@@ -16,8 +16,10 @@ export async function GET(request: NextRequest) {
       }
       const { data: { user } } = await supabase.auth.getUser()
       const role = user?.app_metadata?.role
-      if (role === 'hacker') return NextResponse.redirect(`${origin}/hacker/dashboard`)
+      if (role === 'applicant') return NextResponse.redirect(`${origin}/applicant/dashboard`)
       if (role === 'admin') return NextResponse.redirect(`${origin}/admin/dashboard`)
+
+      await supabase.auth.signOut()
     }
   }
 

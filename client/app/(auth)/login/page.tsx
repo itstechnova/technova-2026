@@ -1,11 +1,19 @@
 'use client'
 
-import { useState, useEffect, useActionState } from 'react'
+import { Suspense, useState, useEffect, useActionState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { signInWithGoogle, authenticate } from './actions'
 import { useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()

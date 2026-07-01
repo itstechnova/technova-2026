@@ -1,10 +1,19 @@
 'use client'
 
+import { Suspense } from 'react'
 import { useSearchParams } from 'next/navigation'
 import { requestPasswordReset } from './actions'
 import { SubmitButton } from '@/components/submit-button'
 
 export default function ForgotPasswordPage() {
+  return (
+    <Suspense>
+      <ForgotPasswordForm />
+    </Suspense>
+  )
+}
+
+function ForgotPasswordForm() {
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
   const message = searchParams.get('message')

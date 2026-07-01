@@ -1,10 +1,10 @@
 import { signOut } from '@/lib/auth/actions'
 
-export default function HackerDashboard() {
+export default function ApplicantDashboard() {
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
-        <h1 className="text-center text-3xl font-bold">Hacker Dashboard</h1>
+        <h1 className="text-center text-3xl font-bold">Applicant Dashboard</h1>
         <form action={signOut}>
           <button
             type="submit"

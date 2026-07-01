@@ -1,12 +1,20 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { useSearchParams } from 'next/navigation'
 import { updatePassword } from './actions'
 import { SubmitButton } from '@/components/submit-button'
 
 export default function ResetPasswordPage() {
+  return (
+    <Suspense>
+      <ResetPasswordForm />
+    </Suspense>
+  )
+}
+
+function ResetPasswordForm() {
   const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()
   const error = searchParams.get('error')
