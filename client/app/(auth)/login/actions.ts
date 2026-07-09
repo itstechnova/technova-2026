@@ -23,38 +23,35 @@ export async function signInWithGoogle() {
   redirect(data.url)
 }
 
-export async function signInWithEmail(formData: FormData) {
+export type AuthState = {
+  error?: string
+  message?: string
+} | null
+
+export async function authenticate(prevState: AuthState, formData: FormData): Promise<AuthState> {
   const supabase = await createClient()
   const email = formData.get('email') as string
   const password = formData.get('password') as string
+  const mode = formData.get('mode') as string
 
-  const { error } = await supabase.auth.signInWithPassword({ email, password })
+  if (mode === 'signup') {
+    const headersList = await headers()
+    const origin = headersList.get('origin')
 
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`)
+    const { error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        emailRedirectTo: `${origin}/auth/callback`,
+      },
+    })
+
+    if (error) return { error: error.message }
+    return { message: 'Check your email to confirm your account' }
+  } else {
+    const { error } = await supabase.auth.signInWithPassword({ email, password })
+
+    if (error) return { error: error.message }
+    redirect('/dashboard')
   }
-
-  redirect('/dashboard')
-}
-
-export async function signUpWithEmail(formData: FormData) {
-  const supabase = await createClient()
-  const headersList = await headers()
-  const origin = headersList.get('origin')
-  const email = formData.get('email') as string
-  const password = formData.get('password') as string
-
-  const { error } = await supabase.auth.signUp({
-    email,
-    password,
-    options: {
-      emailRedirectTo: `${origin}/auth/callback`,
-    },
-  })
-
-  if (error) {
-    redirect(`/login?error=${encodeURIComponent(error.message)}`)
-  }
-
-  redirect('/login?message=Check your email to confirm your account')
 }
