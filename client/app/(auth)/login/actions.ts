@@ -7,7 +7,7 @@ import { headers } from 'next/headers'
 export async function signInWithGoogle() {
   const supabase = await createClient()
   const headersList = await headers()
-  const origin = headersList.get('origin')
+  const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
@@ -36,7 +36,7 @@ export async function authenticate(prevState: AuthState, formData: FormData): Pr
 
   if (mode === 'signup') {
     const headersList = await headers()
-    const origin = headersList.get('origin')
+    const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL
 
     const { error } = await supabase.auth.signUp({
       email,
@@ -49,9 +49,15 @@ export async function authenticate(prevState: AuthState, formData: FormData): Pr
     if (error) return { error: error.message }
     return { message: 'Check your email to confirm your account' }
   } else {
-    const { error } = await supabase.auth.signInWithPassword({ email, password })
+    const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
     if (error) return { error: error.message }
-    redirect('/dashboard')
+
+    const role = data.user?.app_metadata?.role
+    if (role === 'applicant') redirect('/applicant/dashboard')
+    if (role === 'admin') redirect('/admin/dashboard')
+
+    await supabase.auth.signOut()
+    return { error: 'Account has no role assigned' }
   }
 }

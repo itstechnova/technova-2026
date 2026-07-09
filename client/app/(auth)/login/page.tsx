@@ -1,11 +1,19 @@
 'use client'
 
-import { useState, useEffect, useActionState } from 'react'
+import { Suspense, useState, useEffect, useActionState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
 import { signInWithGoogle, authenticate } from './actions'
 import { useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()
@@ -88,9 +96,16 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              {mode === 'signin' && (
+                <a href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:underline">
+                  Forgot password?
+                </a>
+              )}
+            </div>
 
             <div className="relative">
               <input
