@@ -1,28 +1,29 @@
-import { signOut } from '@/lib/auth/actions'
+import { signOut } from '@/lib/auth/actions';
+import { ApplicantsTable } from "@/components/ApplicantsTable";
 
-export default function Page() {
+export default function AdminPage() {
   return (
-    <div className="p-8 bg-gray-50 min-h-screen text-black">
-      <h1 className="text-3xl font-bold">Organizer Dashboard</h1>
-      <p className="text-gray-600 mt-2">
-        Welcome back! Here is your TechNova 2026 overview:
-      </p>
+    <div className="min-h-screen bg-slate-50 text-foreground">
+      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
+        <header className="flex flex-wrap items-end justify-between gap-4">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">overview</p>
+            <h1 className="mt-1 text-3xl font-semibold text-slate-900">Organizer Dashboard</h1>
+          </div>
+          <form action={signOut}>
+            <button
+              type="submit"
+              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-900"
+            >
+              Sign out
+            </button>
+          </form>
+        </header>
 
-      {/* Dashboard Content Container */}
-      <div className="mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
-        <p className="text-gray-500 italic">Dashboard components go here...</p>
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
+          <ApplicantsTable />
+        </section>
       </div>
-
-      <form action={signOut}>
-          <button
-            type="submit"
-            className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-          >
-            Sign out
-          </button>
-        </form>
     </div>
-
-    
   );
 }

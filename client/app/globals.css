@@ -3,11 +3,21 @@
 :root {
   --background: #f5f6f9;
   --foreground: #171717;
+  --border: #e5e7eb;
+  --input-background: #f9fafb;
+  --accent: #6366f1;
+  --muted-foreground: #6b7280;
+  --secondary: #f3f4f6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input-background: var(--input-background);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
   --color-blue-700: #1f3a5f;
