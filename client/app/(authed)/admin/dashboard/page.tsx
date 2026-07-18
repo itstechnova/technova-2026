@@ -1,11 +1,19 @@
 import { signOut } from '@/lib/auth/actions'
 
-export default function AdminDashboard() {
+export default function Page() {
   return (
-    <div className="flex min-h-screen w-full items-center justify-center">
-      <div className="flex flex-col items-center gap-4">
-        <h1 className="text-center text-3xl font-bold">Admin Dashboard</h1>
-        <form action={signOut}>
+    <div className="p-8 bg-gray-50 min-h-screen text-black">
+      <h1 className="text-3xl font-bold">Organizer Dashboard</h1>
+      <p className="text-gray-600 mt-2">
+        Welcome back! Here is your TechNova 2026 overview:
+      </p>
+
+      {/* Dashboard Content Container */}
+      <div className="mt-8 p-6 bg-white rounded-xl shadow-sm border border-gray-200">
+        <p className="text-gray-500 italic">Dashboard components go here...</p>
+      </div>
+
+      <form action={signOut}>
           <button
             type="submit"
             className="rounded-lg border border-gray-300 px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
@@ -13,7 +21,8 @@ export default function AdminDashboard() {
             Sign out
           </button>
         </form>
-      </div>
     </div>
-  )
+
+    
+  );
 }
