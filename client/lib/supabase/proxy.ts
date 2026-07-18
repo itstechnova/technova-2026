@@ -34,17 +34,32 @@ export async function updateSession(request: NextRequest) {
  
   const { data } = await supabase.auth.getClaims()
   const user = data?.claims
+  const pathname = request.nextUrl.pathname
+
   if (
     !user &&
-    !request.nextUrl.pathname.startsWith('/login') &&
-    !request.nextUrl.pathname.startsWith('/auth') &&
-    !request.nextUrl.pathname.startsWith('/forgot-password')
+    !pathname.startsWith('/login') &&
+    !pathname.startsWith('/auth') &&
+    !pathname.startsWith('/forgot-password')
   ) {
     // no user, potentially respond by redirecting the user to the login page
-    const url = request.nextUrl.clone()
-    url.pathname = '/login'
-    return NextResponse.redirect(url)
+    return NextResponse.redirect(new URL('/login', request.url))
   }
- 
+
+  // Optimistic role check: pre-filter users hitting a dashboard they're not
+  // allowed on. The authoritative check lives in each dashboard page via
+  // requireRole(), since Proxy shouldn't be the only line of defense.
+  // Admins may view both dashboards; applicants may only view their own.
+  if (user) {
+    const role = user.app_metadata?.role
+    if (pathname.startsWith('/admin') && role !== 'admin') {
+      const destination = role === 'applicant' ? '/applicant/dashboard' : '/login'
+      return NextResponse.redirect(new URL(destination, request.url))
+    }
+    if (pathname.startsWith('/applicant') && role !== 'applicant' && role !== 'admin') {
+      return NextResponse.redirect(new URL('/login', request.url))
+    }
+  }
+
   return supabaseResponse
 }

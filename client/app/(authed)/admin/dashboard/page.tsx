@@ -1,6 +1,10 @@
 import { signOut } from '@/lib/auth/actions'
+import { requireRole } from '@/lib/auth/dal'
 
-export default function AdminDashboard() {
+export default async function AdminDashboard() {
+  //Second layer of defense to prevent unauthorized users from accessing the admin dashboard
+  await requireRole(['admin'])
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
