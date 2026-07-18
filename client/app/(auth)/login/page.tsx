@@ -1,16 +1,36 @@
 'use client'
 
-import { useState } from 'react'
+import { Suspense, useState, useEffect, useActionState } from 'react'
 import { Eye, EyeOff } from 'lucide-react'
-import { signInWithGoogle, signInWithEmail, signUpWithEmail } from './actions'
+import { signInWithGoogle, authenticate } from './actions'
 import { useSearchParams } from 'next/navigation'
 
 export default function LoginPage() {
+  return (
+    <Suspense>
+      <LoginForm />
+    </Suspense>
+  )
+}
+
+function LoginForm() {
   const [mode, setMode] = useState<'signin' | 'signup'>('signin')
   const [showPassword, setShowPassword] = useState(false)
   const searchParams = useSearchParams()
-  const error = searchParams.get('error')
-  const message = searchParams.get('message')
+  const [state, formAction, isPending] = useActionState(authenticate, null)
+
+  const urlError = searchParams.get('error')
+  const urlMessage = searchParams.get('message')
+
+  const error = state?.error || urlError
+  const message = state?.message || urlMessage
+
+  useEffect(() => {
+    if (urlError || urlMessage) {
+      // Clear the query parameters from the URL so they don't persist on refresh
+      window.history.replaceState(null, '', window.location.pathname)
+    }
+  }, [urlError, urlMessage])
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-gray-50">
@@ -32,7 +52,11 @@ export default function LoginPage() {
 
         {error && (
           <div className="mb-4 rounded-lg bg-red-50 px-4 py-3 text-sm text-red-700">
-            {error === 'auth' ? 'Authentication failed. Please try again.' : error}
+            {error === 'auth' 
+              ? 'Authentication failed. Please try again.' 
+              : error === 'Invalid login credentials'
+              ? 'Incorrect email or password. Please try again.'
+              : error}
           </div>
         )}
         {message && (
@@ -56,7 +80,8 @@ export default function LoginPage() {
           <div className="h-px flex-1 bg-gray-200" />
         </div>
 
-        <form action={mode === 'signin' ? signInWithEmail : signUpWithEmail} className="space-y-4">
+        <form action={formAction} className="space-y-4">
+          <input type="hidden" name="mode" value={mode} />
           <div>
             <label htmlFor="email" className="mb-1 block text-sm font-medium text-gray-700">
               Email
@@ -71,9 +96,16 @@ export default function LoginPage() {
             />
           </div>
           <div>
-            <label htmlFor="password" className="mb-1 block text-sm font-medium text-gray-700">
-              Password
-            </label>
+            <div className="mb-1 flex items-center justify-between">
+              <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+                Password
+              </label>
+              {mode === 'signin' && (
+                <a href="/forgot-password" className="text-sm font-medium text-indigo-600 hover:underline">
+                  Forgot password?
+                </a>
+              )}
+            </div>
 
             <div className="relative">
               <input
@@ -95,9 +127,10 @@ export default function LoginPage() {
           </div>
           <button
             type="submit"
-            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700"
+            disabled={isPending}
+            className="w-full rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
           >
-            {mode === 'signin' ? 'Sign in' : 'Sign up'}
+            {isPending ? 'Please wait...' : mode === 'signin' ? 'Sign in' : 'Sign up'}
           </button>
         </form>
       </div>
