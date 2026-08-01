@@ -24,6 +24,7 @@ export interface ReviewApplicationBase {
 export interface ApplicationFieldConfig<T> {
   label: string;
   value: (application: T) => string;
+  href?: (application: T) => string;
 }
 
 export interface ApplicationPromptConfig<T> {
@@ -44,11 +45,22 @@ interface ApplicationsReviewTableProps<T extends ReviewApplicationBase> {
   prompts: ApplicationPromptConfig<T>[];
 }
 
-function Field({ label, value }: { label: string; value: string }) {
+function Field({ label, value, href }: { label: string; value: string; href?: string }) {
   return (
     <div>
       <p className="text-[0.6875rem] font-semibold uppercase tracking-[0.18em] text-slate-500">{label}</p>
-      <p className="mt-1 text-sm text-slate-900">{value}</p>
+      {href ? (
+        <a
+          href={href}
+          target="_blank"
+          rel="noreferrer"
+          className="mt-1 inline-block text-sm text-indigo-600 hover:underline"
+        >
+          {value}
+        </a>
+      ) : (
+        <p className="mt-1 text-sm text-slate-900">{value}</p>
+      )}
     </div>
   );
 }
@@ -221,6 +233,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                         key={field.label}
                         label={field.label}
                         value={field.value(selectedApplication)}
+                        href={field.href?.(selectedApplication)}
                       />
                     ))}
                   </div>

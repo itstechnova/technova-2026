@@ -80,7 +80,7 @@ export function HackerApplicationsTable() {
         { label: "Grad Year", value: (a) => a.gradYear },
         { label: "Major", value: (a) => a.major },
         { label: "Location", value: (a) => a.location },
-        { label: "Resume", value: (a) => a.resumeFileName },
+        { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
       ]}
       prompts={[
         { question: "Why do you want to attend Technova?", answer: (a) => a.essayWhyAttend },
