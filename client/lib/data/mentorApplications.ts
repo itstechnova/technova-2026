@@ -8,7 +8,7 @@ export interface MentorApplication {
   acceptanceStatus: AcceptanceStatus;
   initials: string;
   avatarColor: string;
-  score: number;
+  score: number | null
   company: string;
   role: string;
   yearsExperience: string;

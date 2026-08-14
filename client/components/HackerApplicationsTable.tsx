@@ -1,9 +1,9 @@
-'use client';
+'use client'
 
 import { Table, type TableColumn } from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { HACKER_APPLICATIONS, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackerApplications";
+import { getHackerApplications, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackers"
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -62,11 +62,11 @@ const COLUMNS: TableColumn<HackerApplication>[] = [
   },
 ];
 
-export function HackerApplicationsTable() {
+export function HackerApplicationsTable({ applications }: { applications: HackerApplication[] }) {
   return (
-    <ApplicationsReviewTable<HackerApplication>
+    <ApplicationsReviewTable
       title="Hacker Applications"
-      applications={HACKER_APPLICATIONS}
+      applications={applications}
       columns={COLUMNS}
       searchKeys={["name", "email"]}
       searchPlaceholder="Filter by name or email..."
@@ -79,7 +79,7 @@ export function HackerApplicationsTable() {
         { label: "School", value: (a) => a.school },
         { label: "Grad Year", value: (a) => a.gradYear },
         { label: "Major", value: (a) => a.major },
-        { label: "Location", value: (a) => a.location },
+        { label: "Location", value: (a) => a.location ?? "" },
         { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
       ]}
       prompts={[

@@ -8,7 +8,7 @@ export interface VolunteerApplication {
   acceptanceStatus: AcceptanceStatus;
   initials: string;
   avatarColor: string;
-  score: number;
+  score: number | null
   schoolOrOrg: string;
   rolePreference: string;
   availability: string;

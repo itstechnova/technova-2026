@@ -1,5 +1,5 @@
 import { signOut } from '@/lib/auth/actions';
-import { HackerApplicationsTable } from "@/components/HackerApplicationsTable";
+import { HackerApplicationsTableWrapper } from '@/components/applications/HackerApplicationsTableWrapper'
 
 export default function HackerApplicationsPage() {
   return (
@@ -21,7 +21,7 @@ export default function HackerApplicationsPage() {
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <HackerApplicationsTable />
+          <HackerApplicationsTableWrapper />
         </section>
       </div>
     </div>

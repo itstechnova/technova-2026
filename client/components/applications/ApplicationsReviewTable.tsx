@@ -18,7 +18,7 @@ export interface ReviewApplicationBase {
   acceptanceStatus: AcceptanceStatus;
   initials: string;
   avatarColor: string;
-  score: number;
+  score: number | null
 }
 
 export interface ApplicationFieldConfig<T> {
