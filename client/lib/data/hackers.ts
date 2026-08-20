@@ -29,7 +29,8 @@ export async function getHackerApplications() {
     .select(`
       *,
       user:hacker_id (
-        name,
+        first_name,
+        last_name,
         email,
         accepted,
         created_at
@@ -43,7 +44,7 @@ export async function getHackerApplications() {
 
   return hackers.map((hacker) => ({
     id: hacker.hacker_id,
-    name: hacker.user?.name ?? 'Unknown',
+    name: `${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`.trim() || 'Unknown',
     email: hacker.user?.email ?? '',
     school: hacker.school,
     gradYear: hacker.year,
@@ -51,8 +52,8 @@ export async function getHackerApplications() {
     resumeFileName: hacker.resume_url,
     acceptanceStatus: hacker.user?.accepted ?? 'Pending',
     applicationDate: hacker.user?.created_at?.split('T')[0] ?? '',
-    avatarColor: stringToColor(hacker.user?.name ?? ''),
-    initials: getInitials(hacker.user?.name ?? ''),
+    avatarColor: stringToColor(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
+    initials: getInitials(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
     score: hacker.score,
     essayWhyAttend: hacker.question_1,
     essayProudProject: hacker.question_2,
