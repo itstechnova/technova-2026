@@ -15,9 +15,9 @@ export type HackerApplication = {
   avatarColor: string
   initials: string
   score: number | null
-  essayWhyAttend: string
-  essayHopeToLearn: string
-  essayProudProject: string
+  hacker_question1: string
+  hacker_question2: string
+  hacker_question3: string
   location?: string
 }
 
@@ -55,9 +55,9 @@ export async function getHackerApplications() {
     avatarColor: stringToColor(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
     initials: getInitials(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
     score: hacker.score,
-    essayWhyAttend: hacker.question_1,
-    essayProudProject: hacker.question_2,
-    essayHopeToLearn: hacker.question_3,
+    hacker_question1: hacker.question_1,
+    hacker_question2: hacker.question_2,
+    hacker_question3: hacker.question_3,
   }))
 }
 

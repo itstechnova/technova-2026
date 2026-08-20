@@ -83,9 +83,9 @@ export function HackerApplicationsTable({ applications }: { applications: Hacker
         { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
       ]}
       prompts={[
-        { question: "Why do you want to attend Technova?", answer: (a) => a.essayWhyAttend },
-        { question: "What project or experience are you most proud of?", answer: (a) => a.essayProudProject },
-        { question: "What do you hope to build or learn at this event?", answer: (a) => a.essayHopeToLearn },
+        { question: "Why do you want to attend Technova?", answer: (a) => a.hacker_question1 },
+        { question: "What project or experience are you most proud of?", answer: (a) => a.hacker_question2 },
+        { question: "What do you hope to build or learn at this event?", answer: (a) => a.hacker_question3 },
       ]}
     />
   );
