@@ -50,7 +50,7 @@ export async function getHackerApplications() {
     gradYear: hacker.year,
     major: hacker.major,
     resumeFileName: hacker.resume_url,
-    acceptanceStatus: hacker.user?.accepted === true ? 'Accepted' : hacker.user?.accepted === false ? 'Rejected' : 'Pending',
+    acceptanceStatus: hacker.user?.accepted === true ? 'Accepted' : hacker.user?.accepted === false ? 'Rejected' : 'Pending' as AcceptanceStatus,
     applicationDate: hacker.user?.created_at?.split('T')[0] ?? '',
     avatarColor: stringToColor(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
     initials: getInitials(`${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`),
