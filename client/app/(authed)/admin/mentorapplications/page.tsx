@@ -1,7 +1,9 @@
 import { signOut } from '@/lib/auth/actions';
+import { getMentorApplications } from '@/lib/data/mentors'
 import { MentorApplicationsTable } from "@/components/MentorApplicationsTable";
 
-export default function MentorApplicationsPage() {
+export default async function MentorApplicationsPage() {
+  const applications = await getMentorApplications()
   return (
     <div className="min-h-screen bg-slate-50 text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
@@ -21,7 +23,7 @@ export default function MentorApplicationsPage() {
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <MentorApplicationsTable />
+          <MentorApplicationsTable applications={applications} />
         </section>
       </div>
     </div>

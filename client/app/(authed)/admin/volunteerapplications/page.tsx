@@ -1,7 +1,9 @@
 import { signOut } from '@/lib/auth/actions';
+import { getVolunteerApplications } from '@/lib/data/volunteers'
 import { VolunteerApplicationsTable } from "@/components/VolunteerApplicationsTable";
 
-export default function VolunteerApplicationsPage() {
+export default async function VolunteerApplicationsPage() {
+  const applications = await getVolunteerApplications()
   return (
     <div className="min-h-screen bg-slate-50 text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
@@ -21,7 +23,7 @@ export default function VolunteerApplicationsPage() {
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <VolunteerApplicationsTable />
+          <VolunteerApplicationsTable applications={applications} />
         </section>
       </div>
     </div>

@@ -1,9 +1,9 @@
 'use client';
 
-import { Table, type TableColumn } from "@/components/Table";
+import { type TableColumn } from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { VOLUNTEER_APPLICATIONS, type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteerApplications";
+import { type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteers"
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -67,11 +67,11 @@ const COLUMNS: TableColumn<VolunteerApplication>[] = [
   },
 ];
 
-export function VolunteerApplicationsTable() {
+export function VolunteerApplicationsTable({ applications }: { applications: VolunteerApplication[] }) {
   return (
     <ApplicationsReviewTable<VolunteerApplication>
       title="Volunteer Applications"
-      applications={VOLUNTEER_APPLICATIONS}
+      applications={applications}
       columns={COLUMNS}
       searchKeys={["name", "email", "rolePreference"]}
       searchPlaceholder="Filter by name, email, or role..."
@@ -81,15 +81,10 @@ export function VolunteerApplicationsTable() {
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
-        { label: "School / Organization", value: (a) => a.schoolOrOrg },
         { label: "Role Preference", value: (a) => a.rolePreference },
-        { label: "Availability", value: (a) => a.availability },
-        { label: "Experience", value: (a) => a.experienceLevel },
-        { label: "Location", value: (a) => a.location },
       ]}
       prompts={[
-        { question: "Why do you want to volunteer at Technova?", answer: (a) => a.motivation },
-        { question: "Additional notes", answer: (a) => a.notes },
+        { question: "Why do you want to volunteer at Technova?", answer: (a) => a.volunteer_question1 },
       ]}
     />
   );
