@@ -1,0 +1,158 @@
+export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected" | "Waitlisted";
+
+export interface VolunteerApplication {
+  id: string;
+  name: string;
+  email: string;
+  applicationDate: string;
+  acceptanceStatus: AcceptanceStatus;
+  initials: string;
+  avatarColor: string;
+  score: number;
+  schoolOrOrg: string;
+  rolePreference: string;
+  availability: string;
+  experienceLevel: string;
+  location: string;
+  motivation: string;
+  notes: string;
+}
+
+export const VOLUNTEER_APPLICATIONS: VolunteerApplication[] = [
+  {
+    id: "1",
+    name: "Camila Vega",
+    email: "camila.vega@berkeley.edu",
+    applicationDate: "Jan 13, 2026",
+    acceptanceStatus: "Accepted",
+    initials: "CV",
+    avatarColor: "#6366f1",
+    score: 8,
+    schoolOrOrg: "UC Berkeley",
+    rolePreference: "Registration + Check-in",
+    availability: "Friday evening + Saturday morning",
+    experienceLevel: "Worked 2 campus hackathons",
+    location: "Berkeley, CA",
+    motivation: "I enjoy creating a smooth attendee experience and helping people feel welcome from the start.",
+    notes: "Strong communication skills, comfortable with fast-paced logistics.",
+  },
+  {
+    id: "2",
+    name: "Diego Morales",
+    email: "diegom@gmail.com",
+    applicationDate: "Jan 14, 2026",
+    acceptanceStatus: "Pending",
+    initials: "DM",
+    avatarColor: "#8b5cf6",
+    score: 6,
+    schoolOrOrg: "San Jose State University",
+    rolePreference: "A/V + Stage",
+    availability: "Full weekend",
+    experienceLevel: "Beginner",
+    location: "San Jose, CA",
+    motivation: "I want to support live demos and make sure presentations run without technical issues.",
+    notes: "Needs quick onboarding on event comms tools.",
+  },
+  {
+    id: "3",
+    name: "Emily Tran",
+    email: "emily.tran@ucla.edu",
+    applicationDate: "Jan 16, 2026",
+    acceptanceStatus: "Accepted",
+    initials: "ET",
+    avatarColor: "#ec4899",
+    score: 9,
+    schoolOrOrg: "UCLA",
+    rolePreference: "Operations Runner",
+    availability: "Saturday + Sunday",
+    experienceLevel: "Lead volunteer for 3 events",
+    location: "Los Angeles, CA",
+    motivation: "I love problem-solving on the fly and keeping event operations moving behind the scenes.",
+    notes: "Great under pressure; can coordinate between teams.",
+  },
+  {
+    id: "4",
+    name: "Farah Malik",
+    email: "fmalik@nyu.edu",
+    applicationDate: "Jan 18, 2026",
+    acceptanceStatus: "Waitlisted",
+    initials: "FM",
+    avatarColor: "#f59e0b",
+    score: 5,
+    schoolOrOrg: "NYU",
+    rolePreference: "Social Media + Content",
+    availability: "Sunday only",
+    experienceLevel: "Managed club social channels",
+    location: "New York, NY",
+    motivation: "I want to capture stories from teams and showcase the event energy online.",
+    notes: "Only available one day due to travel constraints.",
+  },
+  {
+    id: "5",
+    name: "Gavin Reed",
+    email: "gavinreed@asu.edu",
+    applicationDate: "Jan 19, 2026",
+    acceptanceStatus: "Rejected",
+    initials: "GR",
+    avatarColor: "#10b981",
+    score: 2,
+    schoolOrOrg: "Arizona State University",
+    rolePreference: "Food Distribution",
+    availability: "Unknown",
+    experienceLevel: "None listed",
+    location: "Tempe, AZ",
+    motivation: "I want to support student events and meet people in tech.",
+    notes: "Incomplete availability details.",
+  },
+  {
+    id: "6",
+    name: "Hana Suzuki",
+    email: "hana.suzuki@ubc.ca",
+    applicationDate: "Jan 20, 2026",
+    acceptanceStatus: "Accepted",
+    initials: "HS",
+    avatarColor: "#3b82f6",
+    score: 7,
+    schoolOrOrg: "University of British Columbia",
+    rolePreference: "Mentor Support Desk",
+    availability: "Saturday afternoon + Sunday",
+    experienceLevel: "Volunteered at regional hackathon",
+    location: "Vancouver, BC",
+    motivation: "I enjoy helping teams connect with mentors and track support requests efficiently.",
+    notes: "Strong organization and detail orientation.",
+  },
+  {
+    id: "7",
+    name: "Isaac Bennett",
+    email: "ibennett@mcgill.ca",
+    applicationDate: "Jan 21, 2026",
+    acceptanceStatus: "Pending",
+    initials: "IB",
+    avatarColor: "#06b6d4",
+    score: 6,
+    schoolOrOrg: "McGill University",
+    rolePreference: "Workshop Room Support",
+    availability: "Saturday morning",
+    experienceLevel: "TA for intro CS labs",
+    location: "Montreal, QC",
+    motivation: "I can help coordinate workshop logistics and keep sessions on schedule.",
+    notes: "Good fit for instructional support tasks.",
+  },
+  {
+    id: "8",
+    name: "Jules Martin",
+    email: "jules.martin@umich.edu",
+    applicationDate: "Jan 22, 2026",
+    acceptanceStatus: "Accepted",
+    initials: "JM",
+    avatarColor: "#f97316",
+    score: 8,
+    schoolOrOrg: "University of Michigan",
+    rolePreference: "Sponsorship Booth Support",
+    availability: "Full weekend",
+    experienceLevel: "Career fair student ambassador",
+    location: "Ann Arbor, MI",
+    motivation: "I’m comfortable engaging with attendees and sponsors and keeping booth traffic organized.",
+    notes: "Excellent interpersonal skills.",
+  },
+];

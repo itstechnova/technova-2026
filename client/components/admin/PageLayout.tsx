@@ -1,14 +1,19 @@
-import { signOut } from '@/lib/auth/actions';
-import { ApplicantsTable } from "@/components/ApplicantsTable";
+import { signOut } from '@/lib/auth/actions'
 
-export default function AdminPage() {
+interface PageLayoutProps {
+  section: string
+  title: string
+  children: React.ReactNode
+}
+
+export function PageLayout({ section, title, children }: PageLayoutProps) {
   return (
     <div className="min-h-screen bg-slate-50 text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
         <header className="flex flex-wrap items-end justify-between gap-4">
           <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">overview</p>
-            <h1 className="mt-1 text-3xl font-semibold text-slate-900">Organizer Dashboard</h1>
+            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">{section}</p>
+            <h1 className="mt-1 text-3xl font-semibold text-slate-900">{title}</h1>
           </div>
           <form action={signOut}>
             <button
@@ -19,11 +24,10 @@ export default function AdminPage() {
             </button>
           </form>
         </header>
-
         <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <ApplicantsTable />
+          {children}
         </section>
       </div>
     </div>
-  );
+  )
 }
