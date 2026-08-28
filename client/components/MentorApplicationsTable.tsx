@@ -1,9 +1,9 @@
 'use client';
 
-import { Table, type TableColumn } from "@/components/Table";
+import { type TableColumn } from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { MENTOR_APPLICATIONS, type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentorApplications";
+import {  type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentors";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -37,9 +37,9 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
     ),
   },
   {
-    key: "company",
-    header: "Company",
-    accessor: (a) => a.company,
+    key: "organization",
+    header: "Organization",
+    accessor: (a) => a.organization,
   },
   {
     key: "applicationDate",
@@ -67,13 +67,13 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
   },
 ];
 
-export function MentorApplicationsTable() {
+export function MentorApplicationsTable({ applications }: { applications: MentorApplication[] }) {
   return (
     <ApplicationsReviewTable<MentorApplication>
       title="Mentor Applications"
-      applications={MENTOR_APPLICATIONS}
+      applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email", "company"]}
+      searchKeys={["name", "email", "organization"]}
       searchPlaceholder="Filter by name, email, or company..."
       emptyMessage="No mentor applications match your search."
       detailSectionTitle="Mentor Application"
@@ -81,15 +81,10 @@ export function MentorApplicationsTable() {
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
-        { label: "Company", value: (a) => a.company },
-        { label: "Role", value: (a) => a.role },
-        { label: "Experience (Years)", value: (a) => a.yearsExperience },
-        { label: "Location", value: (a) => a.location },
-        { label: "Availability", value: (a) => a.availability },
-        { label: "Expertise", value: (a) => a.expertise },
+        { label: "Company", value: (a) => a.organization },
       ]}
       prompts={[
-        { question: "Why do you want to mentor at Technova?", answer: (a) => a.motivation },
+        { question: "Why do you want to mentor at Technova?", answer: (a) => a.mentor_question1 },
       ]}
     />
   );
