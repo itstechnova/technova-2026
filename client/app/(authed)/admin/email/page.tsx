@@ -1,29 +1,10 @@
-import { signOut } from '@/lib/auth/actions';
+import { PageLayout } from '@/components/admin/PageLayout'
 import { EmailLogsTable } from "@/components/EmailLogsTable";
 
-export default function EmailLogsPage() {
+export default async function EmailLogsPage() {
   return (
-    <div className="min-h-screen bg-slate-50 text-foreground">
-      <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
-        <header className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-slate-500">activity</p>
-            <h1 className="mt-1 text-3xl font-semibold text-slate-900">Email Logs</h1>
-          </div>
-          <form action={signOut}>
-            <button
-              type="submit"
-              className="rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-500 hover:border-slate-300 hover:text-slate-900"
-            >
-              Sign out
-            </button>
-          </form>
-        </header>
-
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <EmailLogsTable />
-        </section>
-      </div>
-    </div>
-  );
+    <PageLayout section="activity" title="Email Logs">
+      <EmailLogsTable />
+    </PageLayout>
+  )
 }
