@@ -1,6 +1,9 @@
 import { signOut } from '@/lib/auth/actions'
+import { requireRole } from '@/lib/auth/dal'
 
-export default function ApplicantDashboard() {
+export default async function ApplicantDashboard() {
+  await requireRole(['admin', 'applicant'])
+
   return (
     <div className="flex min-h-screen w-full items-center justify-center">
       <div className="flex flex-col items-center gap-4">
