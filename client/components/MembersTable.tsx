@@ -5,7 +5,7 @@ import { SearchBar } from "@/components/ui/SearchBar";
 import { Table, type TableColumn } from "@/components/Table";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Badge } from "@/components/ui/badge";
-import { MEMBERS, type Member, type MemberRole } from "@/lib/data/members";
+import { type Member, type MemberRole } from "@/lib/data/members";
 import { cn } from "@/lib/utils";
 
 const ROLE_STYLES: Record<MemberRole, string> = {
@@ -54,19 +54,18 @@ const COLUMNS: TableColumn<Member>[] = [
     align: "center",
     render: (m) => (
       <Badge variant="outline" className="rounded-md border-slate-200 px-2 py-0.5 font-mono text-xs font-medium text-slate-700">
-        {m.shirtSize}
+        
       </Badge>
     ),
   },
   {
     key: "dietaryRestrictions",
     header: "Dietary Restrictions",
-    accessor: (m) => m.dietaryRestrictions,
   },
 ];
 
-export function MembersTable() {
-  const { query, setQuery, results } = useTableSearch(MEMBERS, SEARCH_KEYS);
+export function MembersTable({ members }: { members: Member[] }) {
+  const { query, setQuery, results } = useTableSearch(members, SEARCH_KEYS);
   const [roleFilter, setRoleFilter] = useState<"All" | MemberRole>("All");
 
   const filteredResults = useMemo(() => {
