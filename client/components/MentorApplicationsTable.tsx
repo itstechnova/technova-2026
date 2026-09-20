@@ -4,6 +4,7 @@ import { type TableColumn } from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
 import {  type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentors";
+import { updateMentorScore } from "@/lib/data/mentorMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -78,6 +79,7 @@ export function MentorApplicationsTable({ applications }: { applications: Mentor
       emptyMessage="No mentor applications match your search."
       detailSectionTitle="Mentor Application"
       acceptButtonLabel="Accept as Mentor"
+      onUpdateScore={async (id: string, score: number | null) => await updateMentorScore(id, score)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
