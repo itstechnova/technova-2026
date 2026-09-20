@@ -3,6 +3,7 @@ import { render } from '@react-email/render'
 import { getResendClient } from './client'
 import { ConfirmSignupEmail } from './emails/confirm-signup'
 import { ResetPasswordEmail } from './emails/reset-password'
+import { WelcomeEmail } from './emails/welcome'
 
 const FROM_EMAIL = process.env.RESEND_FROM_EMAIL || 'onboarding@resend.dev'
 
@@ -40,5 +41,13 @@ export async function sendResetPasswordEmail(to: string, resetUrl: string) {
     to,
     subject: 'Reset your TechNova password',
     react: <ResetPasswordEmail resetUrl={resetUrl} />,
+  })
+}
+
+export async function sendWelcomeEmail(to: string, loginUrl: string) {
+  await sendEmail({
+    to,
+    subject: 'Welcome to TechNova',
+    react: <WelcomeEmail email={to} loginUrl={loginUrl} />,
   })
 }

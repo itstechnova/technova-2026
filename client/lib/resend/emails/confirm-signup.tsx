@@ -12,9 +12,10 @@ export function ConfirmSignupEmail({ email, confirmUrl }: ConfirmSignupEmailProp
       <Preview>Confirm your TechNova account</Preview>
       <Body style={main}>
         <Container style={container}>
-          <Heading style={heading}>Welcome to TechNova</Heading>
+          <Heading style={heading}>Confirm your email</Heading>
           <Text style={text}>
-            Thanks for signing up with {email}. Confirm your email to activate your account.
+            Thanks for signing up with {email}. Use the button below to confirm your address and finish creating
+            your account.
           </Text>
           <Button style={button} href={confirmUrl}>
             Confirm email

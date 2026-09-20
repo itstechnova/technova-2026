@@ -13,6 +13,21 @@ type HookPayload = {
   }
 }
 
+function appOrigin(email_data: HookPayload['email_data']) {
+  const fromEnv = process.env.NEXT_PUBLIC_SITE_URL?.replace(/\/$/, '')
+  if (fromEnv) return fromEnv
+
+  if (email_data.redirect_to) {
+    try {
+      return new URL(email_data.redirect_to).origin
+    } catch {
+      // ignore invalid redirect_to
+    }
+  }
+
+  return email_data.site_url.replace(/\/$/, '')
+}
+
 function verifyPayload(payload: string, headers: Record<string, string>) {
   const wh = new Webhook(hookSecret)
   return wh.verify(payload, headers) as HookPayload
@@ -42,7 +57,7 @@ export async function POST(request: Request) {
       type: email_data.email_action_type,
       next: email_data.redirect_to,
     })
-    const confirmUrl = `${email_data.site_url}/auth/confirm?${confirmParams.toString()}`
+    const confirmUrl = `${appOrigin(email_data)}/auth/confirm?${confirmParams.toString()}`
 
     if (email_data.email_action_type === 'signup') {
       await sendConfirmSignupEmail(user.email, confirmUrl)
