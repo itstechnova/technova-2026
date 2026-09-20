@@ -9,6 +9,7 @@ export type Member = {
   role: MemberRole
   avatarColor: string
   initials: string
+  shirt_size: string
 }
 
 export async function getMembers() {
@@ -21,7 +22,8 @@ export async function getMembers() {
       first_name,
       last_name,
       email,
-      role
+      role,
+      shirt_size
     `)
     .eq('accepted', true)
     .in('role', ['hacker', 'mentor', 'volunteer'])
@@ -38,6 +40,7 @@ export async function getMembers() {
     role: capitalizeRole(user.role),
     avatarColor: stringToColor(`${user.first_name ?? ''} ${user.last_name ?? ''}`),
     initials: getInitials(`${user.first_name ?? ''} ${user.last_name ?? ''}`),
+    shirt_size: user.shirt_size ?? '',
   }))
 }
 

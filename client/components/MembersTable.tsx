@@ -54,7 +54,7 @@ const COLUMNS: TableColumn<Member>[] = [
     align: "center",
     render: (m) => (
       <Badge variant="outline" className="rounded-md border-slate-200 px-2 py-0.5 font-mono text-xs font-medium text-slate-700">
-        
+        {m.shirt_size}
       </Badge>
     ),
   },
