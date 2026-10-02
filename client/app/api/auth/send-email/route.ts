@@ -34,6 +34,14 @@ function verifyPayload(payload: string, headers: Record<string, string>) {
 }
 
 export async function POST(request: Request) {
+  if (!hookSecret) {
+    console.error('send-email hook: SEND_EMAIL_HOOK_SECRET is not set')
+    return Response.json(
+      { error: { http_code: 500, message: 'Email hook is not configured' } },
+      { status: 500 }
+    )
+  }
+
   const payload = await request.text()
   const headers = Object.fromEntries(request.headers)
 

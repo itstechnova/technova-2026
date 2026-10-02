@@ -36,6 +36,12 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims
   const pathname = request.nextUrl.pathname
 
+  // Supabase's Send Email hook calls this server-to-server with no session;
+  // the route authenticates the request itself via the webhook signature.
+  if (pathname === '/api/auth/send-email') {
+    return supabaseResponse
+  }
+
   if (
     !user &&
     !pathname.startsWith('/login') &&
