@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import { render } from '@react-email/render'
 import { getResendClient } from './client'
+import { AcceptanceEmail } from './emails/acceptance'
 import { ConfirmSignupEmail } from './emails/confirm-signup'
 import { ResetPasswordEmail } from './emails/reset-password'
 import { WelcomeEmail } from './emails/welcome'
@@ -41,6 +42,14 @@ export async function sendResetPasswordEmail(to: string, resetUrl: string) {
     to,
     subject: 'Reset your TechNova password',
     react: <ResetPasswordEmail resetUrl={resetUrl} />,
+  })
+}
+
+export async function sendAcceptanceEmail(to: string, loginUrl: string) {
+  await sendEmail({
+    to,
+    subject: "You've been accepted to TechNova",
+    react: <AcceptanceEmail loginUrl={loginUrl} />,
   })
 }
 
