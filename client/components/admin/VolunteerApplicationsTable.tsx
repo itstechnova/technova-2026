@@ -1,10 +1,10 @@
 'use client';
 
-import { type TableColumn } from "@/components/Table";
+import { type TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import {  type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentors";
-import { updateMentorScore } from "@/lib/data/mentorMutations";
+import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
+import { type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteers"
+import { updateVolunteerScore } from "@/lib/data/volunteerMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -14,7 +14,7 @@ const STATUS_STYLES: Record<AcceptanceStatus, string> = {
   Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
 };
 
-const COLUMNS: TableColumn<MentorApplication>[] = [
+const COLUMNS: TableColumn<VolunteerApplication>[] = [
   {
     key: "name",
     header: "Name",
@@ -38,9 +38,9 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
     ),
   },
   {
-    key: "organization",
-    header: "Organization",
-    accessor: (a) => a.organization,
+    key: "rolePreference",
+    header: "Role Preference",
+    accessor: (a) => a.rolePreference,
   },
   {
     key: "applicationDate",
@@ -68,25 +68,25 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
   },
 ];
 
-export function MentorApplicationsTable({ applications }: { applications: MentorApplication[] }) {
+export function VolunteerApplicationsTable({ applications }: { applications: VolunteerApplication[] }) {
   return (
-    <ApplicationsReviewTable<MentorApplication>
-      title="Mentor Applications"
+    <ApplicationsReviewTable<VolunteerApplication>
+      title="Volunteer Applications"
       applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email", "organization"]}
-      searchPlaceholder="Filter by name, email, or company..."
-      emptyMessage="No mentor applications match your search."
-      detailSectionTitle="Mentor Application"
-      acceptButtonLabel="Accept as Mentor"
-      onUpdateScore={async (id: string, score: number | null) => await updateMentorScore(id, score)}
+      searchKeys={["name", "email", "rolePreference"]}
+      searchPlaceholder="Filter by name, email, or role..."
+      emptyMessage="No volunteer applications match your search."
+      detailSectionTitle="Volunteer Application"
+      acceptButtonLabel="Accept as Volunteer"
+      onUpdateScore={async (id: string, score: number | null) => await updateVolunteerScore(id, score)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
-        { label: "Company", value: (a) => a.organization },
+        { label: "Role Preference", value: (a) => a.rolePreference },
       ]}
       prompts={[
-        { question: "Why do you want to mentor at Technova?", answer: (a) => a.mentor_question1 },
+        { question: "Why do you want to volunteer at Technova?", answer: (a) => a.volunteer_question1 },
       ]}
     />
   );

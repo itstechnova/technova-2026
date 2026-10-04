@@ -1,6 +1,6 @@
 import { PageLayout } from '@/components/admin/PageLayout'
 import { getVolunteerApplications } from '@/lib/data/volunteers'
-import { VolunteerApplicationsTable } from "@/components/VolunteerApplicationsTable";
+import { VolunteerApplicationsTable } from "@/components/admin/VolunteerApplicationsTable";
 
 
 export default async function VolunteerApplicationsPage() {

@@ -1,6 +1,6 @@
 import { PageLayout } from '@/components/admin/PageLayout'
 import { getMembers } from '@/lib/data/members'
-import { MembersTable } from "@/components/MembersTable";
+import { MembersTable } from "@/components/admin/MembersTable";
 
 
 export default async function MembersPage() {

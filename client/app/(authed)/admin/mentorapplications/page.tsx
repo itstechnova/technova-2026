@@ -1,6 +1,6 @@
 import { PageLayout } from '@/components/admin/PageLayout'
 import { getMentorApplications } from '@/lib/data/mentors'
-import { MentorApplicationsTable } from "@/components/MentorApplicationsTable";
+import { MentorApplicationsTable } from "@/components/admin/MentorApplicationsTable";
 
 
 export default async function MentorApplicationsPage() {

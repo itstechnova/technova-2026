@@ -1,5 +1,5 @@
 import { PageLayout } from '@/components/admin/PageLayout'
-import { EmailLogsTable } from "@/components/EmailLogsTable";
+import { EmailLogsTable } from "@/components/admin/EmailLogsTable";
 import { getEmailLogs } from '@/lib/data/emails';
 
 export default async function EmailLogsPage() {

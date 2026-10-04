@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from "react";
 import { SearchBar } from "@/components/ui/SearchBar";
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Badge } from "@/components/ui/badge";
 import { type Member, type MemberRole } from "@/lib/data/members";

@@ -1,8 +1,8 @@
 'use client'
 
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
+import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
 import { getHackerApplications, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackers"
 import { updateHackerScore } from "@/lib/data/hackerMutations";
 import { cn } from "@/lib/utils";

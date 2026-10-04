@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from "motion/react";
 import { Send, X } from "lucide-react";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { useTableSearch } from "@/components/ui/useTableSearch";
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { cn } from "@/lib/utils";
 
 export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected" | "Waitlisted";
