@@ -1,5 +1,5 @@
 import { signOut } from '@/lib/auth/actions';
-import { ApplicantsTable } from "@/components/ApplicantsTable";
+import KpiCards from "@/components/admin/KpiCards";
 
 export default function AdminPage() {
   return (
@@ -20,8 +20,8 @@ export default function AdminPage() {
           </form>
         </header>
 
-        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm">
-          <ApplicantsTable />
+        <section className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
+          <KpiCards />
         </section>
       </div>
     </div>
