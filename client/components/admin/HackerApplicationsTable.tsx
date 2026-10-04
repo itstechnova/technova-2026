@@ -1,9 +1,10 @@
-'use client';
+'use client'
 
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { MENTOR_APPLICATIONS, type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentorApplications";
+import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
+import { getHackerApplications, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackers"
+import { updateHackerScore } from "@/lib/data/hackerMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -13,7 +14,7 @@ const STATUS_STYLES: Record<AcceptanceStatus, string> = {
   Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
 };
 
-const COLUMNS: TableColumn<MentorApplication>[] = [
+const COLUMNS: TableColumn<HackerApplication>[] = [
   {
     key: "name",
     header: "Name",
@@ -35,11 +36,6 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
     render: (a) => (
       <span className="font-mono text-xs text-muted-foreground">{a.email}</span>
     ),
-  },
-  {
-    key: "company",
-    header: "Company",
-    accessor: (a) => a.company,
   },
   {
     key: "applicationDate",
@@ -67,29 +63,31 @@ const COLUMNS: TableColumn<MentorApplication>[] = [
   },
 ];
 
-export function MentorApplicationsTable() {
+export function HackerApplicationsTable({ applications }: { applications: HackerApplication[] }) {
   return (
-    <ApplicationsReviewTable<MentorApplication>
-      title="Mentor Applications"
-      applications={MENTOR_APPLICATIONS}
+    <ApplicationsReviewTable
+      title="Hacker Applications"
+      applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email", "company"]}
-      searchPlaceholder="Filter by name, email, or company..."
-      emptyMessage="No mentor applications match your search."
-      detailSectionTitle="Mentor Application"
-      acceptButtonLabel="Accept as Mentor"
+      searchKeys={["name", "email"]}
+      searchPlaceholder="Filter by name or email..."
+      emptyMessage="No hacker applications match your search."
+      detailSectionTitle="Hacker Application"
+      acceptButtonLabel="Accept as Hacker"
+      onUpdateScore={async (id: string, score: number | null) => await updateHackerScore(id, score)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
-        { label: "Company", value: (a) => a.company },
-        { label: "Role", value: (a) => a.role },
-        { label: "Experience (Years)", value: (a) => a.yearsExperience },
-        { label: "Location", value: (a) => a.location },
-        { label: "Availability", value: (a) => a.availability },
-        { label: "Expertise", value: (a) => a.expertise },
+        { label: "School", value: (a) => a.school },
+        { label: "Grad Year", value: (a) => a.gradYear },
+        { label: "Major", value: (a) => a.major },
+        { label: "Location", value: (a) => a.location ?? "" },
+        { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
       ]}
       prompts={[
-        { question: "Why do you want to mentor at Technova?", answer: (a) => a.motivation },
+        { question: "Why do you want to attend Technova?", answer: (a) => a.hacker_question1 },
+        { question: "What project or experience are you most proud of?", answer: (a) => a.hacker_question2 },
+        { question: "What do you hope to build or learn at this event?", answer: (a) => a.hacker_question3 },
       ]}
     />
   );

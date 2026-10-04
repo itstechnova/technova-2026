@@ -1,18 +1,20 @@
 import { createClient } from '@/lib/supabase/server'
 
-export type MemberRole = 'Hacker' | 'Mentor' | 'Volunteer'
+export type EmailStatus = 'Opened' | 'Sent' | 'Bounced'
+export type AccountStatus = 'Verified' | 'Not Verified'
 
-export type Member = {
+export type EmailLog = {
   id: string
   name: string
   email: string
-  role: MemberRole
+  email_date: string
+  email_status: EmailStatus
+  account_status: AccountStatus
   avatarColor: string
   initials: string
-  shirt_size: string
 }
 
-export async function getMembers() {
+export async function getEmailLogs() {
   const supabase = await createClient()
 
   const { data: users, error } = await supabase
@@ -22,13 +24,12 @@ export async function getMembers() {
       first_name,
       last_name,
       email,
-      role,
-      shirt_size
+      email_date,
+      email_status,
+      account_status
     `)
-    .eq('accepted', true)
-    .in('role', ['hacker', 'mentor', 'volunteer'])
 
-  console.log('members:', users)
+  console.log('email logs:', users)
   console.log('error:', error)
 
   if (error || !users) return []
@@ -37,20 +38,12 @@ export async function getMembers() {
     id: user.user_id,
     name: `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || 'Unknown',
     email: user.email ?? '',
-    role: capitalizeRole(user.role),
+    email_date: user.email_date?.split('T')[0] ?? '',
+    email_status: (user.email_status as EmailStatus) ?? '',
+    account_status: (user.account_status as AccountStatus) ?? '',
     avatarColor: stringToColor(`${user.first_name ?? ''} ${user.last_name ?? ''}`),
     initials: getInitials(`${user.first_name ?? ''} ${user.last_name ?? ''}`),
-    shirt_size: user.shirt_size ?? '',
   }))
-}
-
-function capitalizeRole(role: string): MemberRole {
-  const map: Record<string, MemberRole> = {
-    hacker: 'Hacker',
-    mentor: 'Mentor',
-    volunteer: 'Volunteer',
-  }
-  return map[role?.toLowerCase()] ?? 'Hacker'
 }
 
 function getInitials(name: string) {

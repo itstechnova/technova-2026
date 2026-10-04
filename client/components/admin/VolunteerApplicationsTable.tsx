@@ -1,9 +1,10 @@
 'use client';
 
-import { Table, type TableColumn } from "@/components/Table";
+import { type TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
-import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { HACKER_APPLICATIONS, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackerApplications";
+import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
+import { type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteers"
+import { updateVolunteerScore } from "@/lib/data/volunteerMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -13,7 +14,7 @@ const STATUS_STYLES: Record<AcceptanceStatus, string> = {
   Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
 };
 
-const COLUMNS: TableColumn<HackerApplication>[] = [
+const COLUMNS: TableColumn<VolunteerApplication>[] = [
   {
     key: "name",
     header: "Name",
@@ -35,6 +36,11 @@ const COLUMNS: TableColumn<HackerApplication>[] = [
     render: (a) => (
       <span className="font-mono text-xs text-muted-foreground">{a.email}</span>
     ),
+  },
+  {
+    key: "rolePreference",
+    header: "Role Preference",
+    accessor: (a) => a.rolePreference,
   },
   {
     key: "applicationDate",
@@ -62,30 +68,25 @@ const COLUMNS: TableColumn<HackerApplication>[] = [
   },
 ];
 
-export function HackerApplicationsTable() {
+export function VolunteerApplicationsTable({ applications }: { applications: VolunteerApplication[] }) {
   return (
-    <ApplicationsReviewTable<HackerApplication>
-      title="Hacker Applications"
-      applications={HACKER_APPLICATIONS}
+    <ApplicationsReviewTable<VolunteerApplication>
+      title="Volunteer Applications"
+      applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email"]}
-      searchPlaceholder="Filter by name or email..."
-      emptyMessage="No hacker applications match your search."
-      detailSectionTitle="Hacker Application"
-      acceptButtonLabel="Accept as Hacker"
+      searchKeys={["name", "email", "rolePreference"]}
+      searchPlaceholder="Filter by name, email, or role..."
+      emptyMessage="No volunteer applications match your search."
+      detailSectionTitle="Volunteer Application"
+      acceptButtonLabel="Accept as Volunteer"
+      onUpdateScore={async (id: string, score: number | null) => await updateVolunteerScore(id, score)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
-        { label: "School", value: (a) => a.school },
-        { label: "Grad Year", value: (a) => a.gradYear },
-        { label: "Major", value: (a) => a.major },
-        { label: "Location", value: (a) => a.location },
-        { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
+        { label: "Role Preference", value: (a) => a.rolePreference },
       ]}
       prompts={[
-        { question: "Why do you want to attend Technova?", answer: (a) => a.essayWhyAttend },
-        { question: "What project or experience are you most proud of?", answer: (a) => a.essayProudProject },
-        { question: "What do you hope to build or learn at this event?", answer: (a) => a.essayHopeToLearn },
+        { question: "Why do you want to volunteer at Technova?", answer: (a) => a.volunteer_question1 },
       ]}
     />
   );
