@@ -81,7 +81,9 @@ export function MentorApplicationsTable({ applications }: { applications: Mentor
       detailSectionTitle="Mentor Application"
       acceptButtonLabel="Accept as Mentor"
       onUpdateScore={async (id: string, score: number | null) => await updateMentorScore(id, score)}
-      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => await updateUserAcceptanceStatus(id, accepted)}
+      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => {
+        await updateUserAcceptanceStatus(id, accepted)
+      }}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },

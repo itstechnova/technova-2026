@@ -76,7 +76,9 @@ export function HackerApplicationsTable({ applications }: { applications: Hacker
       detailSectionTitle="Hacker Application"
       acceptButtonLabel="Accept as Hacker"
       onUpdateScore={async (id: string, score: number | null) => await updateHackerScore(id, score)}
-      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => await updateUserAcceptanceStatus(id, accepted)}
+      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => {
+        await updateUserAcceptanceStatus(id, accepted)
+      }}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },

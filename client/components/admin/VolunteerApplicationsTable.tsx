@@ -81,7 +81,9 @@ export function VolunteerApplicationsTable({ applications }: { applications: Vol
       detailSectionTitle="Volunteer Application"
       acceptButtonLabel="Accept as Volunteer"
       onUpdateScore={async (id: string, score: number | null) => await updateVolunteerScore(id, score)}
-      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => await updateUserAcceptanceStatus(id, accepted)}
+      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => {
+        await updateUserAcceptanceStatus(id, accepted)
+      }}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
