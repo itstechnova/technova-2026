@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
 import { getHackerApplications, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackers"
 import { updateHackerScore } from "@/lib/data/hackerMutations";
+import { updateUserAcceptanceStatus } from "@/lib/data/userMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -75,6 +76,7 @@ export function HackerApplicationsTable({ applications }: { applications: Hacker
       detailSectionTitle="Hacker Application"
       acceptButtonLabel="Accept as Hacker"
       onUpdateScore={async (id: string, score: number | null) => await updateHackerScore(id, score)}
+      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => await updateUserAcceptanceStatus(id, accepted)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },

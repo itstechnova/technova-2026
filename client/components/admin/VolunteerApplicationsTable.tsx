@@ -5,6 +5,7 @@ import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
 import { type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteers"
 import { updateVolunteerScore } from "@/lib/data/volunteerMutations";
+import { updateUserAcceptanceStatus } from "@/lib/data/userMutations";
 import { cn } from "@/lib/utils";
 
 const STATUS_STYLES: Record<AcceptanceStatus, string> = {
@@ -80,6 +81,7 @@ export function VolunteerApplicationsTable({ applications }: { applications: Vol
       detailSectionTitle="Volunteer Application"
       acceptButtonLabel="Accept as Volunteer"
       onUpdateScore={async (id: string, score: number | null) => await updateVolunteerScore(id, score)}
+      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => await updateUserAcceptanceStatus(id, accepted)}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },

@@ -44,6 +44,7 @@ interface ApplicationsReviewTableProps<T extends ReviewApplicationBase> {
   fields: ApplicationFieldConfig<T>[];
   prompts: ApplicationPromptConfig<T>[];
   onUpdateScore?: (id: string, score: number | null) => Promise<void>;
+  onUpdateAcceptanceStatus?: (id: string, accepted: boolean) => Promise<void>;
 }
 
 function Field({ label, value, href }: { label: string; value: string; href?: string }) {
@@ -90,6 +91,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
   fields,
   prompts,
   onUpdateScore,
+  onUpdateAcceptanceStatus,
 }: ApplicationsReviewTableProps<T>) {
   const [applications, setApplications] = useState<T[]>(initialApplications);
   const { query, setQuery, results } = useTableSearch(applications, searchKeys);
@@ -129,6 +131,19 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
 
   const handleUpdate = (id: string, patch: Partial<T>) => {
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+  };
+
+  const handleAccept = async (id: string) => {
+    if (typeof onUpdateAcceptanceStatus === "function") {
+      try {
+        await onUpdateAcceptanceStatus(id, true);
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    }
+
+    handleUpdate(id, { acceptanceStatus: "Accepted" } as Partial<T>);
   };
 
   // update score
@@ -295,7 +310,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => handleUpdate(selectedApplication.id, { acceptanceStatus: "Accepted" } as Partial<T>)}
+                    onClick={async () => await handleAccept(selectedApplication.id)}
                     className="flex-1 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
                   >
                     {acceptButtonLabel}
