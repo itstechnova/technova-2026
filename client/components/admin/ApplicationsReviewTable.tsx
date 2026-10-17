@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
 import { useEffect, useMemo, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Send, X } from "lucide-react";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { useTableSearch } from "@/components/ui/useTableSearch";
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { cn } from "@/lib/utils";
 
 export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected" | "Waitlisted";
@@ -18,7 +18,7 @@ export interface ReviewApplicationBase {
   acceptanceStatus: AcceptanceStatus;
   initials: string;
   avatarColor: string;
-  score: number;
+  score: number | null
 }
 
 export interface ApplicationFieldConfig<T> {
@@ -43,6 +43,8 @@ interface ApplicationsReviewTableProps<T extends ReviewApplicationBase> {
   acceptButtonLabel: string;
   fields: ApplicationFieldConfig<T>[];
   prompts: ApplicationPromptConfig<T>[];
+  onUpdateScore?: (id: string, score: number | null) => Promise<void>;
+  onUpdateAcceptanceStatus?: (id: string, accepted: boolean) => Promise<void>;
 }
 
 function Field({ label, value, href }: { label: string; value: string; href?: string }) {
@@ -88,6 +90,8 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
   acceptButtonLabel,
   fields,
   prompts,
+  onUpdateScore,
+  onUpdateAcceptanceStatus,
 }: ApplicationsReviewTableProps<T>) {
   const [applications, setApplications] = useState<T[]>(initialApplications);
   const { query, setQuery, results } = useTableSearch(applications, searchKeys);
@@ -127,6 +131,34 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
 
   const handleUpdate = (id: string, patch: Partial<T>) => {
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
+  };
+
+  const handleAccept = async (id: string) => {
+    if (typeof onUpdateAcceptanceStatus === "function") {
+      try {
+        await onUpdateAcceptanceStatus(id, true);
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    }
+
+    handleUpdate(id, { acceptanceStatus: "Accepted" } as Partial<T>);
+  };
+
+  // update score
+  const handleSaveScore = async (id: string, score: number | null) => {
+    if (typeof onUpdateScore === 'function') {
+      try {
+        await onUpdateScore(id, score);
+      } catch (e) {
+        console.error(e);
+        return;
+      }
+    }
+
+    // persist locally after remote write succeeded 
+    handleUpdate(id, { score } as Partial<T>);
   };
 
   return (
@@ -278,7 +310,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={() => handleUpdate(selectedApplication.id, { acceptanceStatus: "Accepted" } as Partial<T>)}
+                    onClick={async () => await handleAccept(selectedApplication.id)}
                     className="flex-1 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
                   >
                     {acceptButtonLabel}
@@ -293,7 +325,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                   </a>
                   <button
                     type="button"
-                    onClick={() => handleUpdate(selectedApplication.id, { score: pendingScore } as Partial<T>)}
+                    onClick={async () => await handleSaveScore(selectedApplication.id, pendingScore)}
                     className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                   >
                     Save Score

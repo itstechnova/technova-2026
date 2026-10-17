@@ -1,10 +1,12 @@
 import { PageLayout } from '@/components/admin/PageLayout'
-import { HackerApplicationsTable } from '@/components/HackerApplicationsTable'
+import { getHackerApplications } from '@/lib/data/hackers'
+import { HackerApplicationsTable } from '@/components/admin/HackerApplicationsTable'
 
 export default async function HackerApplicationsPage() {
+  const applications = await getHackerApplications()
   return (
     <PageLayout section="applications" title="Hacker Applications">
-      <HackerApplicationsTable />
+      <HackerApplicationsTable applications={applications} />
     </PageLayout>
   )
 }

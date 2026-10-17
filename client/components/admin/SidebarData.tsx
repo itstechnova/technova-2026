@@ -1,4 +1,4 @@
-import { LayoutDashboard, Code2, GraduationCap, HeartHandshake, Users, Mail } from 'lucide-react'
+import { LayoutDashboard, Code2, GraduationCap, HeartHandshake, Users } from 'lucide-react'
 
 export const SidebarData = [
   {
@@ -38,11 +38,6 @@ export const SidebarData = [
         title: "Members",
         icon: <Users />,
         link: "/admin/members"
-      },
-      {
-        title: "Email Logs",
-        icon: <Mail />,
-        link: "/admin/email"
       },
     ]
   },
