@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="460.0" height="460.0" viewBox="-146.5 35.5 460.0 460.0" fill="none"><g id="saturn" filter="url(#filter16_f_81_2)">
+<g id="blue planet">
+<g id="Mask group">
+<mask id="mask0_81_2" style="mask-type:alpha" maskUnits="userSpaceOnUse" x="-129" y="53" width="425" height="425">
+<circle id="Ellipse 21" cx="83.5" cy="265.5" r="212.231" fill="url(#paint4_radial_81_2)" stroke="#4C458D" stroke-width="0.538023" />
+</mask>
+<g mask="url(#mask0_81_2)">
+<g id="Vector 29" filter="url(#filter19_nf_81_2)">
+<path d="M69.36 216.213C124.303 211.365 245.951 144.765 427.995 16.663C492.577 41.168 402.255 45.081 361.886 156.394C296.493 206.311 -315.768 366.113 -335.328 287.984C-378.251 185.073 -92.6408 230.507 69.36 216.213Z" fill="#11A3BA" />
+<path d="M106.931 358.014C86.5701 373.851 -71.031 407.214 -227.184 461.183C-254.693 483.404 -296.857 487.047 -281.765 521.735C-265.276 567.995 -131.906 538.064 34.6164 422.107C123.899 401.646 314.861 350.349 300.123 307.470C285.845 303.062 163.167 330.543 106.931 358.014Z" fill="#11A3BA" />
+<path d="M69.36 216.213C124.303 211.365 245.951 144.765 427.995 16.663C492.577 41.168 402.255 45.081 361.886 156.394C296.493 206.311 -315.768 366.113 -335.328 287.984C-378.251 185.073 -92.6408 230.507 69.36 216.213Z" stroke="#4C458D" stroke-width="0.538023" />
+<path d="M106.931 358.014C86.5701 373.851 -71.031 407.214 -227.184 461.183C-254.693 483.404 -296.857 487.047 -281.765 521.735C-265.276 567.995 -131.906 538.064 34.6164 422.107C123.899 401.646 314.861 350.349 300.123 307.470C285.845 303.062 163.167 330.543 106.931 358.014Z" stroke="#4C458D" stroke-width="0.538023" />
+</g>
+</g>
+</g>
+</g>
+</g>
+<defs><filter id="filter16_f_81_2" x="-375.739" y="-84.856" width="953.022" height="723.145" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="6.5" result="effect1_foregroundBlur_81_2" />
+</filter>
+<filter id="filter19_nf_81_2" x="-356.239" y="-65.356" width="841.921" height="684.145" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feTurbulence type="fractalNoise" baseFrequency="6.6912 6.6912" stitchTiles="stitch" numOctaves="3" result="noise" seed="2044" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
+</feComponentTransfer>
+<feComposite operator="in" in2="shape" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect1_noise_81_2">
+<feMergeNode in="shape" />
+<feMergeNode in="color1" />
+</feMerge>
+<feGaussianBlur stdDeviation="34.9984" result="effect2_foregroundBlur_81_2" />
+</filter>
+<radialGradient id="paint4_radial_81_2" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(250.349 411.745) rotate(-147.571) scale(346.407)">
+<stop stop-color="#247A88" />
+<stop offset="1" stop-color="#8CDEEB" />
+</radialGradient>
+</defs></svg>

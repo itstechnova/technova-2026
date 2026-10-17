@@ -1,0 +1,27 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580.0" height="580.0" viewBox="-72.56 2010.44 580.0 580.0" fill="none"><g id="Mask group_3" clip-path="url(#green-planet-bands-mask-clip)">
+<g id="Vector 395" filter="url(#filter75_fn_81_2)">
+<path d="M116 2213.5C53.6 2212.3 40.5 2171.5 26.5 2161.5C19 2156.14 21.7 2160.7 -9.590 2134.258C-116.860 2070.169 -273.484 2064.060 -249.989 2144.191C-232.878 2216.211 -109.291 2254.340 -15 2257C25 2252 65 2249 107 2245.5C208.5 2236.5 224.5 2263.5 266.5 2245.5C308.5 2227.5 194 2215 116 2213.5Z" fill="#649415" fill-opacity="0.46" />
+<path d="M347 2304.5C416.5 2318.5 535.360 2219.855 576.931 2206.002C579.049 2241.855 596.225 2316.644 594.160 2334.286C593.098 2356.497 357 2360.5 333.5 2334.5C310 2308.5 195.5 2358.5 179 2314C162.5 2269.5 277.5 2290.5 347 2304.5Z" fill="#649415" fill-opacity="0.46" />
+<path d="M196 2440C124 2450 83.3333 2418.17 72 2401C51.5057 2381.5 45 2431.5 74.5 2440C104 2448.5 101 2449.5 116 2481C131 2512.5 160.5 2506 198.5 2489.5C236.5 2473 250.5 2481.5 299.5 2453.5C348.5 2425.5 286 2427.5 196 2440Z" fill="#649415" fill-opacity="0.46" />
+<path d="M434.983 2507.789C469.258 2495.662 514.166 2527.518 531.727 2545.200L469.081 2648.941C444.242 2649.617 389.727 2642.841 357.039 2601.217C319.203 2548.692 236.617 2596.707 227 2541.5C219.5 2519 276 2514.5 304.5 2523C342.503 2550.501 399.180 2526.491 434.983 2507.789Z" fill="#649415" fill-opacity="0.46" />
+</g>
+</g>
+<defs><filter id="filter75_fn_81_2" x="-72.560" y="2010.440" width="601.185" height="580.000" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="4.2" result="effect1_foregroundBlur_81_2" />
+<feTurbulence type="fractalNoise" baseFrequency="1.6364 1.6364" stitchTiles="stitch" numOctaves="3" result="noise" seed="4210" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
+</feComponentTransfer>
+<feComposite operator="in" in2="effect1_foregroundBlur_81_2" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect2_noise_81_2">
+<feMergeNode in="effect1_foregroundBlur_81_2" />
+<feMergeNode in="color1" />
+</feMerge>
+</filter>
+<clipPath id="green-planet-bands-mask-clip"><circle cx="217.44" cy="2300.44" r="282.724" transform="rotate(-51.2697 217.44 2300.44)" />
+</clipPath></defs></svg>

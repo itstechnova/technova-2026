@@ -1,7 +1,11 @@
-import { signOut } from '@/lib/auth/actions';
+import { signOut } from '@/lib/auth/actions'
 import { ApplicantsTable } from "@/components/ApplicantsTable";
+import { requireRole } from '@/lib/auth/dal'
 
-export default function AdminPage() {
+export default async function AdminDashboard() {
+  //Second layer of defense to prevent unauthorized users from accessing the admin dashboard
+  await requireRole(['admin'])
+
   return (
     <div className="min-h-screen bg-slate-50 text-foreground">
       <div className="mx-auto flex min-h-screen w-full max-w-7xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
