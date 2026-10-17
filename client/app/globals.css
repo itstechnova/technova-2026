@@ -25,10 +25,148 @@
   --color-gray-100: #eff1f7;
   --color-gray-200: #ecedee;
   --color-gray-400: #9fabc0;
+  --font-righteous: var(--font-righteous);
+  --font-josefin: var(--font-josefin);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-josefin), sans-serif;
+}
+
+/* ---------- Background motion ---------- */
+
+.anim-spin,
+.anim-twinkle,
+.anim-breathe {
+  transform-origin: var(--origin, 50% 50%);
+  will-change: transform, opacity;
+}
+
+.anim-spin {
+  animation: spin var(--dur) linear infinite;
+}
+
+.anim-twinkle {
+  animation: twinkle var(--dur) ease-in-out var(--delay, 0s) infinite;
+}
+
+.anim-breathe {
+  animation: breathe var(--dur) ease-in-out var(--delay, 0s) infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes twinkle {
+  0%,
+  100% {
+    opacity: 0.4;
+    transform: scale(0.82);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.14);
+  }
+  55% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+@keyframes breathe {
+  0%,
+  100% {
+    opacity: 0.75;
+    transform: scale(0.97);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+  }
+}
+
+/* Fine film grain over the artwork; oversized so the jitter never exposes an edge. */
+.grain {
+  position: absolute;
+  inset: -50%;
+  pointer-events: none;
+  opacity: 0.09;
+  mix-blend-mode: soft-light;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.3' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix type='matrix' values='0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0.33 0.33 0.33 0 0 0 0 0 0 1'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain 0.9s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  17% { transform: translate(-3%, 2%); }
+  33% { transform: translate(2%, -4%); }
+  50% { transform: translate(-4%, -1%); }
+  67% { transform: translate(3%, 3%); }
+  83% { transform: translate(-1%, 4%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* ---------- Interest signup form: frosted pill in the pink planet's palette ---------- */
+
+.signup-pill {
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.1);
+  border: 1.5px solid rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(14px) saturate(140%);
+  -webkit-backdrop-filter: blur(14px) saturate(140%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 12px 32px rgba(18, 8, 48, 0.35);
+  transition: border-color 0.25s ease, box-shadow 0.25s ease;
+}
+
+.signup-pill:focus-within {
+  border-color: rgba(214, 170, 240, 0.85);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    0 0 0 4px rgba(183, 130, 219, 0.22),
+    0 0 44px rgba(183, 130, 219, 0.45);
+}
+
+.signup-button {
+  border-radius: 9999px;
+  background: linear-gradient(135deg, #b782db 0%, #e843b4 100%);
+  color: #fff;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  box-shadow: 0 4px 18px rgba(232, 67, 180, 0.35);
+  transition: filter 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+.signup-button:hover:not(:disabled) {
+  filter: brightness(1.08);
+  box-shadow: 0 6px 26px rgba(232, 67, 180, 0.55);
+}
+
+.signup-button:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.signup-button:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+.signup-button:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .anim-spin,
+  .anim-twinkle,
+  .anim-breathe,
+  .grain {
+    animation: none;
+  }
 }
