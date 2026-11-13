@@ -1,17 +1,13 @@
 'use client';
 
-import { Table, type TableColumn } from "@/components/Table";
+import type { TableColumn } from "@/components/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/applications/ApplicationsReviewTable";
-import { VOLUNTEER_APPLICATIONS, type VolunteerApplication, type AcceptanceStatus } from "@/lib/data/volunteerApplications";
+import { VOLUNTEER_APPLICATIONS, type VolunteerApplication } from "@/lib/data/volunteerApplications";
+import { STATUS_STYLES } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
-const STATUS_STYLES: Record<AcceptanceStatus, string> = {
-  Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Pending: "bg-amber-50  text-amber-700  border-amber-200",
-  Rejected: "bg-red-50    text-red-700    border-red-200",
-  Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
-};
+const SEARCH_KEYS: (keyof VolunteerApplication)[] = ["name", "email", "rolePreference"];
 
 const COLUMNS: TableColumn<VolunteerApplication>[] = [
   {
@@ -73,7 +69,7 @@ export function VolunteerApplicationsTable() {
       title="Volunteer Applications"
       applications={VOLUNTEER_APPLICATIONS}
       columns={COLUMNS}
-      searchKeys={["name", "email", "rolePreference"]}
+      searchKeys={SEARCH_KEYS}
       searchPlaceholder="Filter by name, email, or role..."
       emptyMessage="No volunteer applications match your search."
       detailSectionTitle="Volunteer Application"

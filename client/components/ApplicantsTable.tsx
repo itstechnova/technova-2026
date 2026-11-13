@@ -6,14 +6,10 @@ import { Table, type TableColumn } from "@/components/Table";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Badge } from "@/components/ui/badge";
 import { APPLICANTS, type Applicant, type AcceptanceStatus } from "@/lib/data/applicants";
+import { STATUS_STYLES, filterAndSortApplications } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
-const STATUS_STYLES: Record<AcceptanceStatus, string> = {
-  Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Pending: "bg-amber-50  text-amber-700  border-amber-200",
-  Rejected: "bg-red-50    text-red-700    border-red-200",
-  Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
-};
+const SEARCH_KEYS: (keyof Applicant)[] = ["name", "email"];
 
 const COLUMNS: TableColumn<Applicant>[] = [
   {
@@ -66,23 +62,14 @@ const COLUMNS: TableColumn<Applicant>[] = [
  *   const { query, setQuery, results } = useTableSearch(data, ["name", "email"]);
  */
 export function ApplicantsTable() {
-  const { query, setQuery, results } = useTableSearch(APPLICANTS, ["name", "email"]);
+  const { query, setQuery, results } = useTableSearch(APPLICANTS, SEARCH_KEYS);
   const [statusFilter, setStatusFilter] = useState<"All" | AcceptanceStatus>("All");
   const [newestFirst, setNewestFirst] = useState(true);
 
-  const filteredResults = useMemo(() => {
-    let rows = statusFilter === "All"
-      ? results
-      : results.filter((a) => a.acceptanceStatus === statusFilter);
-
-    rows = [...rows].sort((a, b) => {
-      const da = new Date(a.applicationDate).getTime();
-      const db = new Date(b.applicationDate).getTime();
-      return newestFirst ? db - da : da - db;
-    });
-
-    return rows;
-  }, [results, statusFilter, newestFirst]);
+  const filteredResults = useMemo(
+    () => filterAndSortApplications(results, statusFilter, newestFirst),
+    [results, statusFilter, newestFirst],
+  );
 
   return (
     <div className="flex w-full flex-col">

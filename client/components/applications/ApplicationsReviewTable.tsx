@@ -6,6 +6,7 @@ import { Send, X } from "lucide-react";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Table, type TableColumn } from "@/components/Table";
+import { filterAndSortApplications } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
 export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected" | "Waitlisted";
@@ -99,10 +100,6 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
   const selectedApplication = applications.find((a) => a.id === selectedId) ?? null;
 
   useEffect(() => {
-    setPendingScore(selectedApplication?.score ?? 0);
-  }, [selectedApplication]);
-
-  useEffect(() => {
     if (!selectedApplication) return;
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === "Escape") setSelectedId(null);
@@ -111,19 +108,10 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedApplication]);
 
-  const filteredResults = useMemo(() => {
-    let rows = statusFilter === "All"
-      ? results
-      : results.filter((a) => a.acceptanceStatus === statusFilter);
-
-    rows = [...rows].sort((a, b) => {
-      const da = new Date(a.applicationDate).getTime();
-      const db = new Date(b.applicationDate).getTime();
-      return newestFirst ? db - da : da - db;
-    });
-
-    return rows;
-  }, [results, statusFilter, newestFirst]);
+  const filteredResults = useMemo(
+    () => filterAndSortApplications(results, statusFilter, newestFirst),
+    [results, statusFilter, newestFirst],
+  );
 
   const handleUpdate = (id: string, patch: Partial<T>) => {
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
@@ -177,7 +165,10 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
             columns={columns}
             data={filteredResults}
             getRowId={(a) => a.id}
-            onRowClick={(a) => setSelectedId(a.id)}
+            onRowClick={(a) => {
+              setSelectedId(a.id);
+              setPendingScore(a.score);
+            }}
             emptyMessage={emptyMessage}
             className="rounded-none border-0"
           />
@@ -273,6 +264,19 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div className="flex gap-2">
+                  {(["Rejected", "Waitlisted"] as const).map((status) => (
+                    <button
+                      key={status}
+                      type="button"
+                      onClick={() => handleUpdate(selectedApplication.id, { acceptanceStatus: status } as Partial<T>)}
+                      className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-50"
+                    >
+                      {status === "Rejected" ? "Reject" : "Waitlist"}
+                    </button>
+                  ))}
                 </div>
 
                 <div className="flex gap-2">
