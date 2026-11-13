@@ -1,6 +1,9 @@
+import 'server-only'
+import { requireRole } from '@/lib/auth/dal'
+import { getInitials, stringToColor } from '@/lib/data/format'
 import { createClient } from '@/lib/supabase/server'
 
-export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected' | 'Waitlisted'
+export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected'
 
 export type HackerApplication = {
   id: string
@@ -18,10 +21,10 @@ export type HackerApplication = {
   hacker_question1: string
   hacker_question2: string
   hacker_question3: string
-  location?: string
 }
 
 export async function getHackerApplications() {
+  await requireRole(['admin'])
   const supabase = await createClient()
 
   const { data: hackers, error } = await supabase
@@ -37,12 +40,9 @@ export async function getHackerApplications() {
       )
     `)
 
-    console.log('hackers:', hackers)
-    console.log('error:', error)
+  if (error) throw new Error("Unable to load hacker applications. Please try again.")
 
-  if (error || !hackers) return []
-
-  return hackers.map((hacker) => ({
+  return (hackers ?? []).map((hacker) => ({
     id: hacker.hacker_id,
     name: `${hacker.user?.first_name ?? ''} ${hacker.user?.last_name ?? ''}`.trim() || 'Unknown',
     email: hacker.user?.email ?? '',
@@ -59,14 +59,4 @@ export async function getHackerApplications() {
     hacker_question2: hacker.question_2,
     hacker_question3: hacker.question_3,
   }))
-}
-
-function getInitials(name: string) {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-}
-
-function stringToColor(str: string) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  return `hsl(${hash % 360}, 60%, 45%)`
 }

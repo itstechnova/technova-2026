@@ -1,19 +1,15 @@
 'use client';
 
-import { type TableColumn } from "@/components/admin/Table";
+import type { TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
-import {  type MentorApplication, type AcceptanceStatus } from "@/lib/data/mentors";
+import type { MentorApplication } from "@/lib/data/mentors";
 import { updateMentorScore } from "@/lib/data/mentorMutations";
 import { updateUserAcceptanceStatus } from "@/lib/data/userMutations";
+import { STATUS_STYLES } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
-const STATUS_STYLES: Record<AcceptanceStatus, string> = {
-  Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Pending: "bg-amber-50  text-amber-700  border-amber-200",
-  Rejected: "bg-red-50    text-red-700    border-red-200",
-  Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
-};
+const SEARCH_KEYS: (keyof MentorApplication)[] = ["name", "email", "organization"];
 
 const COLUMNS: TableColumn<MentorApplication>[] = [
   {
@@ -75,15 +71,13 @@ export function MentorApplicationsTable({ applications }: { applications: Mentor
       title="Mentor Applications"
       applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email", "organization"]}
+      searchKeys={SEARCH_KEYS}
       searchPlaceholder="Filter by name, email, or company..."
       emptyMessage="No mentor applications match your search."
       detailSectionTitle="Mentor Application"
       acceptButtonLabel="Accept as Mentor"
-      onUpdateScore={async (id: string, score: number | null) => await updateMentorScore(id, score)}
-      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => {
-        await updateUserAcceptanceStatus(id, accepted)
-      }}
+      onUpdateScore={updateMentorScore}
+      onUpdateAcceptanceStatus={updateUserAcceptanceStatus}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },

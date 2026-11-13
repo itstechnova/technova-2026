@@ -1,3 +1,6 @@
+import 'server-only'
+import { requireRole } from '@/lib/auth/dal'
+import { getInitials, stringToColor } from '@/lib/data/format'
 import { createClient } from '@/lib/supabase/server'
 
 export type MemberRole = 'Hacker' | 'Mentor' | 'Volunteer'
@@ -13,6 +16,7 @@ export type Member = {
 }
 
 export async function getMembers() {
+  await requireRole(['admin'])
   const supabase = await createClient()
 
   const { data: users, error } = await supabase
@@ -28,12 +32,9 @@ export async function getMembers() {
     .eq('accepted', true)
     .in('role', ['hacker', 'mentor', 'volunteer'])
 
-  console.log('members:', users)
-  console.log('error:', error)
+  if (error) throw new Error("Unable to load members. Please try again.")
 
-  if (error || !users) return []
-
-  return users.map((user) => ({
+  return (users ?? []).map((user) => ({
     id: user.user_id,
     name: `${user.first_name ?? ''} ${user.last_name ?? ''}`.trim() || 'Unknown',
     email: user.email ?? '',
@@ -51,14 +52,4 @@ function capitalizeRole(role: string): MemberRole {
     volunteer: 'Volunteer',
   }
   return map[role?.toLowerCase()] ?? 'Hacker'
-}
-
-function getInitials(name: string) {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-}
-
-function stringToColor(str: string) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  return `hsl(${hash % 360}, 60%, 45%)`
 }

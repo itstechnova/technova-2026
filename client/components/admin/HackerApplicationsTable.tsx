@@ -1,19 +1,15 @@
 'use client'
 
-import { Table, type TableColumn } from "@/components/admin/Table";
+import type { TableColumn } from "@/components/admin/Table";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationsReviewTable } from "@/components/admin/ApplicationsReviewTable";
-import { getHackerApplications, type HackerApplication, type AcceptanceStatus } from "@/lib/data/hackers"
+import type { HackerApplication } from "@/lib/data/hackers";
 import { updateHackerScore } from "@/lib/data/hackerMutations";
 import { updateUserAcceptanceStatus } from "@/lib/data/userMutations";
+import { STATUS_STYLES } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
-const STATUS_STYLES: Record<AcceptanceStatus, string> = {
-  Accepted: "bg-emerald-50 text-emerald-700 border-emerald-200",
-  Pending: "bg-amber-50  text-amber-700  border-amber-200",
-  Rejected: "bg-red-50    text-red-700    border-red-200",
-  Waitlisted: "bg-blue-50   text-blue-700   border-blue-200",
-};
+const SEARCH_KEYS: (keyof HackerApplication)[] = ["name", "email"];
 
 const COLUMNS: TableColumn<HackerApplication>[] = [
   {
@@ -70,23 +66,20 @@ export function HackerApplicationsTable({ applications }: { applications: Hacker
       title="Hacker Applications"
       applications={applications}
       columns={COLUMNS}
-      searchKeys={["name", "email"]}
+      searchKeys={SEARCH_KEYS}
       searchPlaceholder="Filter by name or email..."
       emptyMessage="No hacker applications match your search."
       detailSectionTitle="Hacker Application"
       acceptButtonLabel="Accept as Hacker"
-      onUpdateScore={async (id: string, score: number | null) => await updateHackerScore(id, score)}
-      onUpdateAcceptanceStatus={async (id: string, accepted: boolean) => {
-        await updateUserAcceptanceStatus(id, accepted)
-      }}
+      onUpdateScore={updateHackerScore}
+      onUpdateAcceptanceStatus={updateUserAcceptanceStatus}
       fields={[
         { label: "Full Name", value: (a) => a.name },
         { label: "Email", value: (a) => a.email },
         { label: "School", value: (a) => a.school },
         { label: "Grad Year", value: (a) => a.gradYear },
         { label: "Major", value: (a) => a.major },
-        { label: "Location", value: (a) => a.location ?? "" },
-        { label: "Resume", value: (a) => a.resumeFileName, href: (a) => `/resumes/${a.resumeFileName}` },
+        { label: "Resume", value: (a) => a.resumeFileName || "Not provided", href: (a) => /^https?:\/\//i.test(a.resumeFileName) ? a.resumeFileName : undefined },
       ]}
       prompts={[
         { question: "Why do you want to attend Technova?", answer: (a) => a.hacker_question1 },

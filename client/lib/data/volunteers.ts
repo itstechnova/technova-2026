@@ -1,6 +1,9 @@
+import 'server-only'
+import { requireRole } from '@/lib/auth/dal'
+import { getInitials, stringToColor } from '@/lib/data/format'
 import { createClient } from '@/lib/supabase/server'
 
-export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected' | 'Waitlisted'
+export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected'
 
 export type VolunteerApplication = {
   id: string
@@ -16,8 +19,8 @@ export type VolunteerApplication = {
   location?: string
 }
 
-
 export async function getVolunteerApplications() {
+  await requireRole(['admin'])
   const supabase = await createClient()
 
   const { data: volunteers, error } = await supabase
@@ -33,12 +36,9 @@ export async function getVolunteerApplications() {
       )
     `)
 
-    console.log('volunteer:', volunteers)
-    console.log('error:', error)
+  if (error) throw new Error("Unable to load volunteer applications. Please try again.")
 
-  if (error || !volunteers) return []
-
-  return volunteers.map((volunteer) => ({
+  return (volunteers ?? []).map((volunteer) => ({
     id: volunteer.volunteer_id,
     name: `${volunteer.user?.first_name ?? ''} ${volunteer.user?.last_name ?? ''}`.trim() || 'Unknown',
     email: volunteer.user?.email ?? '',
@@ -50,14 +50,4 @@ export async function getVolunteerApplications() {
     score: volunteer.score,
     volunteer_question1: volunteer.question_1,
   }))
-}
-
-function getInitials(name: string) {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-}
-
-function stringToColor(str: string) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  return `hsl(${hash % 360}, 60%, 45%)`
 }

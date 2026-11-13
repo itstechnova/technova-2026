@@ -1,6 +1,9 @@
+import 'server-only'
+import { requireRole } from '@/lib/auth/dal'
+import { getInitials, stringToColor } from '@/lib/data/format'
 import { createClient } from '@/lib/supabase/server'
 
-export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected' | 'Waitlisted'
+export type AcceptanceStatus = 'Accepted' | 'Pending' | 'Rejected'
 
 export type MentorApplication = {
   id: string
@@ -16,8 +19,8 @@ export type MentorApplication = {
   location?: string
 }
 
-
 export async function getMentorApplications() {
+  await requireRole(['admin'])
   const supabase = await createClient()
 
   const { data: mentors, error } = await supabase
@@ -33,12 +36,9 @@ export async function getMentorApplications() {
       )
     `)
 
-    console.log('mentor:', mentors)
-    console.log('error:', error)
+  if (error) throw new Error("Unable to load mentor applications. Please try again.")
 
-  if (error || !mentors) return []
-
-  return mentors.map((mentor) => ({
+  return (mentors ?? []).map((mentor) => ({
     id: mentor.mentor_id,
     name: `${mentor.user?.first_name ?? ''} ${mentor.user?.last_name ?? ''}`.trim() || 'Unknown',
     email: mentor.user?.email ?? '',
@@ -50,14 +50,4 @@ export async function getMentorApplications() {
     score: mentor.score,
     mentor_question1: mentor.question_1,
   }))
-}
-
-function getInitials(name: string) {
-  return name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)
-}
-
-function stringToColor(str: string) {
-  let hash = 0
-  for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash)
-  return `hsl(${hash % 360}, 60%, 45%)`
 }

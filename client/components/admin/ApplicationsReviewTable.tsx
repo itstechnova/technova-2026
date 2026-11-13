@@ -1,14 +1,17 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion } from "motion/react";
 import { Send, X } from "lucide-react";
 import { SearchBar } from "@/components/ui/SearchBar";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Table, type TableColumn } from "@/components/admin/Table";
+import { filterAndSortApplications } from "@/lib/applicationReview";
 import { cn } from "@/lib/utils";
 
-export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected" | "Waitlisted";
+type UpdateResult = { success: true } | { success: false; error: string };
+
+export type AcceptanceStatus = "Pending" | "Accepted" | "Rejected";
 
 export interface ReviewApplicationBase {
   id: string;
@@ -24,7 +27,7 @@ export interface ReviewApplicationBase {
 export interface ApplicationFieldConfig<T> {
   label: string;
   value: (application: T) => string;
-  href?: (application: T) => string;
+  href?: (application: T) => string | undefined;
 }
 
 export interface ApplicationPromptConfig<T> {
@@ -43,8 +46,8 @@ interface ApplicationsReviewTableProps<T extends ReviewApplicationBase> {
   acceptButtonLabel: string;
   fields: ApplicationFieldConfig<T>[];
   prompts: ApplicationPromptConfig<T>[];
-  onUpdateScore?: (id: string, score: number | null) => Promise<void>;
-  onUpdateAcceptanceStatus?: (id: string, accepted: boolean) => Promise<void>;
+  onUpdateScore: (id: string, score: number | null) => Promise<UpdateResult>;
+  onUpdateAcceptanceStatus: (id: string, accepted: boolean) => Promise<UpdateResult>;
 }
 
 function Field({ label, value, href }: { label: string; value: string; href?: string }) {
@@ -98,68 +101,71 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
   const [statusFilter, setStatusFilter] = useState<"All" | AcceptanceStatus>("All");
   const [newestFirst, setNewestFirst] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
-  const [pendingScore, setPendingScore] = useState(0);
+  const [pendingScore, setPendingScore] = useState<number | null>(null);
+
+  const savingRef = useRef(false);
+  const [saving, setSaving] = useState(false);
+  const [feedback, setFeedback] = useState<{ error: boolean; message: string } | null>(null);
 
   const selectedApplication = applications.find((a) => a.id === selectedId) ?? null;
 
   useEffect(() => {
-    setPendingScore(selectedApplication?.score ?? 0);
-  }, [selectedApplication]);
-
-  useEffect(() => {
     if (!selectedApplication) return;
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setSelectedId(null);
+      if (e.key === "Escape" && !savingRef.current) setSelectedId(null);
     };
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
   }, [selectedApplication]);
 
-  const filteredResults = useMemo(() => {
-    let rows = statusFilter === "All"
-      ? results
-      : results.filter((a) => a.acceptanceStatus === statusFilter);
-
-    rows = [...rows].sort((a, b) => {
-      const da = new Date(a.applicationDate).getTime();
-      const db = new Date(b.applicationDate).getTime();
-      return newestFirst ? db - da : da - db;
-    });
-
-    return rows;
-  }, [results, statusFilter, newestFirst]);
+  const filteredResults = useMemo(
+    () => filterAndSortApplications(results, statusFilter, newestFirst),
+    [results, statusFilter, newestFirst],
+  );
 
   const handleUpdate = (id: string, patch: Partial<T>) => {
     setApplications((prev) => prev.map((a) => (a.id === id ? { ...a, ...patch } : a)));
   };
 
-  const handleAccept = async (id: string) => {
-    if (typeof onUpdateAcceptanceStatus === "function") {
-      try {
-        await onUpdateAcceptanceStatus(id, true);
-      } catch (e) {
-        console.error(e);
+  const saveUpdate = async (
+    update: () => Promise<UpdateResult>,
+    id: string,
+    patch: Partial<T>,
+    message: string,
+  ) => {
+    if (savingRef.current) return;
+    savingRef.current = true;
+    setSaving(true);
+    setFeedback(null);
+    try {
+      const result = await update();
+      if (!result.success) {
+        setFeedback({ error: true, message: result.error });
         return;
       }
+      handleUpdate(id, patch);
+      setFeedback({ error: false, message });
+    } catch {
+      setFeedback({ error: true, message: "Could not save changes. Please try again." });
+    } finally {
+      savingRef.current = false;
+      setSaving(false);
     }
-
-    handleUpdate(id, { acceptanceStatus: "Accepted" } as Partial<T>);
   };
 
-  // update score
-  const handleSaveScore = async (id: string, score: number | null) => {
-    if (typeof onUpdateScore === 'function') {
-      try {
-        await onUpdateScore(id, score);
-      } catch (e) {
-        console.error(e);
-        return;
-      }
-    }
+  const handleAcceptance = (id: string, accepted: boolean) => saveUpdate(
+    () => onUpdateAcceptanceStatus(id, accepted),
+    id,
+    { acceptanceStatus: accepted ? "Accepted" : "Rejected" } as Partial<T>,
+    accepted ? "Applicant accepted." : "Applicant rejected.",
+  );
 
-    // persist locally after remote write succeeded 
-    handleUpdate(id, { score } as Partial<T>);
-  };
+  const handleSaveScore = (id: string, score: number | null) => saveUpdate(
+    () => onUpdateScore(id, score),
+    id,
+    { score } as Partial<T>,
+    "Score saved.",
+  );
 
   return (
     <>
@@ -179,7 +185,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
           </div>
 
           <div className="flex flex-wrap items-center gap-2">
-            {(["All", "Accepted", "Pending", "Rejected", "Waitlisted"] as const).map((status) => (
+            {(["All", "Accepted", "Pending", "Rejected"] as const).map((status) => (
               <button
                 key={status}
                 type="button"
@@ -209,7 +215,12 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
             columns={columns}
             data={filteredResults}
             getRowId={(a) => a.id}
-            onRowClick={(a) => setSelectedId(a.id)}
+            onRowClick={(a) => {
+              if (savingRef.current) return;
+              setFeedback(null);
+              setSelectedId(a.id);
+              setPendingScore(a.score);
+            }}
             emptyMessage={emptyMessage}
             className="rounded-none border-0"
           />
@@ -223,7 +234,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            onClick={() => setSelectedId(null)}
+            onClick={() => { if (!savingRef.current) setSelectedId(null); }}
           >
             <motion.div
               className="flex h-full w-full max-w-lg flex-col border-l border-slate-200 bg-white shadow-xl"
@@ -248,7 +259,7 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                 </div>
                 <button
                   type="button"
-                  onClick={() => setSelectedId(null)}
+                  onClick={() => { if (!savingRef.current) setSelectedId(null); }}
                   className="rounded-full p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-900"
                   aria-label="Close"
                 >
@@ -293,7 +304,8 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                       <button
                         key={n}
                         type="button"
-                        onClick={() => setPendingScore(n)}
+                        disabled={saving}
+                        onClick={() => { setPendingScore(n); setFeedback(null); }}
                         className={cn(
                           "flex h-9 w-9 items-center justify-center rounded-lg border font-mono text-sm font-medium transition-colors",
                           pendingScore === n
@@ -307,10 +319,29 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                   </div>
                 </div>
 
+                {feedback && (
+                  <p role={feedback.error ? "alert" : "status"} className={feedback.error ? "text-sm text-red-700" : "text-sm text-emerald-700"}>
+                    {feedback.message}
+                  </p>
+                )}
+                {saving && <p role="status" className="text-sm text-slate-500">Saving changes…</p>}
+
                 <div className="flex gap-2">
                   <button
                     type="button"
-                    onClick={async () => await handleAccept(selectedApplication.id)}
+                    disabled={saving}
+                    onClick={() => handleAcceptance(selectedApplication.id, false)}
+                    className="flex-1 rounded-full border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    Reject
+                  </button>
+                </div>
+
+                <div className="flex gap-2">
+                  <button
+                    type="button"
+                    disabled={saving}
+                    onClick={() => handleAcceptance(selectedApplication.id, true)}
                     className="flex-1 rounded-full border border-emerald-200 bg-emerald-50 px-4 py-2 text-sm font-medium text-emerald-700 hover:bg-emerald-100"
                   >
                     {acceptButtonLabel}
@@ -325,7 +356,8 @@ export function ApplicationsReviewTable<T extends ReviewApplicationBase>({
                   </a>
                   <button
                     type="button"
-                    onClick={async () => await handleSaveScore(selectedApplication.id, pendingScore)}
+                    disabled={saving}
+                    onClick={() => handleSaveScore(selectedApplication.id, pendingScore)}
                     className="flex-1 rounded-full border border-slate-200 bg-white px-4 py-2 text-sm font-medium text-slate-700 hover:border-slate-300 hover:bg-slate-50"
                   >
                     Save Score

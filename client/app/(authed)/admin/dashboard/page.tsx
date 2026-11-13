@@ -1,10 +1,12 @@
 import { signOut } from '@/lib/auth/actions'
 import { requireRole } from '@/lib/auth/dal'
+import { getDashboardStats } from "@/lib/data/dashboardStats";
 import KpiCards from "@/components/admin/KpiCards";
 
 export default async function AdminDashboard() {
   //Second layer of defense to prevent unauthorized users from accessing the admin dashboard
   await requireRole(['admin'])
+  const stats = await getDashboardStats()
 
   return (
     <div className="min-h-screen bg-slate-50 text-foreground" >
@@ -25,7 +27,7 @@ export default async function AdminDashboard() {
         </header>
 
         <section className="rounded-2xl border border-slate-200 bg-white shadow-sm p-6">
-          <KpiCards />
+          <KpiCards stats={stats} />
         </section>
       </div>
     </div>

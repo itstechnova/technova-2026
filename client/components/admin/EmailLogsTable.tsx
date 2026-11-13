@@ -9,12 +9,14 @@ import { type EmailLog, type EmailStatus, type AccountStatus } from "@/lib/data/
 import { cn } from "@/lib/utils";
 
 const EMAIL_STATUS_STYLES: Record<EmailStatus, string> = {
+  Unknown: "bg-slate-50 text-slate-500 border-slate-200",
   Sent: "bg-blue-50    text-blue-700    border-blue-200",
   Opened: "bg-emerald-50 text-emerald-700 border-emerald-200",
   Bounced: "bg-red-50     text-red-700     border-red-200",
 };
 
 const ACCOUNT_STATUS_STYLES: Record<AccountStatus, string> = {
+  Unknown: "bg-slate-50 text-slate-500 border-slate-200",
   Verified: "bg-emerald-50 text-emerald-700 border-emerald-200",
   "Not Verified": "bg-amber-50   text-amber-700   border-amber-200",
 };
@@ -98,7 +100,7 @@ export function EmailLogsTable({ logs }: { logs: EmailLog[] }) {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {(["All", "Sent", "Opened", "Bounced"] as const).map((status) => (
+          {(["All", "Sent", "Opened", "Bounced", "Unknown"] as const).map((status) => (
             <button
               key={status}
               type="button"

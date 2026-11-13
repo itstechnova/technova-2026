@@ -65,7 +65,7 @@ export function SearchBar({
               onChange("");
               inputRef.current?.focus();
             }}
-            className="absolute right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+            className="absolute right-2.5 flex h-5 w-5 items-center justify-center rounded-full text-muted-foreground transition-colors hover:bg-slate-100 hover:text-foreground"
           >
             <X size={11} strokeWidth={2.5} />
           </motion.button>

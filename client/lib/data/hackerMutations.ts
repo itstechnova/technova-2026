@@ -1,19 +1,18 @@
-import { createClient } from "@/lib/supabase/client";
+"use server";
 
-// update score for a specific hacker in the database
+import { createClient } from "@/lib/supabase/server";
+import { requireRole } from "@/lib/auth/dal";
+
 export async function updateHackerScore(id: string, score: number | null) {
-  const supabase = createClient();
-  console.log('updateHackerScore called', { id, score });
-
-  const { data, error } = await supabase.from('hacker').update({ score }).eq('hacker_id', id);
-
-  // throw error if the update fails
-  if (error) {
-    console.error('updateHackerScore failed', { id, score, error });
-    throw error;
+  await requireRole(["admin"]);
+  if (!id || (score !== null && (!Number.isInteger(score) || score < 1 || score > 10))) {
+    return { success: false as const, error: "Choose a score between 1 and 10." };
   }
-
-  // log success
-  console.log('updateHackerScore succeeded', { id, score, updated: !!data });
-  return;
+  const supabase = await createClient();
+  const { data, error } = await supabase.from("hacker")
+    .update({ score }).eq("hacker_id", id).select("hacker_id").single();
+  if (error || !data) {
+    return { success: false as const, error: "Score could not be saved. Please try again." };
+  }
+  return { success: true as const };
 }
