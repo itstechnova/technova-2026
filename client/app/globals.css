@@ -3,15 +3,32 @@
 :root {
   --background: #111c4c;
   --foreground: #ffffff;
+  --border: #e5e7eb;
+  --input-background: #f9fafb;
+  --accent: #6366f1;
+  --muted-foreground: #6b7280;
+  --secondary: #f3f4f6;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-input-background: var(--input-background);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-secondary: var(--secondary);
+  --font-mono: var(--font-geist-mono);
+  --color-admin-navy: #1f3a5f;
+  --color-admin-muted: #9fabc0;
   --font-righteous: var(--font-righteous);
   --font-josefin: var(--font-josefin);
 }
 
+.admin-shell {
+  --background: #f5f6f9;
+  --foreground: #171717;
+  font-family: var(--font-geist-sans), sans-serif;
 html {
   /* Shown in overscroll/bounce areas; matches the artwork's base colour. */
   background: var(--background);
