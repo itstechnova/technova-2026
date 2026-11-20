@@ -2,19 +2,21 @@
 
 import { useMemo, useState } from "react";
 import { SearchBar } from "@/components/ui/SearchBar";
-import { Table, type TableColumn } from "@/components/Table";
+import { Table, type TableColumn } from "@/components/admin/Table";
 import { useTableSearch } from "@/components/ui/useTableSearch";
 import { Badge } from "@/components/ui/badge";
-import { EMAIL_LOGS, type EmailLog, type EmailStatus, type AccountStatus } from "@/lib/data/emailLogs";
+import { type EmailLog, type EmailStatus, type AccountStatus } from "@/lib/data/emails"
 import { cn } from "@/lib/utils";
 
 const EMAIL_STATUS_STYLES: Record<EmailStatus, string> = {
+  Unknown: "bg-slate-50 text-slate-500 border-slate-200",
   Sent: "bg-blue-50    text-blue-700    border-blue-200",
   Opened: "bg-emerald-50 text-emerald-700 border-emerald-200",
   Bounced: "bg-red-50     text-red-700     border-red-200",
 };
 
 const ACCOUNT_STATUS_STYLES: Record<AccountStatus, string> = {
+  Unknown: "bg-slate-50 text-slate-500 border-slate-200",
   Verified: "bg-emerald-50 text-emerald-700 border-emerald-200",
   "Not Verified": "bg-amber-50   text-amber-700   border-amber-200",
 };
@@ -48,7 +50,7 @@ const COLUMNS: TableColumn<EmailLog>[] = [
     key: "emailSentDate",
     header: "Email Sent Date",
     render: (l) => (
-      <span className="font-mono text-xs text-muted-foreground">{l.emailSentDate}</span>
+      <span className="font-mono text-xs text-muted-foreground">{l.email_date}</span>
     ),
   },
   {
@@ -56,8 +58,8 @@ const COLUMNS: TableColumn<EmailLog>[] = [
     header: "Email Status",
     align: "center",
     render: (l) => (
-      <Badge variant="outline" className={cn("text-xs font-medium", EMAIL_STATUS_STYLES[l.emailStatus])}>
-        {l.emailStatus}
+      <Badge variant="outline" className={cn("text-xs font-medium", EMAIL_STATUS_STYLES[l.email_status])}>
+        {l.email_status}
       </Badge>
     ),
   },
@@ -66,19 +68,19 @@ const COLUMNS: TableColumn<EmailLog>[] = [
     header: "Account Status",
     align: "center",
     render: (l) => (
-      <Badge variant="outline" className={cn("text-xs font-medium", ACCOUNT_STATUS_STYLES[l.accountStatus])}>
-        {l.accountStatus}
+      <Badge variant="outline" className={cn("text-xs font-medium", ACCOUNT_STATUS_STYLES[l.account_status])}>
+        {l.account_status}
       </Badge>
     ),
   },
 ];
 
-export function EmailLogsTable() {
-  const { query, setQuery, results } = useTableSearch(EMAIL_LOGS, SEARCH_KEYS);
+export function EmailLogsTable({ logs }: { logs: EmailLog[] }) {
+  const { query, setQuery, results } = useTableSearch(logs, SEARCH_KEYS);
   const [statusFilter, setStatusFilter] = useState<"All" | EmailStatus>("All");
 
   const filteredResults = useMemo(() => {
-    return statusFilter === "All" ? results : results.filter((l) => l.emailStatus === statusFilter);
+    return statusFilter === "All" ? results : results.filter((e) => e.email_status === statusFilter)
   }, [results, statusFilter]);
 
   return (
@@ -98,7 +100,7 @@ export function EmailLogsTable() {
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {(["All", "Sent", "Opened", "Bounced"] as const).map((status) => (
+          {(["All", "Sent", "Opened", "Bounced", "Unknown"] as const).map((status) => (
             <button
               key={status}
               type="button"

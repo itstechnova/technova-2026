@@ -1,11 +1,13 @@
 import { PageLayout } from '@/components/admin/PageLayout'
-import { MembersTable } from "@/components/MembersTable";
+import { getMembers } from '@/lib/data/members'
+import { MembersTable } from "@/components/admin/MembersTable";
 
 
 export default async function MembersPage() {
+  const members = await getMembers()
   return (
     <PageLayout section="manage" title="Members">
-      <MembersTable />
+      <MembersTable members={members}/>
     </PageLayout>
   )
 }
