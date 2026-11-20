@@ -44,6 +44,7 @@ export async function updateSession(request: NextRequest) {
 
   if (
     !user &&
+    pathname !== '/' &&
     !pathname.startsWith('/login') &&
     !pathname.startsWith('/auth') &&
     !pathname.startsWith('/forgot-password')

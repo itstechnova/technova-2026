@@ -1,0 +1,24 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="580.0" height="580.0" viewBox="-72.56 2010.44 580.0 580.0" fill="none"><g id="Mask group_3" clip-path="url(#green-planet-spots-mask-clip)">
+<g id="Vector 394" filter="url(#filter74_fn_81_2)">
+<path d="M256 2084C326 2080.8 332.833 2108.33 327.5 2122.5C317.167 2133.17 288.4 2153.7 256 2150.5C215.5 2146.5 264 2122.5 190 2112C116 2101.5 168.5 2088 256 2084Z" fill="#649415" fill-opacity="0.34" />
+</g>
+</g>
+<defs><filter id="filter74_fn_81_2" x="-72.560" y="2010.440" width="580.000" height="580.000" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feFlood flood-opacity="0" result="BackgroundImageFix" />
+<feBlend mode="normal" in="SourceGraphic" in2="BackgroundImageFix" result="shape" />
+<feGaussianBlur stdDeviation="3.5" result="effect1_foregroundBlur_81_2" />
+<feTurbulence type="fractalNoise" baseFrequency="0.8182 0.8182" stitchTiles="stitch" numOctaves="3" result="noise" seed="23" />
+<feColorMatrix in="noise" type="luminanceToAlpha" result="alphaNoise" />
+<feComponentTransfer in="alphaNoise" result="coloredNoise1">
+<feFuncA type="discrete" tableValues="1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 " />
+</feComponentTransfer>
+<feComposite operator="in" in2="effect1_foregroundBlur_81_2" in="coloredNoise1" result="noise1Clipped" />
+<feFlood flood-color="rgba(0, 0, 0, 0.25)" result="color1Flood" />
+<feComposite operator="in" in2="noise1Clipped" in="color1Flood" result="color1" />
+<feMerge result="effect2_noise_81_2">
+<feMergeNode in="effect1_foregroundBlur_81_2" />
+<feMergeNode in="color1" />
+</feMerge>
+</filter>
+<clipPath id="green-planet-spots-mask-clip"><circle cx="217.44" cy="2300.44" r="282.724" transform="rotate(-51.2697 217.44 2300.44)" />
+</clipPath></defs></svg>
