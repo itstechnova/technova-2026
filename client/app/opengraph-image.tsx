@@ -1,5 +1,5 @@
 import { ImageResponse } from "next/og";
-import { EVENT_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
+import { EVENT_DATE_TEXT, EVENT_NAME, SITE_TAGLINE, SITE_URL } from "@/lib/site";
 
 // Link-preview card for search results, iMessage, Slack, LinkedIn, X, etc.
 export const alt = `${EVENT_NAME}: ${SITE_TAGLINE}`;
@@ -27,7 +27,7 @@ export default function Image() {
         <div style={{ fontSize: 148, fontWeight: 700, letterSpacing: -2, color: "#f1e3fa" }}>{EVENT_NAME}</div>
         <div style={{ fontSize: 46, marginTop: 20, color: "#dfc5ee" }}>{SITE_TAGLINE}</div>
         <div style={{ fontSize: 30, marginTop: 44, color: "#ffffff", opacity: 0.8 }}>
-          {SITE_URL.replace(/^https?:\/\//, "")}
+          {`${EVENT_DATE_TEXT} · ${SITE_URL.replace(/^https?:\/\//, "")}`}
         </div>
       </div>
     ),

@@ -2,7 +2,9 @@ import type { Metadata } from "next";
 import { Righteous, Josefin_Sans, Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import {
+  EVENT_END_DATE,
   EVENT_NAME,
+  EVENT_START_DATE,
   SITE_DESCRIPTION,
   SITE_KEYWORDS,
   SITE_NAME,
@@ -97,6 +99,31 @@ const jsonLd = {
       description: SITE_DESCRIPTION,
       inLanguage: "en-CA",
       publisher: { "@id": `${SITE_URL}/#organization` },
+    },
+    {
+      "@type": "Event",
+      "@id": `${SITE_URL}/#event`,
+      name: `${EVENT_NAME}: ${SITE_TAGLINE}`,
+      description: SITE_DESCRIPTION,
+      url: SITE_URL,
+      image: `${SITE_URL}/opengraph-image`,
+      startDate: EVENT_START_DATE,
+      endDate: EVENT_END_DATE,
+      eventStatus: "https://schema.org/EventScheduled",
+      eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
+      location: {
+        "@type": "Place",
+        name: "University of Waterloo",
+        address: {
+          "@type": "PostalAddress",
+          streetAddress: "200 University Avenue West",
+          addressLocality: "Waterloo",
+          addressRegion: "ON",
+          postalCode: "N2L 3G1",
+          addressCountry: "CA",
+        },
+      },
+      organizer: { "@id": `${SITE_URL}/#organization` },
     },
   ],
 };
