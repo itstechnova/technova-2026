@@ -53,18 +53,11 @@ function Submitted() {
       <PageHeading as="h2" eyebrow="TechNova" title="While you wait">
         Meet the community and explore the event.
       </PageHeading>
-      <div className="grid gap-x-6 sm:grid-cols-2">
-        <InfoCard eyebrow="Explore" title="Event preview">
-          <Link href="/" className={textLink}>
-            Meet the people and ideas behind TechNova.
-          </Link>
-        </InfoCard>
-        <InfoCard eyebrow="Support" title="Need help?">
-          <a href={`mailto:${SUPPORT_EMAIL}`} className={textLink}>
-            {SUPPORT_EMAIL}
-          </a>
-        </InfoCard>
-      </div>
+      <InfoCard eyebrow="Support" title="Need help?">
+        <a href={`mailto:${SUPPORT_EMAIL}`} className={textLink}>
+          {SUPPORT_EMAIL}
+        </a>
+      </InfoCard>
     </PortalPage>
   );
 }
