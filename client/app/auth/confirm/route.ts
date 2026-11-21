@@ -2,6 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { sendWelcomeEmail } from '@/lib/resend/send'
 import { NextRequest, NextResponse } from 'next/server'
 import type { EmailOtpType } from '@supabase/supabase-js'
+import { safeNextPath } from '@/components/auth/safeNext'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -28,7 +29,11 @@ export async function GET(request: NextRequest) {
         }
       }
       const role = user?.app_metadata?.role
-      if (role === 'applicant') return NextResponse.redirect(`${origin}/applicant/dashboard`)
+      if (role === 'applicant') {
+        // `next` is the email's redirect_to: a full URL, of which only an /applicant/ path is used.
+        const nextPath = safeNextPath(next, { allowAbsolute: true })
+        return NextResponse.redirect(`${origin}${nextPath ?? '/applicant/dashboard'}`)
+      }
       if (role === 'admin') return NextResponse.redirect(`${origin}/admin/dashboard`)
 
       await supabase.auth.signOut()

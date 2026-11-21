@@ -1,8 +1,8 @@
 "use client";
 
+import Link from "next/link";
 import { Fragment, type CSSProperties } from "react";
 import { BackgroundLayer, layerUrl } from "@/components/background-layer";
-import { InterestSignupForm } from "@/components/interest-signup-form";
 import { ParallaxGroup } from "@/components/parallax-group";
 import {
   FRAME_HEIGHT,
@@ -230,7 +230,7 @@ export default function Home() {
       <div className="absolute inset-0 z-10 overflow-clip">
         <img src="/images/logo.svg" alt="TechNova Logo" className="logo" />
 
-        {/* Title, date, subscribe form — Figma nodes 81:160 and 162:13 */}
+        {/* Title, date, Apply Now — Figma nodes 81:160 and 162:13 */}
         <div className="hero">
           <h1
             className="hero-title"
@@ -247,8 +247,10 @@ export default function Home() {
             TechNova 6
           </h1>
           <p className="hero-date">January 22nd-24th, 2026</p>
-          <p className="hero-subscribe">Subscribe for more updates coming soon!</p>
-          <InterestSignupForm />
+          {/* Signed-out visitors are sent to /login by the proxy and come back here after. */}
+          <Link href="/applicant/application" className="hero-apply signup-button">
+            Apply Now
+          </Link>
         </div>
 
         <ParallaxGroup planet="pink">
