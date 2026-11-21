@@ -43,9 +43,9 @@ html {
   background: var(--background);
   /* The page never scrolls sideways: the artwork is wider than the screen on purpose. `clip` on the
      root becomes `hidden` on the viewport, which stays the (vertical) root scroller that the
-     parallax timeline follows; no sideways rubber-banding either. */
+     parallax timeline follows. No `overscroll-behavior-x: none` here: on the root it also switches
+     off the browser's two-finger swipe to go back or forward. */
   overflow-x: clip;
-  overscroll-behavior-x: none;
 }
 
 /* Rubber-band scrolling past the artwork reveals flat background; mice and trackpads don't need it.

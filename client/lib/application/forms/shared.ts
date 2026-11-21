@@ -6,14 +6,15 @@ import type {
   ShortTextQuestion,
   SingleChoiceQuestion,
 } from "../types";
+import { POLICIES, type PolicySlug } from "../policies";
 import { toOptions } from "./options";
 
-export const MLH_CODE_OF_CONDUCT_URL =
-  "https://github.com/MLH/mlh-policies/blob/main/code-of-conduct.md";
-export const MLH_PRIVACY_POLICY_URL =
-  "https://github.com/MLH/mlh-policies/blob/main/privacy-policy.md";
-export const MLH_CONTEST_TERMS_URL =
-  "https://github.com/MLH/mlh-policies/blob/main/contest-terms.md";
+/** A link that opens one of the policy documents in a popup over the form. */
+const policyLink = (policy: PolicySlug) => ({
+  label: POLICIES[policy].title,
+  href: POLICIES[policy].href,
+  policy,
+});
 
 /** Stored value of the gender option that reveals the free-text follow-up question. */
 export const GENDER_NOT_LISTED = "Not listed here";
@@ -83,7 +84,7 @@ export const mlhCodeOfConduct: ConsentQuestion = {
   type: "consent",
   prompt: "I have read and agree to the MLH Code of Conduct.",
   required: true,
-  links: [{ label: "MLH Code of Conduct", href: MLH_CODE_OF_CONDUCT_URL }],
+  links: [policyLink("mlh-code-of-conduct")],
 };
 
 export const mlhDataSharing: ConsentQuestion = {
@@ -92,10 +93,7 @@ export const mlhDataSharing: ConsentQuestion = {
   prompt:
     "I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy. I further agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy.",
   required: true,
-  links: [
-    { label: "MLH Privacy Policy", href: MLH_PRIVACY_POLICY_URL },
-    { label: "MLH Contest Terms and Conditions", href: MLH_CONTEST_TERMS_URL },
-  ],
+  links: [policyLink("mlh-privacy-policy"), policyLink("mlh-contest-terms")],
 };
 
 export const mlhEmails: ConsentQuestion = {

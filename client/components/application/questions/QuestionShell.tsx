@@ -1,6 +1,7 @@
 import { useId, type ReactNode } from "react";
 
 import { fieldError, fieldLabel } from "@/components/portal/ui";
+import { PolicyLink } from "@/components/application/questions/PolicyLink";
 import type { Question } from "@/lib/application/types";
 
 export type FieldIds = {
@@ -50,21 +51,28 @@ export function QuestionDescription({ id, children }: { id: string; children: Re
   );
 }
 
+const linkClass =
+  "inline-flex min-h-11 cursor-pointer items-center rounded text-base text-tn-cyan underline underline-offset-4 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-0";
+
 export function QuestionLinks({ links }: { links: Question["links"] }) {
   if (!links || links.length === 0) return null;
   return (
     <ul className="flex flex-wrap gap-x-6 gap-y-1">
       {links.map((link) => (
         <li key={link.href}>
+          {link.policy ? (
+            <PolicyLink policy={link.policy} label={link.label} className={linkClass} />
+          ) : (
           <a
             href={link.href}
             target="_blank"
             rel="noopener noreferrer"
-            className="inline-flex min-h-11 items-center rounded text-base text-tn-cyan underline underline-offset-4 hover:brightness-110 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white sm:min-h-0"
+            className={linkClass}
           >
             {link.label}
             <span className="sr-only"> (opens in a new tab)</span>
           </a>
+          )}
         </li>
       ))}
     </ul>

@@ -1,3 +1,5 @@
+import type { PolicySlug } from "./policies";
+
 // The application form is data: sections of typed questions (lib/application/forms/*). The
 // database only stores answers; prompts, options and section ids live in the client config.
 // A question's `id` is the name of the column its answer is stored in.
@@ -15,8 +17,12 @@ type QuestionBase = {
   showIf?: { question: string; equals: string };
   /** Where the answer is stored. Defaults to "hacker". */
   table?: "hacker" | "user";
-  /** Links shown with the question, e.g. the MLH policies next to a consent. */
-  links?: { label: string; href: string }[];
+  /**
+   * Links shown with the question, e.g. the MLH policies next to a consent. With `policy`, the
+   * document opens in a popup over the form (lib/application/policies.ts); `href` stays the
+   * address of the original.
+   */
+  links?: { label: string; href: string; policy?: PolicySlug }[];
 };
 
 export type ShortTextQuestion = QuestionBase & {
