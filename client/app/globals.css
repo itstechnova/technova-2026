@@ -29,6 +29,8 @@
   --background: #f5f6f9;
   --foreground: #171717;
   font-family: var(--font-geist-sans), sans-serif;
+}
+
 html {
   /* Shown in overscroll/bounce areas; matches the artwork's base colour. */
   background: var(--background);
