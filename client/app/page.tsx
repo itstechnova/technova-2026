@@ -12,6 +12,7 @@ import {
   MOBILE_FRAME_WIDTH,
 } from "@/lib/frame";
 import { PLANETS, planetOf, type PlanetName } from "@/lib/parallax";
+import { EVENT_DATE_TEXT } from "@/lib/site";
 
 type Motion = {
   kind: "spin" | "twinkle" | "breathe";
@@ -228,7 +229,7 @@ export default function Home() {
 
       {/* ===== Content Layer ===== (positions in globals.css, per layout) */}
       <div className="absolute inset-0 z-10 overflow-clip">
-        <img src="/images/logo.svg" alt="TechNova Logo" className="logo" />
+        <img src="/images/logo.svg" alt="TechNova, the University of Waterloo's women+ in tech hackathon" className="logo" />
 
         {/* Title, date, subscribe form — Figma nodes 81:160 and 162:13 */}
         <div className="hero">
@@ -246,7 +247,13 @@ export default function Home() {
           >
             TechNova 6
           </h1>
-          <p className="hero-date">January 22nd-24th, 2026</p>
+          {/* Says what the event is for screen readers and search engines until the full site adds
+              visible copy; the hero artwork alone only carries the name and date. */}
+          <p className="sr-only">
+            TechNova is the University of Waterloo&apos;s hackathon for women and non-binary students in tech,
+            held in Waterloo, Ontario from January 22 to 24, 2027.
+          </p>
+          <p className="hero-date">{EVENT_DATE_TEXT}</p>
           <p className="hero-subscribe">Subscribe for more updates coming soon!</p>
           <InterestSignupForm />
         </div>
