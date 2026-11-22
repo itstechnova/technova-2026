@@ -36,9 +36,9 @@ jobs:
       NETLIFY_CLI: netlify-cli@24
       ALIAS: pr-${{ github.event.pull_request.number }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v5
         with:
           node-version: 22
 
@@ -56,7 +56,6 @@ jobs:
         id: deploy
         run: |
           npx --yes "$NETLIFY_CLI" deploy --no-build \
-            --context deploy-preview \
             --alias "$ALIAS" \
             --message "PR #${{ github.event.pull_request.number }} @ ${{ github.event.pull_request.head.sha }}" \
             --json > deploy.json
@@ -65,7 +64,7 @@ jobs:
           echo "Preview: $url" >> "$GITHUB_STEP_SUMMARY"
 
       - name: Comment preview URL on the PR
-        uses: actions/github-script@v7
+        uses: actions/github-script@v8
         env:
           PREVIEW_URL: ${{ steps.deploy.outputs.url }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
