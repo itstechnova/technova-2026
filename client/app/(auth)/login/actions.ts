@@ -30,23 +30,21 @@ export type AuthState = {
 
 export async function authenticate(prevState: AuthState, formData: FormData): Promise<AuthState> {
   const supabase = await createClient()
+  const headersList = await headers()
+  const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL
   const email = formData.get('email') as string
   const password = formData.get('password') as string
   const mode = formData.get('mode') as string
 
   if (mode === 'signup') {
-    const headersList = await headers()
-    const origin = headersList.get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL
-
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        emailRedirectTo: `${origin}/auth/callback`,
-      },
+      options: origin ? { emailRedirectTo: origin } : undefined,
     })
 
     if (error) return { error: error.message }
+
     return { message: 'Check your email to confirm your account' }
   } else {
     const { data, error } = await supabase.auth.signInWithPassword({ email, password })
