@@ -1,5 +1,6 @@
 "use client";
 
+import { MapPin } from "lucide-react";
 import { useState, type CSSProperties } from "react";
 import { DrawnPlanet, SectionHeading, wrap } from "@/components/landing/shared";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
@@ -9,11 +10,41 @@ import { SUPPORT_EMAIL } from "@/lib/application/config";
 // The venue, for the "Where is it held?" answer and its map.
 const VENUE = {
   name: "Pearl Sullivan Engineering Building (PSE)",
+  short: "PSE",
   address: "200 University Avenue West, Waterloo, Ontario N2L 3G1",
   query: "Pearl Sullivan Engineering Building, University of Waterloo",
 };
 const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(VENUE.query)}&z=16&output=embed`;
 const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(VENUE.query)}`;
+
+/**
+ * The venue map. Until Google's frame has loaded, a quiet placeholder in the page's own colours
+ * holds its place (a pin and the venue's name over a slow shimmer); the map then fades in over it.
+ */
+function VenueMap() {
+  const [loaded, setLoaded] = useState(false);
+  return (
+    <div className="relative aspect-[16/10] w-full overflow-hidden rounded-xl border border-tn-line bg-[#120838]">
+      <div
+        aria-hidden
+        className={`absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${loaded ? "opacity-0" : "opacity-100"}`}
+      >
+        <div className="map-shimmer absolute inset-0" />
+        <MapPin size={28} strokeWidth={1.75} className="relative text-tn-cyan motion-safe:animate-bounce" />
+        <p className="relative text-sm text-tn-muted">Finding {VENUE.short} on the map…</p>
+      </div>
+      <iframe
+        title={`Map showing the ${VENUE.name}`}
+        src={mapEmbed}
+        loading="lazy"
+        referrerPolicy="no-referrer-when-downgrade"
+        allowFullScreen
+        onLoad={() => setLoaded(true)}
+        className={`absolute inset-0 size-full transition-opacity duration-700 ${loaded ? "opacity-100" : "opacity-0"}`}
+      />
+    </div>
+  );
+}
 
 type Question = { q: string; a: string; map?: boolean };
 
@@ -111,14 +142,7 @@ export function Faq() {
                       {/* The map is only requested from Google once the answer is opened. */}
                       {map && expanded && (
                         <div className="flex flex-col gap-3 pb-6">
-                          <iframe
-                            title={`Map showing the ${VENUE.name}`}
-                            src={mapEmbed}
-                            loading="lazy"
-                            referrerPolicy="no-referrer-when-downgrade"
-                            allowFullScreen
-                            className="aspect-[16/10] w-full rounded-xl border border-tn-line"
-                          />
+                          <VenueMap />
                           <a
                             href={mapLink}
                             target="_blank"
