@@ -113,7 +113,7 @@ const jsonLd = {
       eventAttendanceMode: "https://schema.org/OfflineEventAttendanceMode",
       location: {
         "@type": "Place",
-        name: "University of Waterloo",
+        name: "Pearl Sullivan Engineering Building (PSE), University of Waterloo",
         address: {
           "@type": "PostalAddress",
           streetAddress: "200 University Avenue West",
