@@ -34,7 +34,6 @@ export const CREW: CrewMember[] = [
   { slug: "cindy-marketing", name: "Cindy", role: "Marketing Lead", department: "Marketing", width: 193, height: 396 },
   { slug: "madison-logistics", name: "Madison", role: "Logistics Lead", department: "Logistics", width: 188, height: 395 },
   { slug: "lindsay-leadership", name: "Lindsay", role: "Co-Director", department: "Leadership", width: 198, height: 394 },
-  { slug: "amy-design", name: "Amy", role: "Design Coordinator", department: "Design", width: 211, height: 394 },
   { slug: "fei-engineering", name: "Fei", role: "Hardware Lead", department: "Engineering", width: 165, height: 393 },
   { slug: "eva-sponsorship", name: "Eva", role: "Sponsorship Coordinator", department: "Sponsorship", width: 241, height: 355 },
   { slug: "laeticia-finance", name: "Laeticia", role: "Finance Coordinator", department: "Finance", width: 200, height: 395 },
