@@ -108,18 +108,17 @@ export function Sponsors() {
         <Constellation />
         <LogoGrid />
 
-        {/* The invitation, kept plain: one line, one action, and the event partner. */}
-        <div className="scroll-in mt-16 flex flex-col gap-x-10 gap-y-8 border-t border-tn-line/70 pt-8 md:flex-row md:items-center md:justify-between">
+        {/* The invitation: one line, one action that opens an email, and the address under it. */}
+        <div className="scroll-in mt-16 flex flex-col items-start gap-4 border-t border-tn-line/70 pt-8">
           <div className="flex flex-wrap items-center gap-x-7 gap-y-4">
             <h3 className={`${heading} text-2xl leading-[1.2]`}>Join the constellation.</h3>
             <a href={`mailto:${SPONSOR_EMAIL}`} className={action}>
               Become a sponsor
             </a>
           </div>
-          <div className="flex items-center gap-5">
-            <p className="text-sm leading-[1.3] text-tn-muted">Official event partner</p>
-            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[104px]" />
-          </div>
+          <a href={`mailto:${SPONSOR_EMAIL}`} className="text-[15px] text-tn-muted underline decoration-from-font underline-offset-4 hover:text-tn-ink">
+            {SPONSOR_EMAIL}
+          </a>
         </div>
       </div>
     </section>
