@@ -10,7 +10,7 @@ import { BrandLockup } from "@/components/portal/ui";
 
 // The hacker dashboard's navigation (Figma "Sidebar / hacker dashboard", 240px). From `md` up it is a
 // flush rail pinned to the viewport with one hairline on its right: brand and deadline on top, the
-// links scrolling if the window is short, then "Back to website" / "Sign out" under them. On phones it is a top bar whose menu
+// links scrolling if the window is short, and "Back to website" / "Sign out" at the bottom of the rail. On phones it is a top bar whose menu
 // button reveals the same links.
 
 type NavItem = { label: string; href?: string };
@@ -119,7 +119,8 @@ export default function Sidebar() {
         <nav aria-label="Hacker dashboard" className="md:min-h-0 md:overflow-y-auto">
           <NavLinks pathname={pathname} onNavigate={close} />
         </nav>
-        <div className="flex flex-col md:pt-1">
+        {/* `md:mt-auto` takes the spare height above it, which puts these at the foot of the rail. */}
+        <div className="flex flex-col md:mt-auto md:pt-1">
           <Link href="/" className={footerLink}>
             Back to website
           </Link>
