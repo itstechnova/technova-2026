@@ -42,15 +42,22 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   }
 
+  // /reset-password is deliberately not public: the recovery link signs the visitor in through
+  // /auth/confirm before sending them there, and the page needs that session to set a password.
   if (
     !user &&
     pathname !== '/' &&
     !pathname.startsWith('/login') &&
+    !pathname.startsWith('/signup') &&
+    !pathname.startsWith('/verify-email') &&
     !pathname.startsWith('/auth') &&
     !pathname.startsWith('/forgot-password')
   ) {
-    // no user, potentially respond by redirecting the user to the login page
-    return NextResponse.redirect(new URL('/login', request.url))
+    // no user: send them to the login page, remembering which applicant page they were after
+    // (the login flow re-validates `next` before using it).
+    const loginUrl = new URL('/login', request.url)
+    if (pathname.startsWith('/applicant/')) loginUrl.searchParams.set('next', pathname)
+    return NextResponse.redirect(loginUrl)
   }
 
   // Optimistic role check: pre-filter users hitting a dashboard they're not
