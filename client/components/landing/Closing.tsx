@@ -19,8 +19,9 @@ export function Closing() {
           className="anim-float pointer-events-none absolute top-24 left-[5%] hidden h-auto w-[190px] select-none lg:block"
           style={{ "--dur": "19s", "--float-y": "-8%", "--float-x": "4%" } as CSSProperties}
         />
-        <div aria-hidden className="liftoff pointer-events-none absolute top-44 right-[2%] hidden w-[130px] select-none lg:block">
-          <img src={art("rocket-liftoff")} alt="" className="anim-float h-auto w-full" style={{ "--dur": "5s", "--float-y": "-5%" } as CSSProperties} />
+        {/* The design system's rocket, turned nose-up on the launch pad. */}
+        <div aria-hidden className="liftoff pointer-events-none absolute top-40 right-0 hidden w-[230px] select-none lg:block">
+          <img src={art("rocket-red")} alt="" className="anim-float h-auto w-full rotate-[55deg]" style={{ "--dur": "5s", "--float-y": "-4%" } as CSSProperties} />
         </div>
         <ShootingStar className="absolute top-6 left-[26%] hidden w-[320px] lg:block" seconds={11} delay={3} />
         <TwinkleStar className="absolute top-[58%] left-[22%] hidden w-[70px] lg:block" dur={4.8} />
