@@ -24,7 +24,7 @@ export function Closing() {
         <TwinkleStar className="absolute top-12 left-[53%] w-9" dur={5.3} />
 
         <p className="scroll-in text-lg leading-none text-tn-cyan">Ready for liftoff?</p>
-        <h2 className={`${heading} scroll-in text-[clamp(2.5rem,1.4rem+4.4vw,4.5rem)] leading-[1.1] text-balance`}>Come build with us.</h2>
+        <h2 className={`${heading} title-shade scroll-in pb-[0.08em] text-[clamp(2.5rem,1.4rem+4.4vw,4.5rem)] leading-[1.1] text-balance`}>Come build with us.</h2>
         <ApplyLink />
         <KeyDatesLine />
       </div>

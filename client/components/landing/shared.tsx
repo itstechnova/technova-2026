@@ -93,7 +93,7 @@ export function SectionHeading({
   return (
     <div className={`scroll-in flex flex-col gap-4 ${className}`}>
       <h2
-        className={`${heading} leading-[1.1] text-balance ${
+        className={`${heading} title-shade w-fit pb-[0.08em] leading-[1.1] text-balance ${
           size === "wide" ? "text-[clamp(2.5rem,1.7rem+2.6vw,3.75rem)]" : "text-[clamp(2.5rem,1.7rem+2.2vw,3.5rem)]"
         }`}
       >

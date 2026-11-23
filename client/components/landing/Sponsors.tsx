@@ -118,7 +118,7 @@ export function Sponsors() {
         {/* The invitation: one line, one action that opens an email, and the address under it. */}
         <div className="scroll-in mt-16 flex flex-col items-start gap-4 border-t border-tn-line/70 pt-8">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-            <h3 className={`${heading} text-[clamp(1.875rem,1.4rem+1.6vw,2.75rem)] leading-[1.2]`}>Join the constellation.</h3>
+            <h3 className={`${heading} title-shade pb-[0.08em] text-[clamp(1.875rem,1.4rem+1.6vw,2.75rem)] leading-[1.2]`}>Join the constellation.</h3>
             <a href={`mailto:${SPONSOR_EMAIL}`} className={action}>
               Become a sponsor
             </a>
