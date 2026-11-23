@@ -9,8 +9,8 @@ import { APPLICATIONS_CLOSE_DATE_LABEL, APPLICATIONS_CLOSE_TIME_LABEL } from "@/
 import { BrandLockup } from "@/components/portal/ui";
 
 // The hacker dashboard's navigation (Figma "Sidebar / hacker dashboard", 240px). From `md` up it is a
-// flush rail pinned to the viewport with one hairline on its right: brand and deadline on top, the links scrolling if the window is short, and
-// "Back to website" / "Sign out" always in view at the bottom. On phones it is a top bar whose menu
+// flush rail pinned to the viewport with one hairline on its right: brand and deadline on top, the
+// links scrolling if the window is short, then "Back to website" / "Sign out" under them. On phones it is a top bar whose menu
 // button reveals the same links.
 
 type NavItem = { label: string; href?: string };
@@ -33,7 +33,7 @@ const footerLink =
 function Deadline() {
   return (
     <div className="flex flex-col gap-[5px] leading-none">
-      <p className="text-xs text-tn-muted">Applications close</p>
+      <p className="text-xs tracking-wide text-tn-muted uppercase">Applications close</p>
       <p className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</p>
       <p className="text-base text-tn-cyan xl:text-lg">{APPLICATIONS_CLOSE_TIME_LABEL}</p>
     </div>
@@ -108,10 +108,10 @@ export default function Sidebar() {
       >
         <p className="text-xs leading-[1.35] font-semibold text-tn-cyan uppercase">Hacker dashboard</p>
         <Deadline />
-        <nav aria-label="Hacker dashboard" className="md:min-h-0 md:flex-1 md:overflow-y-auto">
+        <nav aria-label="Hacker dashboard" className="md:min-h-0 md:overflow-y-auto">
           <NavLinks pathname={pathname} onNavigate={close} />
         </nav>
-        <div className="flex flex-col gap-1 md:border-t md:border-tn-line/60 md:pt-2">
+        <div className="flex flex-col md:pt-1">
           <Link href="/" className={footerLink}>
             Back to website
           </Link>

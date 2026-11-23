@@ -15,11 +15,7 @@ import {
 } from "@/components/application/useApplicationDraft";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
-import {
-  APPLICATIONS_CLOSE_DATE_LABEL,
-  APPLICATIONS_CLOSE_TIME_LABEL,
-  SUPPORT_EMAIL,
-} from "@/lib/application/config";
+import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
 import { submitHackerApplication } from "@/lib/application/submit";
 import type { AnswerValue, Answers } from "@/lib/application/types";
@@ -36,10 +32,17 @@ import {
 // stepper with one step per form section, then Review. The current step is in the URL
 // (`?step=<section id | review>`); answers are a localStorage draft until submitted.
 
-// Shown under the welcome step's introduction.
+// The welcome step's extras, under its introduction (Figma "01 · My application / Welcome").
 const KEY_DATES = [
-  { label: "Hackathon", value: "Jan 22–24, 2027 · in person, Waterloo" },
-  { label: "Applications close", value: `${APPLICATIONS_CLOSE_DATE_LABEL}, ${APPLICATIONS_CLOSE_TIME_LABEL}` },
+  { label: "Hackathon", value: "Jan 22-24", note: "2027 · in person, Waterloo" },
+  { label: "Applications opened", value: "Nov 16", note: "2026" },
+];
+const OPPORTUNITIES = [
+  "Bring your ideas to life and build a project.",
+  "Receive mentorship and learn from others.",
+  "Connect with fellow students and industry professionals.",
+  "Showcase and demo your submission.",
+  "Build meaningful connections within the Women+ in Tech community.",
 ];
 
 const DASHBOARD = "/applicant/dashboard";
@@ -295,14 +298,40 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
         </div>
 
         {current === 0 && (
-          <dl className="flex max-w-[820px] flex-wrap gap-x-12 gap-y-4 border-y border-tn-line/70 py-5">
-            {KEY_DATES.map(({ label, value }) => (
-              <div key={label} className="flex flex-col gap-1">
-                <dt className="text-sm text-tn-muted">{label}</dt>
-                <dd className="text-[17px] font-semibold text-tn-ink">{value}</dd>
-              </div>
-            ))}
-          </dl>
+          <div className="flex max-w-[820px] flex-col gap-6">
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-4">
+              {KEY_DATES.map(({ label, value, note }) => (
+                <div key={label} className="flex flex-col gap-1">
+                  <dt className="text-xs text-tn-muted">{label}</dt>
+                  <dd className="flex flex-col gap-1">
+                    <span className={`${heading} text-[clamp(1.5rem,1.2rem+1vw,2rem)] leading-[1.1]`}>{value}</span>
+                    <span className="text-[13px] text-tn-muted">{note}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <div className="flex flex-col gap-3">
+              <p className="text-[17px] font-semibold text-tn-ink">
+                Join us for an in-person hackathon where you&apos;ll have the opportunity to:
+              </p>
+              <ul className="flex flex-col gap-2 text-base text-tn-ink">
+                {OPPORTUNITIES.map((item) => (
+                  <li key={item} className="flex items-baseline gap-3">
+                    <span aria-hidden className="size-2 shrink-0 -translate-y-px rounded-full bg-tn-yellow" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[15px] leading-[1.45] text-tn-muted">
+                Applications will be reviewed on a rolling basis, so we encourage you to apply early! If you require
+                accommodations or have any questions, please email us at{" "}
+                <a href={`mailto:${SUPPORT_EMAIL}`} className={textLink}>
+                  {SUPPORT_EMAIL}
+                </a>
+                .
+              </p>
+            </div>
+          </div>
         )}
 
         {section ? (
