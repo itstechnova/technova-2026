@@ -6,9 +6,6 @@ import { heading } from "@/components/portal/ui";
 /** The page column: at most 1080px of content, with gutters that grow with the screen. */
 export const wrap = "mx-auto w-full max-w-[1208px] px-6 sm:px-10 lg:px-16";
 
-/** The panel behind the sponsor invitation. */
-export const panel = "rounded-2xl border border-tn-line/80 bg-[#120838]/50";
-
 // The landing page's buttons: squarer and lighter than the portal's pills.
 const actionBase =
   "inline-flex cursor-pointer items-center justify-center rounded-[10px] px-5 py-3 text-base leading-[1.25] font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";

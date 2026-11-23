@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { SectionHeading, actionQuiet, panel, wrap } from "@/components/landing/shared";
+import { SectionHeading, StarMark, action, wrap } from "@/components/landing/shared";
 import { TwinkleStar, heading } from "@/components/portal/ui";
 
 // Figma "03 · Sponsors / #sponsors": the sponsors as a constellation. From `lg` up the logos, stars
@@ -108,21 +108,36 @@ export function Sponsors() {
         <Constellation />
         <LogoGrid />
 
-        <div className={`${panel} scroll-in relative mt-16 flex flex-col gap-x-10 gap-y-9 px-7 py-8 md:flex-row md:items-center md:justify-between lg:px-9`}>
-          <div className="flex flex-wrap items-center gap-x-9 gap-y-5">
+        {/* The invitation: the pitch and its one action on the left, the event partner on the right. */}
+        <div className="scroll-in mt-16 grid overflow-hidden rounded-2xl border border-tn-line/70 bg-linear-to-br from-white/[0.07] via-[#120838]/40 to-[#120838]/60 md:grid-cols-[minmax(0,1fr)_auto]">
+          <div className="flex flex-col items-start gap-5 p-7 sm:p-9">
             <div className="flex flex-col gap-2.5">
-              <h3 className={`${heading} text-2xl leading-[1.25] sm:text-[28px]`}>Join the constellation.</h3>
-              <a href={`mailto:${SPONSOR_EMAIL}`} className="w-fit text-lg text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink">
-                {SPONSOR_EMAIL}
-              </a>
+              <h3 className={`${heading} flex items-center gap-3 text-2xl leading-[1.2] sm:text-[28px]`}>
+                <StarMark className="size-5" />
+                Join the constellation.
+              </h3>
+              <p className="max-w-[46ch] text-base leading-[1.5] text-tn-muted sm:text-[17px]">
+                Sponsor TechNova 6 and meet the women and non-binary students building here in January.
+              </p>
             </div>
-            <a href={`mailto:${SPONSOR_EMAIL}`} className={actionQuiet}>
-              Become a sponsor
-            </a>
+            <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
+              <a href={`mailto:${SPONSOR_EMAIL}?subject=${encodeURIComponent("Sponsoring TechNova 6")}`} className={action}>
+                Become a sponsor
+                <span aria-hidden className="ml-2.5">
+                  →
+                </span>
+              </a>
+              <p className="text-[15px] text-tn-muted">
+                or email{" "}
+                <a href={`mailto:${SPONSOR_EMAIL}`} className="text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink">
+                  {SPONSOR_EMAIL}
+                </a>
+              </p>
+            </div>
           </div>
-          <div className="flex flex-col gap-5 md:pr-6">
-            <p className="text-[15px] leading-none text-tn-muted">Official event partner</p>
-            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[160px]" />
+          <div className="flex flex-col justify-center gap-4 border-t border-tn-line/70 p-7 sm:p-9 md:border-t-0 md:border-l md:px-12">
+            <p className="text-sm leading-none text-tn-muted">Official event partner</p>
+            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[150px]" />
           </div>
         </div>
       </div>
