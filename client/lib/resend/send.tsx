@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import { render } from '@react-email/render'
 import { getResendClient } from './client'
-import { EVENT_DATES_LABEL, SUPPORT_EMAIL } from '@/lib/application/config'
 import { AcceptanceEmail } from './emails/acceptance'
 import { ApplicationReceivedEmail } from './emails/application-received'
 import { ConfirmSignupEmail } from './emails/confirm-signup'
@@ -67,13 +66,6 @@ export async function sendApplicationReceivedEmail(to: string, applicationUrl: s
   await sendEmail({
     to,
     subject: 'We received your TechNova application',
-    react: (
-      <ApplicationReceivedEmail
-        firstName={firstName}
-        applicationUrl={applicationUrl}
-        eventDates={EVENT_DATES_LABEL}
-        supportEmail={SUPPORT_EMAIL}
-      />
-    ),
+    react: <ApplicationReceivedEmail firstName={firstName} applicationUrl={applicationUrl} />,
   })
 }
