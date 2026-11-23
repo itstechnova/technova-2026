@@ -5,6 +5,7 @@ import { headers } from 'next/headers'
 
 import { applicationsOpen } from '@/lib/application/config'
 import { hackerForm } from '@/lib/application/forms/hacker'
+import { isOnList } from '@/lib/application/lists'
 import type { Answers, AnswerValue, Question, SubmitResult } from '@/lib/application/types'
 import { isVisible, validateForm, visibleAnswers } from '@/lib/application/validate'
 import { decodeAnswers } from '@/lib/application/wire'
@@ -76,6 +77,15 @@ export async function submitHackerApplication(encodedAnswers: string): Promise<S
     }
     if (value !== '' && (!/^\d{1,5}$/.test(value) || Number(value) > SMALLINT_MAX)) {
       fieldErrors[question.id] = 'Enter a whole number.'
+    }
+  }
+
+  // Lookup answers must come from their list, which only the server has in full.
+  for (const question of hackerForm.flatMap((section) => section.questions)) {
+    const value = cleaned[question.id]
+    if (question.type !== 'lookup' || fieldErrors[question.id] || typeof value !== 'string') continue
+    if (value !== question.otherValue && !isOnList(question.list, value)) {
+      fieldErrors[question.id] = 'Please search for your answer and choose it from the list'
     }
   }
 

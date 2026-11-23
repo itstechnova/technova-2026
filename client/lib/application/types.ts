@@ -46,11 +46,28 @@ export type SingleChoiceQuestion = QuestionBase & {
   allowOther?: boolean;
 };
 
-/** Select menu, for long option lists (institutions, programs). */
+/** Select menu, for long option lists (programs, countries). */
 export type DropdownQuestion = QuestionBase & {
   type: "dropdown";
   options: Option[];
   placeholder?: string;
+  /** The options are whole numbers and the column is numeric (e.g. `age`). */
+  numeric?: boolean;
+};
+
+/** Lists too long to ship with the form; served by /api/lists/[list] (lib/application/lists.ts). */
+export type ListName = "schools";
+
+/**
+ * Search-and-pick from one of those lists. The answer is an entry of the list, or `otherValue`
+ * when the form offers a way out for something that isn't listed.
+ */
+export type LookupQuestion = QuestionBase & {
+  type: "lookup";
+  list: ListName;
+  placeholder?: string;
+  /** Always offered under the matches, e.g. "Other". */
+  otherValue?: string;
 };
 
 /** Checkbox group. */
@@ -74,12 +91,13 @@ export type Question =
   | ParagraphQuestion
   | SingleChoiceQuestion
   | DropdownQuestion
+  | LookupQuestion
   | MultiChoiceQuestion
   | ConsentQuestion;
 
 export type QuestionType = Question["type"];
 
-/** short_text / paragraph / single_choice / dropdown: string. multi_choice: string[]. consent: boolean. */
+/** short_text / paragraph / single_choice / dropdown / lookup: string. multi_choice: string[]. consent: boolean. */
 export type AnswerValue = string | string[] | boolean;
 export type Answers = Record<string, AnswerValue | undefined>;
 

@@ -14,6 +14,9 @@
   `public.hacker` for the "Getting to Waterloo" acknowledgement that replaced the transportation
   question. Additive and idempotent; the old `transportation` column is kept. Required by the
   application form.
+- `migrations/20261123000200_country_of_residence.sql`: adds `country_of_residence` to
+  `public.hacker`, one of the registration fields MLH requires. Additive and idempotent. Required by
+  the application form.
 
 Apply in filename order with `supabase db push` (linked project) or by pasting each file into the
 dashboard SQL editor. Both can be re-run safely.
