@@ -37,11 +37,11 @@ function Deadline() {
 
   return (
     <div className="flex flex-col gap-[5px] leading-none">
-      <p className="text-xs tracking-wide text-tn-muted uppercase">{closed ? "Applications closed" : "Applications close"}</p>
+      <p className="text-xs tracking-wide text-tn-muted uppercase">{closed ? "Applications closed" : "Applications close in"}</p>
       {!closed && (
         // Reserves its line before the visitor's clock is read, so the links below don't move.
         <p className="min-h-[1em] text-sm font-semibold text-tn-yellow tabular-nums">
-          {remaining !== null && `${timeLeftLabel(remaining)} left`}
+          {remaining !== null && timeLeftLabel(remaining)}
         </p>
       )}
     </div>
