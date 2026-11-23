@@ -1,6 +1,7 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
+import { headers } from 'next/headers'
 
 import { applicationsOpen } from '@/lib/application/config'
 import { hackerForm } from '@/lib/application/forms/hacker'
@@ -8,6 +9,8 @@ import type { Answers, AnswerValue, Question, SubmitResult } from '@/lib/applica
 import { isVisible, validateForm, visibleAnswers } from '@/lib/application/validate'
 import { requireRole } from '@/lib/auth/dal'
 import { isNumberQuestion, questionsForTable, type DbRow } from '@/lib/data/hackerApplication'
+import { sendApplicationReceivedEmail } from '@/lib/resend/send'
+import { SITE_URL } from '@/lib/site'
 import { createClient } from '@/lib/supabase/server'
 
 const GENERIC_ERROR = 'Something went wrong while submitting your application. Please try again.'
@@ -137,6 +140,18 @@ export async function submitHackerApplication(answers: Answers): Promise<SubmitR
   // The saved draft has done its job. Best effort: a leftover draft is ignored once a hacker row exists.
   const { error: draftError } = await supabase.from('hacker_draft').delete().eq('user_id', user.id)
   if (draftError) console.error('submitHackerApplication: failed to delete the saved draft', draftError)
+
+  // Confirm by email, to the address the account signed up with. Best effort: the application is
+  // saved either way, so a failed send must not turn a successful submit into an error.
+  if (user.email) {
+    try {
+      const origin = (await headers()).get('origin') ?? SITE_URL
+      const firstName = typeof cleaned.first_name === 'string' ? cleaned.first_name : undefined
+      await sendApplicationReceivedEmail(user.email, `${origin}/applicant/application`, firstName)
+    } catch (emailError) {
+      console.error('submitHackerApplication: failed to send the confirmation email', emailError)
+    }
+  }
 
   revalidatePath('/applicant', 'layout')
   return { ok: true }
