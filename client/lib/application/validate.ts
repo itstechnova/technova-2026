@@ -64,6 +64,21 @@ export function isAnswered(question: Question, value: AnswerValue | undefined): 
   }
 }
 
+/**
+ * The problem with a text answer that is over its word limit, or null. The fields show this as
+ * the applicant types, so going over is flagged straight away instead of at Submit. It leaves the
+ * running count to the counter beside it, so the message stays the same while they edit.
+ */
+export function wordLimitError(
+  question: ShortTextQuestion | ParagraphQuestion,
+  value: string,
+): string | null {
+  if (question.maxWords === undefined) return null;
+  return countWords(value) > question.maxWords
+    ? `Please keep this to ${question.maxWords} words or fewer`
+    : null;
+}
+
 function validateText(
   question: ShortTextQuestion | ParagraphQuestion,
   value: string,
