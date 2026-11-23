@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { AnswerValue, Answers } from "@/lib/application/types";
 
-// An unsubmitted application lives only in this browser's localStorage, one entry per user.
+// An unsubmitted application is kept in this browser's localStorage, one entry per user, as the
+// applicant types. (It is also saved to their account at milestones: see lib/application/draft.ts.)
 // Everything here tolerates a missing, corrupt, full or blocked localStorage: the form then
 // simply works without a saved draft.
 
@@ -180,6 +181,12 @@ export function useApplicationDraft(userId: string, initial: DraftContent, initi
   }, [save, userId]);
 
   return { answers: content.answers, step: content.step, savedAt, saveFailed, setAnswer, setStep, save, clear };
+}
+
+/** The more recently saved of two drafts (either may be missing). */
+export function newerDraft(a: Draft | null, b: Draft | null): Draft | null {
+  if (!a || !b) return a ?? b;
+  return (Date.parse(b.savedAt) || 0) > (Date.parse(a.savedAt) || 0) ? b : a;
 }
 
 /** "Saved just now", "Saved 2 min ago", "Saved 3 hr ago", "Saved Dec 1". */

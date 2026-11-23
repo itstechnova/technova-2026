@@ -5,6 +5,7 @@ import { PageHeading, PortalPage } from "@/components/portal/PortalPage";
 import { applicationsOpen } from "@/lib/application/config";
 import { requireRole } from "@/lib/auth/dal";
 import { getMyHackerApplication } from "@/lib/data/hackerApplication";
+import { getMyHackerDraft } from "@/lib/data/hackerDraft";
 
 /** The application is in and waiting for a decision. */
 function Submitted() {
@@ -28,10 +29,11 @@ export default async function ApplicantDashboard() {
   const application = await getMyHackerApplication();
 
   if (application) return <Submitted />;
+  const accountDraft = await getMyHackerDraft();
 
   return (
     <PortalPage>
-      <DraftOverview userId={user.id} closed={!applicationsOpen()} />
+      <DraftOverview userId={user.id} accountDraft={accountDraft} closed={!applicationsOpen()} />
     </PortalPage>
   );
 }

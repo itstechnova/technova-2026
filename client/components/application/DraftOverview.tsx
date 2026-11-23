@@ -1,15 +1,21 @@
 "use client";
 
 import Link from "next/link";
-import { savedLabel, useNow, useStoredDraft } from "@/components/application/useApplicationDraft";
+import {
+  newerDraft,
+  savedLabel,
+  useNow,
+  useStoredDraft,
+  type Draft,
+} from "@/components/application/useApplicationDraft";
 import { DeadlineBlock, EventCard, HelpBlock, MissionTracker } from "@/components/portal/overview";
 import { PageHeading, Section } from "@/components/portal/PortalPage";
 import { hackerForm } from "@/lib/application/forms/hacker";
 import type { Answers, FormSection } from "@/lib/application/types";
 import { isAnswered, isVisible, stepSections, validateSection } from "@/lib/application/validate";
 
-// The Overview page before submitting (Figma "02 · Hacker dashboard"). The draft is in
-// localStorage, so its progress is only known in the browser.
+// The Overview page before submitting (Figma "02 · Hacker dashboard"). The latest draft may be the
+// one in this browser's localStorage, so progress is worked out in the browser.
 
 const SECTIONS = stepSections(hackerForm);
 const TOTAL = SECTIONS.length + 1; // + Review
@@ -29,12 +35,21 @@ const marker = {
   empty: "border border-tn-muted/60",
 };
 
-export default function DraftOverview({ userId, closed }: { userId: string; closed: boolean }) {
-  const draft = useStoredDraft(userId);
+export default function DraftOverview({
+  userId,
+  accountDraft,
+  closed,
+}: {
+  userId: string;
+  /** The draft saved to the applicant's account, if any. */
+  accountDraft: Draft | null;
+  closed: boolean;
+}) {
+  const local = useStoredDraft(userId);
   const now = useNow();
 
   // Not known on the server or during hydration.
-  if (draft === undefined) {
+  if (local === undefined) {
     return (
       <div aria-busy="true" className="flex max-w-[820px] animate-pulse flex-col gap-[30px]">
         <span className="sr-only">Loading your dashboard…</span>
@@ -45,6 +60,7 @@ export default function DraftOverview({ userId, closed }: { userId: string; clos
     );
   }
 
+  const draft = newerDraft(local, accountDraft);
   const answers = draft?.answers ?? {};
   const progress = SECTIONS.map((section) => progressOf(section, answers));
   const complete = progress.filter((item) => item.state === "complete").length;
@@ -53,8 +69,8 @@ export default function DraftOverview({ userId, closed }: { userId: string; clos
   const note = closed
     ? "The deadline to apply has passed, so new applications can no longer be submitted."
     : started && draft
-      ? `Your draft is saved on this device (${savedLabel(draft.savedAt, now).toLowerCase()}). It has not been submitted.`
-      : "You haven’t started yet. Your answers are saved on this device as you go.";
+      ? `Your draft is saved (${savedLabel(draft.savedAt, now).toLowerCase()}). It has not been submitted.`
+      : "You haven’t started yet. Your answers are saved as you go, so you can finish later.";
 
   return (
     <>

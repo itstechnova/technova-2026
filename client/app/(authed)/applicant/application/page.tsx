@@ -10,6 +10,7 @@ import { hackerForm } from "@/lib/application/forms/hacker";
 import type { Answers } from "@/lib/application/types";
 import { requireRole } from "@/lib/auth/dal";
 import { getMyHackerApplication } from "@/lib/data/hackerApplication";
+import { getMyHackerDraft } from "@/lib/data/hackerDraft";
 
 const DASHBOARD = "/applicant/dashboard";
 const SPONSORS_EMAIL = "sponsors@itstechnova.org";
@@ -130,12 +131,15 @@ export default async function ApplicationPage({
     );
   }
 
+  const accountDraft = await getMyHackerDraft();
+
   return (
     // ApplicationForm reads the step from the URL with useSearchParams.
     <Suspense fallback={null}>
       <ApplicationForm
         userId={user.id}
         prefill={accountAnswers(user.email, user.user_metadata?.full_name)}
+        accountDraft={accountDraft}
         closed={!applicationsOpen()}
       />
     </Suspense>

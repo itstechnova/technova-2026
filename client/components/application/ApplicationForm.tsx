@@ -9,6 +9,7 @@ import { StepTabs, type Step } from "@/components/application/StepTabs";
 import {
   savedLabel,
   useApplicationDraft,
+  newerDraft,
   useNow,
   useStoredDraft,
   type Draft,
@@ -17,6 +18,7 @@ import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPag
 import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
+import { saveHackerDraft } from "@/lib/application/draft";
 import { submitHackerApplication } from "@/lib/application/submit";
 import type { AnswerValue, Answers } from "@/lib/application/types";
 import {
@@ -126,20 +128,36 @@ type FormProps = {
   userId: string;
   /** Answers known from the account (email, name), used where the draft has none. */
   prefill: Answers;
+  /** The draft saved to the applicant's account, if any. */
+  accountDraft: Draft | null;
   /** True once the application deadline has passed. */
   closed: boolean;
 };
 
-export default function ApplicationForm({ userId, prefill, closed }: FormProps) {
+export default function ApplicationForm({ userId, prefill, accountDraft, closed }: FormProps) {
   const stored = useStoredDraft(userId);
 
   if (closed) return <ClosedState />;
   // Not known on the server or during hydration: localStorage is read after that.
   if (stored === undefined) return <FormSkeleton />;
-  return <Stepper userId={userId} prefill={prefill} stored={stored} />;
+  // Start from whichever copy was saved last: this browser's, or the one on their account.
+  return (
+    <Stepper
+      userId={userId}
+      prefill={prefill}
+      stored={newerDraft(stored, accountDraft)}
+      accountSavedAt={accountDraft?.savedAt || null}
+    />
+  );
 }
 
-function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stored: Draft | null }) {
+type StepperProps = Pick<FormProps, "userId" | "prefill"> & {
+  stored: Draft | null;
+  /** When the account copy was last saved. */
+  accountSavedAt: string | null;
+};
+
+function Stepper({ userId, prefill, stored, accountSavedAt }: StepperProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // `stored` is only the starting point; the hook owns the draft from here on.
@@ -155,6 +173,25 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
+
+  // The copy on the applicant's account, saved at milestones (switching step, save and exit).
+  const [account, setAccount] = useState<{ savedAt: string | null; failed: boolean }>({
+    savedAt: accountSavedAt,
+    failed: false,
+  });
+  const accountSave = useRef(0);
+  async function saveToAccount(step: string) {
+    const attempt = ++accountSave.current;
+    let result: Awaited<ReturnType<typeof saveHackerDraft>> = { ok: false };
+    try {
+      result = await saveHackerDraft(answers, step);
+    } catch {
+      // Offline or the request failed: the browser copy is still there.
+    }
+    // Only the latest save decides what is shown.
+    if (attempt !== accountSave.current) return;
+    setAccount((previous) => (result.ok ? { savedAt: result.savedAt, failed: false } : { ...previous, failed: true }));
+  }
 
   // The step to show: the one in the URL, else where the draft left off. Any step can be opened
   // in any order; what is still missing is checked when the application is submitted.
@@ -195,6 +232,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     // Leaving a step saves it, finished or not.
     draft.setStep(id);
     draft.save();
+    if (id !== stepId) void saveToAccount(id);
     if (id !== stepId) window.history.pushState(null, "", `?step=${id}`);
   }
 
@@ -224,8 +262,9 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     if (section) goTo(current + 1);
   }
 
-  function saveAndExit() {
+  async function saveAndExit() {
     draft.save();
+    await saveToAccount(stepId);
     router.push(DASHBOARD);
   }
 
@@ -253,11 +292,18 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     });
   }
 
-  const saveStatus = draft.saveFailed
-    ? "Couldn’t save your draft on this device"
-    : draft.savedAt
-      ? savedLabel(draft.savedAt, now)
-      : "Not saved yet";
+  // What the header says about the draft. The account copy is the one that follows them around.
+  const saveStatus = account.failed
+    ? draft.saveFailed
+      ? "Couldn’t save your draft"
+      : "Saved on this device only. We’ll try your account again when you switch sections"
+    : account.savedAt
+      ? `${savedLabel(account.savedAt, now)} to your account`
+      : draft.saveFailed
+        ? "Not saved yet"
+        : draft.savedAt
+          ? `${savedLabel(draft.savedAt, now)} on this device`
+          : "Not saved yet";
   const errorCount = Object.keys(errors).length;
 
   const title = section ? section.title : "Review and submit";
