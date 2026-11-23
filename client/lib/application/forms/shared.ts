@@ -1,10 +1,14 @@
-// Questions that every TechNova application asks (hacker today; mentor and volunteer later).
+// Questions that several TechNova applications ask (hacker, volunteer, mentor, judge).
 // Import the ones a form needs and list them in its sections.
 
-import type {
-  ConsentQuestion,
-  ShortTextQuestion,
-  SingleChoiceQuestion,
+import {
+  gridCellValue,
+  type CheckboxGridQuestion,
+  type ConsentQuestion,
+  type FileQuestion,
+  type Option,
+  type ShortTextQuestion,
+  type SingleChoiceQuestion,
 } from "../types";
 import { POLICIES, type PolicySlug } from "../policies";
 import { toOptions } from "./options";
@@ -18,6 +22,15 @@ const policyLink = (policy: PolicySlug) => ({
 
 /** Stored value of the gender option that reveals the free-text follow-up question. */
 export const GENDER_NOT_LISTED = "Not listed here";
+
+/** Stored as a smallint; validated as a whole number between 10 and 100 (validate.ts). */
+export const age: ShortTextQuestion = {
+  id: "age",
+  type: "short_text",
+  inputType: "number",
+  prompt: "How old will you be as of January 22, 2027?",
+  required: true,
+};
 
 export const firstName: ShortTextQuestion = {
   id: "first_name",
@@ -102,3 +115,77 @@ export const mlhEmails: ConsentQuestion = {
   prompt:
     "I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements.",
 };
+
+/**
+ * Gender identity as the volunteer/mentor/judge forms ask it (the hacker form uses `genderIdentity`).
+ * Same `public.user` column, different options.
+ */
+export const genderIdentityOpen: SingleChoiceQuestion = {
+  id: "gender_identity",
+  type: "single_choice",
+  table: "user",
+  prompt: "What is your gender identity?",
+  required: true,
+  allowOther: true,
+  options: toOptions(["Woman", "Non-binary", "Man", "Prefer not to specify"]),
+};
+
+// The event runs Fri Jan 22, 5 PM to Sun Jan 24, 5 PM. A day's "Overnight" row is the night
+// that follows its "Late night" row, so the rows of one column read in time order.
+const DAYS = toOptions(["Fri", "Sat", "Sun"]);
+const TIME_SLOTS: Option[] = [
+  { value: "8 AM – 12 PM", label: "Morning (8 AM – 12 PM)" },
+  { value: "12 PM – 5 PM", label: "Afternoon (12 PM – 5 PM)" },
+  { value: "5 PM – 9 PM", label: "Evening (5 PM – 9 PM)" },
+  { value: "9 PM – 1 AM", label: "Late night (9 PM – 1 AM)" },
+  { value: "1 AM – 8 AM", label: "Overnight (1 AM – 8 AM)" },
+];
+const [fri, , sun] = DAYS;
+const [morning, afternoon, evening, lateNight, overnight] = TIME_SLOTS;
+// Before the event starts on Friday and after it ends on Sunday.
+const OUTSIDE_EVENT = [
+  gridCellValue(fri, morning),
+  gridCellValue(fri, afternoon),
+  gridCellValue(sun, evening),
+  gridCellValue(sun, lateNight),
+  gridCellValue(sun, overnight),
+];
+
+export const unavailableTimes: CheckboxGridQuestion = {
+  id: "unavailable_times",
+  type: "checkbox_grid",
+  prompt: "Please indicate the times you are NOT available during the event.",
+  description:
+    "These are to gauge availability and are not binding. Leave everything unticked if you're available the whole time.",
+  rows: TIME_SLOTS,
+  columns: DAYS,
+  skip: OUTSIDE_EVENT,
+};
+
+export const resume: FileQuestion = {
+  id: "resume_path",
+  type: "file",
+  prompt: "Please upload your resume.",
+  description: "PDF or Word (.docx), up to 10 MB.",
+  required: true,
+  bucket: "resumes",
+  accept: [".pdf", ".docx"],
+  maxBytes: 10 * 1024 * 1024,
+};
+
+export const codeOfConduct: ConsentQuestion = {
+  id: "code_of_conduct",
+  type: "consent",
+  prompt: "I agree to uphold the MLH Code of Conduct and TechNova's values throughout the event.",
+  required: true,
+  links: [policyLink("mlh-code-of-conduct")],
+};
+
+/** "Where did you hear about this opportunity?" options for the volunteer/mentor/judge forms. */
+export const HEARD_FROM_OPTIONS = [
+  "LinkedIn",
+  "Instagram",
+  "Word of Mouth",
+  "Email/Mailing List",
+  "University Student Organization/Club",
+] as const;

@@ -1,5 +1,5 @@
 -- OPTIONAL hardening: tighten RLS on public.user and public.hacker.
--- Independent of 20261121000000 except that it leaves that migration's INSERT policy in place.
+-- Independent of 20261121210631 except that it leaves that migration's INSERT policy in place.
 --
 -- Before: both tables had `SELECT using (true)` and `UPDATE using (true) with check (true)` for
 -- every role, so anyone holding the publishable key (i.e. anyone, signed in or not) could read

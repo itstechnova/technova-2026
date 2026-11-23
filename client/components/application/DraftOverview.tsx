@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { savedLabel, useNow, useStoredDraft } from "@/components/application/useApplicationDraft";
+import { draftKey, savedLabel, useNow, useStoredDraft } from "@/components/application/useApplicationDraft";
 import { InfoCard, PageHeading, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary } from "@/components/portal/ui";
 import {
@@ -37,7 +37,7 @@ const NOT_STARTED: Copy = {
 };
 
 export default function DraftOverview({ userId, closed }: { userId: string; closed: boolean }) {
-  const draft = useStoredDraft(userId);
+  const draft = useStoredDraft(draftKey("hacker", userId));
   const now = useNow();
 
   // Not known on the server or during hydration.

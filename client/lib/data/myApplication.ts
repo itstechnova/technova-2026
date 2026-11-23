@@ -1,11 +1,12 @@
 import 'server-only'
 
-import { hackerForm } from '@/lib/application/forms/hacker'
+import { APPLICATIONS, type ApplicationType } from '@/lib/application/applicationTypes'
 import type { Answers, AnswerValue, Form, Question } from '@/lib/application/types'
 import { requireRole } from '@/lib/auth/dal'
 import { createClient } from '@/lib/supabase/server'
 
-export type ApplicationTable = 'hacker' | 'user'
+/** "application": the application type's own table (hacker, volunteer, …). "user": the shared profile row. */
+export type ApplicationTable = 'application' | 'user'
 
 /** A database row as returned by / sent to Supabase, keyed by column name. */
 export type DbRow = Record<string, unknown>
@@ -17,7 +18,7 @@ export type DbRow = Record<string, unknown>
 export function questionsForTable(form: Form, table: ApplicationTable): Question[] {
   return form
     .flatMap((section) => section.questions)
-    .filter((question) => (question.table ?? 'hacker') === table)
+    .filter((question) => (question.table ?? 'application') === table)
 }
 
 /** Numeric short-text answers (e.g. `age`) are stored as integers. */
@@ -33,6 +34,7 @@ function toAnswer(question: Question, value: unknown): AnswerValue | undefined {
     case 'consent':
       return typeof value === 'boolean' ? value : undefined
     case 'multi_choice':
+    case 'checkbox_grid':
       return Array.isArray(value)
         ? value.filter((item): item is string => typeof item === 'string')
         : undefined
@@ -53,29 +55,35 @@ function rowToAnswers(questions: Question[], row: DbRow | null): Answers {
   return answers
 }
 
-/** The signed-in user's submitted hacker application, or null when they have not submitted. */
-export async function getMyHackerApplication(): Promise<{
+/** A Supabase error's fields, for logging (logged as-is it can print as `{}`). */
+function describe(error: { message?: string; code?: string; details?: string; hint?: string }) {
+  return { message: error.message, code: error.code, details: error.details, hint: error.hint }
+}
+
+/** The signed-in user's submitted application of this type, or null when they have not submitted. */
+export async function getMyApplication(applicationType: ApplicationType): Promise<{
   answers: Answers
   submittedAt: string | null
 } | null> {
   const user = await requireRole(['applicant', 'admin'])
   if (!user) throw new Error('Not signed in.')
+  const { form, table, idColumn } = APPLICATIONS[applicationType]
   const supabase = await createClient()
 
-  const hackerQuestions = questionsForTable(hackerForm, 'hacker')
-  const userQuestions = questionsForTable(hackerForm, 'user')
+  const applicationQuestions = questionsForTable(form, 'application')
+  const userQuestions = questionsForTable(form, 'user')
 
-  const { data: hackerRow, error: hackerError } = await supabase
-    .from('hacker')
-    .select(['submitted_at', ...hackerQuestions.map((question) => question.id)].join(','))
-    .eq('hacker_id', user.id)
+  const { data: applicationRow, error: applicationError } = await supabase
+    .from(table)
+    .select(['submitted_at', ...applicationQuestions.map((question) => question.id)].join(','))
+    .eq(idColumn, user.id)
     .maybeSingle<DbRow>()
 
-  if (hackerError) {
-    console.error('getMyHackerApplication: failed to load hacker row', hackerError)
+  if (applicationError) {
+    console.error(`getMyApplication(${applicationType}): failed to load application row`, describe(applicationError))
     throw new Error('Could not load your application.')
   }
-  if (!hackerRow) return null
+  if (!applicationRow) return null
 
   const { data: userRow, error: userError } = await supabase
     .from('user')
@@ -84,16 +92,16 @@ export async function getMyHackerApplication(): Promise<{
     .maybeSingle<DbRow>()
 
   if (userError) {
-    console.error('getMyHackerApplication: failed to load user row', userError)
+    console.error(`getMyApplication(${applicationType}): failed to load user row`, describe(userError))
     throw new Error('Could not load your application.')
   }
 
-  const submittedAt = hackerRow.submitted_at
+  const submittedAt = applicationRow.submitted_at
 
   return {
     answers: {
       ...rowToAnswers(userQuestions, userRow),
-      ...rowToAnswers(hackerQuestions, hackerRow),
+      ...rowToAnswers(applicationQuestions, applicationRow),
     },
     submittedAt: typeof submittedAt === 'string' ? submittedAt : null,
   }

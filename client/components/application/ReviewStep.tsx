@@ -60,23 +60,26 @@ export function ReviewStep({
         />
       ))}
 
-      <section className="flex flex-col gap-6 border-t border-tn-line/70 pt-7">
-        <h2 className={`${heading} text-[32px] leading-[1.35]`}>Before you submit</h2>
-        {agreements.map((section) => (
-          <div key={section.id} className="flex flex-col gap-3">
-            {section.description && (
-              <p className="text-lg leading-[1.45] whitespace-pre-line text-tn-muted">{section.description}</p>
-            )}
-            <QuestionList
-              questions={section.questions}
-              answers={answers}
-              errors={errors}
-              disabled={pending}
-              onChange={onChange}
-            />
-          </div>
-        ))}
-      </section>
+      {/* Forms without review-placement sections (e.g. mentor) have nothing to agree to here. */}
+      {agreements.length > 0 && (
+        <section className="flex flex-col gap-6 border-t border-tn-line/70 pt-7">
+          <h2 className={`${heading} text-[32px] leading-[1.35]`}>Before you submit</h2>
+          {agreements.map((section) => (
+            <div key={section.id} className="flex flex-col gap-3">
+              {section.description && (
+                <p className="text-lg leading-[1.45] whitespace-pre-line text-tn-muted">{section.description}</p>
+              )}
+              <QuestionList
+                questions={section.questions}
+                answers={answers}
+                errors={errors}
+                disabled={pending}
+                onChange={onChange}
+              />
+            </div>
+          ))}
+        </section>
+      )}
 
       {submitError && (
         <p role="alert" className="rounded-[10px] border border-tn-error px-[18px] py-3 text-lg text-tn-error">

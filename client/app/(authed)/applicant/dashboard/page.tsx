@@ -6,7 +6,7 @@ import { InfoCard, PageHeading, PortalPage, textLink } from "@/components/portal
 import { TwinkleStar, buttonSecondary } from "@/components/portal/ui";
 import { SUPPORT_EMAIL, applicationsOpen } from "@/lib/application/config";
 import { requireRole } from "@/lib/auth/dal";
-import { getMyHackerApplication } from "@/lib/data/hackerApplication";
+import { getMyApplication } from "@/lib/data/myApplication";
 
 /** The satellite from Figma frame 07, drifting gently with a couple of stars around it. */
 function Satellite() {
@@ -65,7 +65,7 @@ function Submitted() {
 export default async function ApplicantDashboard() {
   const user = await requireRole(["admin", "applicant"]);
   if (!user) redirect("/login");
-  const application = await getMyHackerApplication();
+  const application = await getMyApplication("hacker");
 
   if (application) return <Submitted />;
 
