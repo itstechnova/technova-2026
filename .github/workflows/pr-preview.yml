@@ -33,11 +33,11 @@ jobs:
     env:
       NETLIFY_AUTH_TOKEN: ${{ secrets.NETLIFY_AUTH_TOKEN }}
       NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
-      NEXT_PUBLIC_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
-      NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
-      RESEND_FROM_EMAIL: ${{ vars.RESEND_FROM_EMAIL }}
-      RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
-      SEND_EMAIL_HOOK_SECRET: ${{ secrets.SEND_EMAIL_HOOK_SECRET }}
+      CI_SUPABASE_URL: ${{ vars.NEXT_PUBLIC_SUPABASE_URL }}
+      CI_SUPABASE_PUBLISHABLE_KEY: ${{ vars.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY }}
+      CI_RESEND_FROM_EMAIL: ${{ vars.RESEND_FROM_EMAIL }}
+      CI_RESEND_API_KEY: ${{ secrets.RESEND_API_KEY }}
+      CI_SEND_EMAIL_HOOK_SECRET: ${{ secrets.SEND_EMAIL_HOOK_SECRET }}
       NETLIFY_CLI: netlify-cli@24
       ALIAS: pr-${{ github.event.pull_request.number }}
     steps:
@@ -59,8 +59,15 @@ jobs:
         id: deploy
         run: |
           set -euo pipefail
-          : "${NEXT_PUBLIC_SUPABASE_URL:?Missing Actions variable NEXT_PUBLIC_SUPABASE_URL}"
-          : "${NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY:?Missing Actions variable NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
+          : "${CI_SUPABASE_URL:?Missing Actions variable NEXT_PUBLIC_SUPABASE_URL}"
+          : "${CI_SUPABASE_PUBLISHABLE_KEY:?Missing Actions variable NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY}"
+          # Apply values inside the build process, after Netlify loads protected placeholders.
+          # This temporary context contains variable references only, never secret values.
+          cat >> netlify.toml <<'TOML'
+
+          [context.deploy-preview]
+            command = 'NEXT_PUBLIC_SUPABASE_URL="$CI_SUPABASE_URL" NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY="$CI_SUPABASE_PUBLISHABLE_KEY" RESEND_FROM_EMAIL="$CI_RESEND_FROM_EMAIL" RESEND_API_KEY="$CI_RESEND_API_KEY" SEND_EMAIL_HOOK_SECRET="$CI_SEND_EMAIL_HOOK_SECRET" npm run build'
+          TOML
           npx --yes "$NETLIFY_CLI" deploy \
             --context deploy-preview \
             --alias "$ALIAS" \
