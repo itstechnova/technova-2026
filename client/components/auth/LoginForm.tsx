@@ -33,7 +33,7 @@ function urlErrorText(error: string) {
     case 'oauth':
       return 'We couldn’t start Google sign-in. Please try again.'
     case 'confirm-link':
-      return 'That confirmation link has expired or was already used. If your email is confirmed, log in below. Otherwise, log in and we’ll send a new link.'
+      return 'That link was already used or has expired. Your email may already be confirmed: try logging in. If it isn’t, we’ll send you a new link when you log in.'
     case 'no-role':
       return `We couldn’t open your account. Email ${SUPPORT_EMAIL} and we’ll sort it out.`
     default:
