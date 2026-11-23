@@ -9,7 +9,7 @@ export const authPanel = 'flex flex-col gap-5 lg:pt-2'
 /** Title + intro at the top of the form, with a little more room before the first field. */
 export const cardHeader = 'flex flex-col gap-2 pb-2'
 
-export const cardTitle = `${heading} text-[clamp(2rem,1.8rem+0.8vw,2.25rem)] leading-[1.25]`
+export const cardTitle = `${heading} title-shade w-fit pb-[0.08em] text-[clamp(2rem,1.8rem+0.8vw,2.25rem)] leading-[1.25]`
 
 export const cardIntro = 'text-lg leading-[1.25] text-tn-muted sm:text-xl'
 

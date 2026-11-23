@@ -27,7 +27,7 @@ export function PageHeading({
     <div className="flex max-w-[820px] flex-col gap-2 leading-[1.35] xl:gap-3">
       <Title
         tabIndex={-1}
-        className={`${heading} leading-[1.15] text-balance outline-none ${Title === "h2" ? "text-[clamp(1.5rem,1.2rem+1vw,2rem)]" : "text-[clamp(1.875rem,1.2rem+2vw,3rem)]"}`}
+        className={`${heading} title-shade w-fit pb-[0.08em] leading-[1.15] text-balance outline-none ${Title === "h2" ? "text-[clamp(1.5rem,1.2rem+1vw,2rem)]" : "text-[clamp(1.875rem,1.2rem+2vw,3rem)]"}`}
       >
         {title}
       </Title>

@@ -37,7 +37,7 @@ function Confirmation() {
       <div className="mx-auto flex max-w-[720px] flex-col items-center gap-6 py-6 text-center lg:py-12">
         {/* eslint-disable-next-line @next/next/no-img-element */}
         <img src="/images/cratered-moon.svg" alt="" width={174} height={174} className="-mb-8 w-[174px]" />
-        <h1 tabIndex={-1} className={`${heading} text-[clamp(2rem,1.2rem+2.6vw,3.25rem)] leading-[1.15] text-balance outline-none`}>
+        <h1 tabIndex={-1} className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(2rem,1.2rem+2.6vw,3.25rem)] leading-[1.15] text-balance outline-none`}>
           Thank you for applying to TechNova 2027!
         </h1>
         <div className="flex flex-col gap-4 text-lg leading-[1.45] text-tn-muted">
@@ -88,7 +88,7 @@ function SubmittedApplication({ answers, submittedAt }: { answers: Answers; subm
         </Link>
       </div>
       <div className="flex max-w-[820px] flex-col gap-3">
-        <h1 tabIndex={-1} className={`${heading} text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}>
+        <h1 tabIndex={-1} className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}>
           Your submitted application
         </h1>
         <p className="text-base leading-[1.45] text-tn-muted xl:text-lg">

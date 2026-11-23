@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
-import { BrandLockup, EyebrowPill, Planet, TwinkleStar, heading } from '@/components/portal/ui'
+import { BrandLockup, Planet, TwinkleStar, heading } from '@/components/portal/ui'
 import { SiteFooter, contentWidth } from '@/components/SiteFooter'
 import { EVENT_DATES_SHORT_LABEL } from '@/lib/application/config'
 import { DeadlineCountdown } from './DeadlineCountdown'
@@ -46,9 +46,7 @@ export function LoginShell({ children }: { children: ReactNode }) {
             countdown share the left column and the form sits on the right. */}
         <main className={`${contentWidth} flex flex-col gap-8 pt-4 pb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-[clamp(2rem,6vw,5rem)] lg:gap-y-7 lg:pt-[clamp(1rem,6.5vh,3.9375rem)]`}>
           <div className={`${column} flex flex-col items-start gap-6 lg:gap-7`}>
-            <EyebrowPill>Applicant portal</EyebrowPill>
-
-            <p className={`${heading} text-[clamp(3rem,6.1vw,5rem)] leading-none`}>
+            <p className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(3rem,6.1vw,5rem)] leading-none`}>
               See you at
               <br />
               TechNova.

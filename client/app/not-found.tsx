@@ -97,7 +97,7 @@ export default function NotFound() {
         <div className="flex flex-col items-center gap-6">
           <EyebrowPill>Page not found</EyebrowPill>
           <div className="flex flex-col items-center gap-4">
-            <h1 className={`${heading} text-[clamp(2.5rem,4.5vw,4rem)] leading-none`}>Lost in space.</h1>
+            <h1 className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(2.5rem,4.5vw,4rem)] leading-none`}>Lost in space.</h1>
             <p className="max-w-[560px] text-lg leading-[1.4] text-tn-muted sm:text-[22px]">
               This page drifted out of orbit, or was never here. Let’s get you back to TechNova.
             </p>

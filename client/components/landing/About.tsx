@@ -38,6 +38,17 @@ function Collage() {
         className="absolute h-auto rounded-full border-[3px] border-tn-cyan shadow-[0_12px_32px_rgb(5_0_38_/_0.5)]"
         style={at(6, 368, 200)}
       />
+      {/* A third, smaller photo tucked against the planet's lower right. */}
+      <img
+        src={art("photo-swag-circle")}
+        alt=""
+        width={360}
+        height={360}
+        loading="lazy"
+        className="absolute h-auto rounded-full border-[3px] border-[#ffd0f0] shadow-[0_12px_32px_rgb(5_0_38_/_0.5)]"
+        style={at(492, 486, 168)}
+      />
+      <TwinkleStar className="absolute" dur={5.2} style={at(430, 618, 36)} />
       {/* A small planet travels the dashed orbit once a minute or so. */}
       <div className="anim-spin absolute aspect-square" style={{ ...at(50, 10, 560), "--dur": "54s" } as CSSProperties}>
         <DrawnPlanet kind="rose" className="absolute" style={{ left: "76%", top: "4%", width: "11%" }} />

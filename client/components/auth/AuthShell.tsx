@@ -79,7 +79,7 @@ function AuthArt() {
 export function AuthHeader({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <>
-      <h1 className={`${heading} text-[clamp(1.75rem,1.3rem+1.2vw,2.25rem)] leading-[1.25]`}>{title}</h1>
+      <h1 className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(1.75rem,1.3rem+1.2vw,2.25rem)] leading-[1.25]`}>{title}</h1>
       {children && (
         <p className="w-full max-w-[440px] text-base leading-[1.35] text-tn-muted sm:text-lg 2xl:text-xl">{children}</p>
       )}

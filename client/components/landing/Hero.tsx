@@ -1,5 +1,6 @@
 import type { CSSProperties } from "react";
-import { ApplyLink, Countdown } from "@/components/landing/deadline";
+import { DeadlineCountdown } from "@/components/auth/DeadlineCountdown";
+import { ApplyLink } from "@/components/landing/deadline";
 import { ShootingStar, actionQuiet, art, caps, place, wrap } from "@/components/landing/shared";
 import { Planet, TwinkleStar, heading } from "@/components/portal/ui";
 import { EVENT_DATES_SHORT_LABEL } from "@/lib/application/config";
@@ -126,7 +127,8 @@ export function Hero() {
         </p>
 
         <div className="rise mt-2" style={order(4)}>
-          <Countdown />
+          {/* The same deadline card and mission clock as the login and sign-up screens. */}
+          <DeadlineCountdown />
         </div>
 
         <div className="rise mt-1 flex flex-wrap gap-3" style={order(5)}>

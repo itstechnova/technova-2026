@@ -357,8 +357,8 @@ body {
 
 /* ---------- Landing page (app/page.tsx, components/landing) ---------- */
 
-/* "TechNova 6" in the hero: white letters with the design system's grainy lilac shade rising from
-   the lower right (Design System file, node 64:12: a blurred #B782DB blob masked by the letters). */
+/* Large headings across the site ("TechNova 6", section and page titles): white letters with the
+   design system's lilac shade rising from the lower right (Design System file, node 64:12: a blurred #B782DB blob masked by the letters). */
 .title-shade {
   background:
     radial-gradient(72% 125% at 72% 118%, rgb(183 130 219) 0%, rgb(183 130 219 / 0.78) 38%, rgb(183 130 219 / 0) 100%),
