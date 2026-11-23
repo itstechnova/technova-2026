@@ -3,7 +3,7 @@ import { heading } from "@/components/portal/ui";
 
 // Pieces shared by the landing page's sections (Figma "05 · Public website · redesign v2").
 
-/** The page column: at most 1080px of content, with gutters that grow with the screen. */
+/** The page column: at most 1080px of content (shared with the footer and the login screens), with gutters that grow with the screen. */
 export const wrap = "mx-auto w-full max-w-[1208px] px-6 sm:px-10 lg:px-16";
 
 // The landing page's buttons: one pill shape, lighter than the portal's.

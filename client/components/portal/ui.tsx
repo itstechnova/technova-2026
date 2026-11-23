@@ -53,7 +53,7 @@ const LOGO_LAYERS = [
   },
 ];
 
-/** The stacked-squares logo. Each square carries its own white-to-lilac shade, like the headings. */
+/** The stacked-squares logo. Each square carries its own shade: white on top, lilac toward its lower edge. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   const id = useId();
   return (
@@ -71,12 +71,12 @@ export function LogoMark({ size = 32 }: { size?: number }) {
             key={i}
             id={`${id}-${i}`}
             gradientUnits="userSpaceOnUse"
-            x1="6"
+            x1="16"
             y1={y[0]}
-            x2="28"
+            x2="16"
             y2={y[1]}
           >
-            <stop offset="0.2" stopColor="#fff" />
+            <stop offset="0.25" stopColor="#fff" />
             <stop offset="1" stopColor="#B782DB" />
           </linearGradient>
         ))}

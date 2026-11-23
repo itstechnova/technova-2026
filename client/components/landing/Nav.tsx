@@ -4,6 +4,7 @@ import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { ApplyLink } from "@/components/landing/deadline";
 import { BrandLockup } from "@/components/portal/ui";
+import { headerShade } from "@/components/SiteFooter";
 
 // The sticky navigation (Figma "Sticky navbar"): logo left, section anchors centre, Apply now on
 // the right. The link of the section on screen is highlighted. On phones the
@@ -95,7 +96,7 @@ export function Nav() {
   return (
     <header
       // No bar: the page shows through, darkened only enough at the very top to keep the links legible.
-      className={`sticky top-0 z-40 bg-linear-to-b from-tn-bg/75 via-tn-bg/35 to-transparent transition-transform duration-300 ease-out focus-within:translate-y-0 motion-reduce:transition-none ${
+      className={`sticky top-0 z-40 ${headerShade} transition-transform duration-300 ease-out focus-within:translate-y-0 motion-reduce:transition-none ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
