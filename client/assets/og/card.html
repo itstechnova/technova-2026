@@ -1,0 +1,61 @@
+<!doctype html>
+<!-- The link-preview card (app/opengraph-image.jpg), drawn at 1200 x 630 from the landing hero's
+     artwork, fonts and copy. Render it with `node scripts/render-og-image.mjs`. -->
+<html><head><meta charset="utf-8"><style>
+@font-face{font-family:Righteous;src:url(fonts/righteous-400.woff2)}
+@font-face{font-family:Josefin;font-weight:400;src:url(fonts/josefin-sans-400.woff2)}
+@font-face{font-family:Josefin;font-weight:600;src:url(fonts/josefin-sans-600.woff2)}
+*{margin:0;box-sizing:border-box}
+html,body{width:1200px;height:630px;overflow:hidden;background:#050026;color:#fff;font-family:Josefin,sans-serif}
+.abs{position:absolute}
+#bg{left:0;top:-160px;width:1200px}
+.planet{position:absolute;aspect-ratio:1}
+.planet img{position:absolute;max-width:none}
+.text{position:absolute;left:72px;top:0;bottom:0;display:flex;flex-direction:column;justify-content:center}
+.brand{position:absolute;left:72px;top:54px;display:flex;align-items:center;gap:14px;font:400 30px/1 Righteous}
+.caps{font-weight:600;font-size:22px;letter-spacing:.12em;text-transform:uppercase;color:#9edae6}
+h1{font:400 128px/1 Righteous;margin-top:18px;padding-bottom:.08em;white-space:nowrap;
+ background:radial-gradient(72% 125% at 72% 118%, rgb(183 130 219) 0%, rgb(183 130 219 / .78) 38%, rgb(183 130 219 / 0) 100%),#fff;
+ -webkit-background-clip:text;background-clip:text;color:transparent}
+.dates{font:400 50px/1.2 Righteous}
+.tag{font-size:30px;line-height:1.4;margin-top:26px}
+.url{position:absolute;left:72px;bottom:52px;font-weight:600;font-size:24px;color:#cfc4ff;letter-spacing:.02em}
+</style></head><body>
+<img id="bg" class="abs" src="../../public/images/bg.webp">
+<div class="abs" id="scene" style="left:56px;top:0;width:1200px;height:630px">
+<svg class="abs" viewBox="0 0 1200 630" width="1200" height="630" fill="none" style="overflow:visible"><g transform="rotate(-16 960 300)">
+<path d="M 624 300 A 336 127 0 0 1 1296 300" stroke="#ffd0f0" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M 528 300 A 432 174 0 0 1 1392 300" stroke="#9edae6" stroke-opacity=".5" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>
+</g></svg>
+<div class="planet" style="left:610px;top:-50px;width:700px">
+<img src="../../public/images/pink-planet-halo.webp" style="inset:0;width:100%">
+<img src="../../public/images/pink-planet-base.webp" style="inset:19.08%;width:61.84%">
+<img src="../../public/images/pink-planet-color.webp" style="inset:19.08%;width:61.84%">
+<img src="../../public/images/pink-planet-bands.webp" style="inset:19.08%;width:61.84%">
+<img src="../../public/images/pink-planet-glint.webp" style="inset:19.08%;width:61.84%">
+</div>
+<svg class="abs" viewBox="0 0 1200 630" width="1200" height="630" fill="none" style="overflow:visible"><g transform="rotate(-16 960 300)">
+<path d="M 624 300 A 336 127 0 0 0 1296 300" stroke="#ffd0f0" stroke-opacity=".55" stroke-width="2.5" stroke-linecap="round"/>
+<path d="M 528 300 A 432 174 0 0 0 1392 300" stroke="#9edae6" stroke-opacity=".5" stroke-width="2" stroke-dasharray="2 10" stroke-linecap="round"/>
+<circle cx="700" cy="372" r="6" fill="#ffd0f0"/>
+</g></svg>
+<div class="planet" style="left:930px;top:350px;width:250px">
+<img src="../../public/images/green-planet-body.webp" style="inset:0;width:100%">
+<img src="../../public/images/green-planet-bands.webp" style="inset:16.28%;width:67.44%">
+<img src="../../public/images/green-planet-spots.webp" style="inset:16.28%;width:67.44%">
+</div>
+<img class="abs" src="../../public/images/star-small.webp" style="left:640px;top:470px;width:60px">
+<img class="abs" src="../../public/images/star-small.webp" style="left:560px;top:70px;width:30px">
+<img class="abs" src="../../public/images/star-small.webp" style="left:1140px;top:40px;width:26px">
+</div>
+<div id="copy">
+<div class="brand"><img src="../../public/images/logo-white.svg" width="34"> TechNova</div>
+<div class="text">
+<div class="caps">Waterloo’s largest women+ hackathon</div>
+<h1>TechNova 6</h1>
+<div class="dates">Jan 22–24, 2027</div>
+<div class="tag">A universe of possibility. Hack with us.</div>
+</div>
+<div class="url">itstechnova.org</div>
+</div>
+</body></html>
