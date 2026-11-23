@@ -37,3 +37,14 @@ export function safeNextPath(value: unknown, { allowAbsolute = false }: Options 
 export function withNext(pathname: string, next: string | null): string {
   return next ? `${pathname}?next=${encodeURIComponent(next)}` : pathname
 }
+
+/**
+ * Where the signup confirmation email sends a new account once Supabase has verified the link:
+ * /auth/callback, which signs them in and opens the dashboard (or `next`). `type=signup` tells the
+ * callback this is a confirmation and not a Google sign-in.
+ */
+export function confirmRedirectUrl(origin: string, next: string | null): string {
+  const params = new URLSearchParams({ type: 'signup' })
+  if (next) params.set('next', next)
+  return `${origin}/auth/callback?${params.toString()}`
+}

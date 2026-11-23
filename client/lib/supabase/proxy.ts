@@ -42,6 +42,25 @@ export async function updateSession(request: NextRequest) {
     return supabaseResponse
   }
 
+  // An email link that lands on a page instead of /auth/callback still carries its one-time `code`:
+  // the password-reset link (sent to /reset-password), and confirmation links from emails sent
+  // before the callback became their destination or when Supabase falls back to the Site URL.
+  // Hand the code to the callback, which signs the visitor in and sends them on.
+  const code = request.nextUrl.searchParams.get('code')
+  if (code && !user) {
+    const callbackUrl = new URL('/auth/callback', request.url)
+    callbackUrl.searchParams.set('code', code)
+    if (pathname === '/reset-password') {
+      callbackUrl.searchParams.set('next', pathname)
+      return NextResponse.redirect(callbackUrl)
+    }
+    if (pathname === '/' || pathname.startsWith('/applicant/')) {
+      callbackUrl.searchParams.set('type', 'signup')
+      if (pathname !== '/') callbackUrl.searchParams.set('next', pathname)
+      return NextResponse.redirect(callbackUrl)
+    }
+  }
+
   // /reset-password is deliberately not public: the recovery link signs the visitor in through
   // /auth/confirm before sending them there, and the page needs that session to set a password.
   if (

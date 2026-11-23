@@ -2,7 +2,7 @@
 
 import { createClient } from '@/lib/supabase/server'
 import { headers } from 'next/headers'
-import { safeNextPath } from '@/components/auth/safeNext'
+import { confirmRedirectUrl, safeNextPath } from '@/components/auth/safeNext'
 
 export type ResendState = {
   error?: string
@@ -25,7 +25,7 @@ export async function resendVerificationEmail(prevState: ResendState, formData: 
     type: 'signup',
     email,
     // Same destination as the original confirmation email (see signup/actions.ts).
-    options: origin ? { emailRedirectTo: next ? `${origin}${next}` : origin } : undefined,
+    options: origin ? { emailRedirectTo: confirmRedirectUrl(origin, next) } : undefined,
   })
 
   if (error) return { error: error.message, email }

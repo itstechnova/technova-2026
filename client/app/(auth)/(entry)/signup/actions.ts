@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { safeNextPath } from '@/components/auth/safeNext'
+import { confirmRedirectUrl, safeNextPath } from '@/components/auth/safeNext'
 
 export type SignupState = {
   error?: string
@@ -32,8 +32,8 @@ export async function signUp(prevState: SignupState, formData: FormData): Promis
     password,
     options: {
       data: { full_name: name },
-      // The confirmation link comes back through /auth/confirm with this as its `next`.
-      ...(origin ? { emailRedirectTo: next ? `${origin}${next}` : origin } : {}),
+      // Where the confirmation link lands after Supabase verifies it (see confirmRedirectUrl).
+      ...(origin ? { emailRedirectTo: confirmRedirectUrl(origin, next) } : {}),
     },
   })
 
