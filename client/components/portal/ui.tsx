@@ -34,26 +34,31 @@ export const eyebrow = "text-sm leading-[1.45] tracking-wide text-tn-cyan upperc
 
 export const heading = "font-[family-name:var(--font-righteous)] text-tn-ink";
 
-// The logo's three stacked squares, top to bottom: each one's top face and edge, and where it sits.
+// The logo's three stacked squares, top to bottom: each one's top face and edge, and its shade.
+// The top square stays white; the shading starts just below it and deepens down the stack, each
+// square running from `from` at `y[0]` to `to` at `y[1]` so the squares stay distinct.
 const LOGO_LAYERS = [
   {
-    y: [0, 19.06],
     face: "M32 8.05069L15.9369 0L0.000248647 8.05069L15.9369 15.8852L32 8.05069Z",
     edge: "M31.9997 10.8725L15.9379 19.0621L0 10.8725V8.0505L15.9379 15.8502L31.9997 8.04683V10.8725Z",
   },
   {
-    y: [6.83, 25.89],
+    y: [11, 25.89],
+    from: "#F1E7F9",
+    to: "#CDABE7",
     face: "M31.9997 14.8784L15.9366 6.82766L0 14.8784L15.9366 22.7129L31.9997 14.8784Z",
     edge: "M31.9997 17.7002L15.9379 25.8898L0 17.7002V14.8782L15.9379 22.6778L31.9997 14.8745V17.7002Z",
   },
   {
-    y: [13.6, 32.67],
+    y: [18, 32.67],
+    from: "#DCC4EF",
+    to: "#B782DB",
     face: "M31.9997 21.6551L15.9366 13.6044L0 21.6551L15.9366 29.4896L31.9997 21.6551Z",
     edge: "M31.9997 24.477L15.9379 32.6667L0 24.477V21.655L15.9379 29.4547L31.9997 21.6513V24.477Z",
   },
 ];
 
-/** The stacked-squares logo. Each square carries its own shade: white on top, lilac toward its lower edge. */
+/** The stacked-squares logo: a white top square, with lilac shading on the two beneath it. */
 export function LogoMark({ size = 32 }: { size?: number }) {
   const id = useId();
   return (
@@ -66,24 +71,19 @@ export function LogoMark({ size = 32 }: { size?: number }) {
       className="shrink-0"
     >
       <defs>
-        {LOGO_LAYERS.map(({ y }, i) => (
-          <linearGradient
-            key={i}
-            id={`${id}-${i}`}
-            gradientUnits="userSpaceOnUse"
-            x1="16"
-            y1={y[0]}
-            x2="16"
-            y2={y[1]}
-          >
-            <stop offset="0.25" stopColor="#fff" />
-            <stop offset="1" stopColor="#B782DB" />
-          </linearGradient>
-        ))}
+        {LOGO_LAYERS.map(
+          ({ y, from, to }, i) =>
+            y && (
+              <linearGradient key={i} id={`${id}-${i}`} gradientUnits="userSpaceOnUse" x1="16" y1={y[0]} x2="16" y2={y[1]}>
+                <stop stopColor={from} />
+                <stop offset="1" stopColor={to} />
+              </linearGradient>
+            ),
+        )}
       </defs>
       {/* Bottom square first, so the ones above overlap it. */}
-      {LOGO_LAYERS.map(({ face, edge }, i) => (
-        <g key={i} fill={`url(#${id}-${i})`}>
+      {LOGO_LAYERS.map(({ y, face, edge }, i) => (
+        <g key={i} fill={y ? `url(#${id}-${i})` : "#fff"}>
           <path d={face} />
           <path d={edge} />
         </g>
