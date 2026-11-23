@@ -87,7 +87,15 @@ export function Planet({ kind, className = "" }: { kind: "green" | "pink"; class
 }
 
 /** The landing page's small four-point star, twinkling (`.anim-twinkle`). */
-export function TwinkleStar({ className = "", dur = 4.2 }: { className?: string; dur?: number }) {
+export function TwinkleStar({
+  className = "",
+  dur = 4.2,
+  style,
+}: {
+  className?: string;
+  dur?: number;
+  style?: CSSProperties;
+}) {
   return (
     // eslint-disable-next-line @next/next/no-img-element
     <img
@@ -95,7 +103,7 @@ export function TwinkleStar({ className = "", dur = 4.2 }: { className?: string;
       src={layerUrl("star-small")}
       alt=""
       className={`anim-twinkle pointer-events-none select-none ${className}`}
-      style={{ "--dur": `${dur}s` } as CSSProperties}
+      style={{ ...style, "--dur": `${dur}s` } as CSSProperties}
     />
   );
 }

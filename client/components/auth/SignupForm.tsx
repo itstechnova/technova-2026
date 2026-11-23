@@ -3,9 +3,22 @@
 import Link from 'next/link'
 import { useActionState, useEffect } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
-import { signUp } from '@/app/(auth)/signup/actions'
-import { buttonPrimary, fieldInput, fieldLabel } from '@/components/portal/ui'
-import { AuthBanner, AuthHeader, authLink } from './AuthShell'
+import { signInWithGoogle } from '@/app/(auth)/(entry)/login/actions'
+import { signUp } from '@/app/(auth)/(entry)/signup/actions'
+import { fieldLabel } from '@/components/portal/ui'
+import { AuthBanner } from './AuthShell'
+import {
+  authPanel,
+  cardButtonPrimary,
+  cardButtonSecondary,
+  cardDivider,
+  cardField,
+  cardHeader,
+  cardInput,
+  cardIntro,
+  cardSwitchLink,
+  cardTitle,
+} from './card'
 import { PasswordField } from './PasswordField'
 import { SIGNUP_STORAGE_KEY, safeNextPath, withNext } from './safeNext'
 
@@ -29,15 +42,18 @@ export function SignupForm() {
   const moving = isPending || Boolean(state?.success)
 
   return (
-    <>
-      <AuthHeader title="Create an account">Save your application and check its status.</AuthHeader>
+    <div className={authPanel}>
+      <div className={cardHeader}>
+        <h1 className={cardTitle}>Create an account</h1>
+        <p className={cardIntro}>Save your application and check its status.</p>
+      </div>
 
       {state?.error && <AuthBanner tone="error">{state.error}</AuthBanner>}
 
-      <form action={formAction} className="flex w-full flex-col items-start gap-6">
+      <form action={formAction} className="flex flex-col gap-5">
         {next && <input type="hidden" name="next" value={next} />}
 
-        <div className="flex w-full max-w-[440px] flex-col gap-2">
+        <div className={cardField}>
           <label htmlFor="name" className={fieldLabel}>
             Name
           </label>
@@ -49,11 +65,11 @@ export function SignupForm() {
             autoComplete="name"
             placeholder="Your name"
             defaultValue={state?.name ?? ''}
-            className={fieldInput}
+            className={cardInput}
           />
         </div>
 
-        <div className="flex w-full max-w-[440px] flex-col gap-2">
+        <div className={cardField}>
           <label htmlFor="email" className={fieldLabel}>
             Email address
           </label>
@@ -69,7 +85,7 @@ export function SignupForm() {
             spellCheck={false}
             placeholder="you@example.com"
             defaultValue={state?.email ?? ''}
-            className={fieldInput}
+            className={cardInput}
           />
         </div>
 
@@ -79,16 +95,27 @@ export function SignupForm() {
           autoComplete="new-password"
           minLength={6}
           hint="At least 6 characters."
+          className={cardField}
+          inputClassName={cardInput}
         />
 
-        <button type="submit" disabled={moving} className={`${buttonPrimary} w-full max-w-[440px] sm:w-auto`}>
-          {moving ? 'Creating account…' : 'Create account'}
-        </button>
+        <div className="flex flex-col gap-3">
+          <button type="submit" disabled={moving} className={cardButtonPrimary}>
+            {moving ? 'Creating account…' : 'Create account'}
+          </button>
+          {/* Same form, different action: a first Google sign-in creates the account, so it needs
+              `next` but none of the fields. */}
+          <button type="submit" formAction={signInWithGoogle} formNoValidate disabled={moving} className={cardButtonSecondary}>
+            Sign up with Google
+          </button>
+        </div>
       </form>
 
-      <Link href={withNext('/login', next)} className={authLink}>
+      <div aria-hidden className={cardDivider} />
+
+      <Link href={withNext('/login', next)} className={cardSwitchLink}>
         Already have an account? Log in
       </Link>
-    </>
+    </div>
   )
 }

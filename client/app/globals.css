@@ -30,6 +30,8 @@
   --color-tn-cyan: #9edae6;
   --color-tn-line: #4b3a72;
   --color-tn-error: #ffb4c8;
+  --color-tn-yellow: #fdf4b8;
+  --color-tn-surface: rgb(18 8 56 / 0.6);
 }
 
 .admin-shell {
@@ -197,6 +199,11 @@ body {
   transform-origin: var(--origin, 50% 50%);
 }
 
+/* Login scene: a slow drift for the planet and the things orbiting it. */
+.anim-float {
+  animation: float var(--dur, 14s) ease-in-out var(--delay, 0s) infinite;
+}
+
 .anim-spin {
   animation: spin var(--dur) linear infinite;
 }
@@ -217,6 +224,106 @@ img[data-offscreen] {
 @keyframes spin {
   to {
     transform: rotate(360deg);
+  }
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0) rotate(0deg);
+  }
+  50% {
+    transform: translate3d(var(--float-x, 0), var(--float-y, -1.5%), 0) rotate(var(--float-rotate, 0deg));
+  }
+}
+
+/* Login scene: the satellite floats free, wandering across the lower part of the scene and back.
+   Offsets are shares of its own box (200 x 62 in the 1440px frame), so the path scales with it. */
+.anim-satellite-drift {
+  animation: satellite-drift 120s ease-in-out infinite alternate;
+}
+
+@keyframes satellite-drift {
+  0% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  22% {
+    transform: translate(135%, 130%) rotate(14deg);
+  }
+  50% {
+    transform: translate(400%, 290%) rotate(-6deg);
+  }
+  78% {
+    transform: translate(575%, -30%) rotate(-22deg);
+  }
+  100% {
+    transform: translate(470%, 180%) rotate(8deg);
+  }
+}
+
+/* Login scene: the moon circles the planet. Its path is an ellipse, drawn as two sine
+   motions a quarter turn apart: across the orbit's box (x) and up and down it (y). It is
+   drawn twice, behind and in front of the planet, and the copies swap at the ends of the orbit,
+   where it passes from one side of the planet to the other. */
+.anim-orbit-x {
+  animation: orbit-x var(--dur) var(--delay, 0s) infinite;
+}
+
+.anim-orbit-y {
+  animation: orbit-y var(--dur) var(--delay, 0s) infinite;
+}
+
+.anim-orbit-front {
+  animation: orbit-front var(--dur) step-end var(--delay, 0s) infinite;
+}
+
+.anim-orbit-back {
+  animation: orbit-back var(--dur) step-end var(--delay, 0s) infinite;
+}
+
+@keyframes orbit-x {
+  0%,
+  100% {
+    transform: translateX(50%);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  50% {
+    transform: translateX(-50%);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+}
+
+@keyframes orbit-y {
+  0%,
+  100% {
+    transform: translateY(0);
+    animation-timing-function: cubic-bezier(0.61, 1, 0.88, 1);
+  }
+  25% {
+    transform: translateY(50%);
+    animation-timing-function: cubic-bezier(0.37, 0, 0.63, 1);
+  }
+  75% {
+    transform: translateY(-50%);
+    animation-timing-function: cubic-bezier(0.12, 0, 0.39, 0);
+  }
+}
+
+@keyframes orbit-front {
+  0% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@keyframes orbit-back {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
   }
 }
 
@@ -440,7 +547,13 @@ img[data-lazy="pending"] {
 @media (prefers-reduced-motion: reduce) {
   .anim-spin,
   .anim-twinkle,
-  .anim-breathe {
+  .anim-breathe,
+  .anim-float,
+  .anim-satellite-drift,
+  .anim-orbit-x,
+  .anim-orbit-y,
+  .anim-orbit-front,
+  .anim-orbit-back {
     animation: none;
   }
 
