@@ -7,7 +7,7 @@ import type { PolicySlug } from "./policies";
 export type Option = { value: string; label: string };
 
 type QuestionBase = {
-  /** Column name in `public.hacker` (or `public.user` when `table` is "user"). */
+  /** Column name in the application's own table (`public.hacker`, `public.volunteer`, …), or in `public.user` when `table` is "user". */
   id: string;
   prompt: string;
   /** Helper text under the prompt. */
@@ -15,8 +15,8 @@ type QuestionBase = {
   required?: boolean;
   /** Only shown (and only validated/stored) when another question has this answer. */
   showIf?: { question: string; equals: string };
-  /** Where the answer is stored. Defaults to "hacker". */
-  table?: "hacker" | "user";
+  /** "user": stored on the applicant's `public.user` profile row, shared by every application. */
+  table?: "user";
   /**
    * Links shown with the question, e.g. the MLH policies next to a consent. With `policy`, the
    * document opens in a popup over the form (lib/application/policies.ts); `href` stays the
@@ -67,17 +67,43 @@ export type ConsentQuestion = QuestionBase & {
   type: "consent";
 };
 
+/**
+ * A grid of checkboxes: one row per `rows` option, one column per `columns` option. The answer is
+ * the list of ticked cells, each stored as readable text (see `gridCellValue`), e.g. "Sat 5 PM – 9 PM".
+ */
+export type CheckboxGridQuestion = QuestionBase & {
+  type: "checkbox_grid";
+  rows: Option[];
+  columns: Option[];
+  /** Cells that don't exist (e.g. times outside the event), as `gridCellValue` strings. */
+  skip?: string[];
+};
+
+/**
+ * A file uploaded to Supabase Storage as soon as it is picked. The answer is the object's path in
+ * `bucket`: `<user id>/<question id>/<timestamp>-<file name>`.
+ */
+export type FileQuestion = QuestionBase & {
+  type: "file";
+  bucket: string;
+  /** Allowed extensions, lowercase with the dot: [".pdf", ".docx"]. */
+  accept: string[];
+  maxBytes: number;
+};
+
 export type Question =
   | ShortTextQuestion
   | ParagraphQuestion
   | SingleChoiceQuestion
   | DropdownQuestion
   | MultiChoiceQuestion
-  | ConsentQuestion;
+  | ConsentQuestion
+  | CheckboxGridQuestion
+  | FileQuestion;
 
 export type QuestionType = Question["type"];
 
-/** short_text / paragraph / single_choice / dropdown: string. multi_choice: string[]. consent: boolean. */
+/** short_text / paragraph / single_choice / dropdown / file: string. multi_choice / checkbox_grid: string[]. consent: boolean. */
 export type AnswerValue = string | string[] | boolean;
 export type Answers = Record<string, AnswerValue | undefined>;
 
@@ -93,6 +119,9 @@ export type FormSection = {
 };
 
 export type Form = FormSection[];
+
+/** The stored value of one checkbox-grid cell: column then row, e.g. "Sat 5 PM – 9 PM". */
+export const gridCellValue = (column: Option, row: Option) => `${column.value} ${row.value}`;
 
 /** Prefix of a free-text "Other" answer, e.g. "Other: Ottawa". */
 export const OTHER_PREFIX = "Other: ";

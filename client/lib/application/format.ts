@@ -1,6 +1,7 @@
 // Turns a stored answer back into display text, for the review page and the read-only view.
 
 import type { AnswerValue, Option, Question } from "./types";
+import { fileNameFromPath } from "./validate";
 
 const EMPTY = "—";
 
@@ -11,6 +12,9 @@ function optionLabel(options: Option[], value: string): string {
 
 export function formatAnswer(question: Question, value: AnswerValue | undefined): string {
   if (question.type === "consent") return value === true ? "Agreed" : "Not agreed";
+
+  // An unticked availability grid means "available the whole time", not a missing answer.
+  if (question.type === "checkbox_grid" && (!Array.isArray(value) || value.length === 0)) return "None";
 
   if (Array.isArray(value)) {
     const items = value.map((item) => String(item).trim()).filter((item) => item !== "");
@@ -29,6 +33,8 @@ export function formatAnswer(question: Question, value: AnswerValue | undefined)
     case "single_choice":
     case "dropdown":
       return optionLabel(question.options, text);
+    case "file":
+      return fileNameFromPath(text);
     default:
       return text;
   }

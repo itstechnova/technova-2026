@@ -3,7 +3,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState, useSyncExternalStore } from "react";
 import type { AnswerValue, Answers } from "@/lib/application/types";
 
-// An unsubmitted application lives only in this browser's localStorage, one entry per user.
+// An unsubmitted application lives only in this browser's localStorage, one entry per user and
+// application type (see `draftKey`); the hooks below take that key.
 // Everything here tolerates a missing, corrupt, full or blocked localStorage: the form then
 // simply works without a saved draft.
 
@@ -21,11 +22,12 @@ const SAVE_DELAY_MS = 400;
 // `storage` events only fire in other tabs; this one tells hooks in this tab about a write.
 const CHANGE_EVENT = "technova:draft-change";
 
-export const draftKey = (userId: string) => `technova:hacker-application:draft:${userId}`;
+/** E.g. `technova:hacker-application:draft:<user id>` (the hacker key predates the other application types). */
+export const draftKey = (applicationType: string, userId: string) => `technova:${applicationType}-application:draft:${userId}`;
 
-function readRaw(userId: string): string | null {
+function readRaw(key: string): string | null {
   try {
-    return window.localStorage.getItem(draftKey(userId));
+    return window.localStorage.getItem(key);
   } catch {
     return null;
   }
@@ -63,10 +65,10 @@ function parseDraft(raw: string | null): Draft | null {
 }
 
 /** Writes the draft and returns its save time, or null when the browser refused to store it. */
-function writeDraft(userId: string, content: DraftContent): string | null {
+function writeDraft(key: string, content: DraftContent): string | null {
   const draft: Draft = { ...content, savedAt: new Date().toISOString() };
   try {
-    window.localStorage.setItem(draftKey(userId), JSON.stringify(draft));
+    window.localStorage.setItem(key, JSON.stringify(draft));
     window.dispatchEvent(new Event(CHANGE_EVENT));
     return draft.savedAt;
   } catch {
@@ -74,9 +76,9 @@ function writeDraft(userId: string, content: DraftContent): string | null {
   }
 }
 
-function removeDraft(userId: string) {
+function removeDraft(key: string) {
   try {
-    window.localStorage.removeItem(draftKey(userId));
+    window.localStorage.removeItem(key);
     window.dispatchEvent(new Event(CHANGE_EVENT));
   } catch {
     // Nothing was stored, or storage is blocked: nothing to remove.
@@ -96,11 +98,11 @@ function subscribe(onChange: () => void) {
  * The stored draft: `undefined` while rendering on the server and during hydration (render a
  * skeleton), then the draft or `null` when there is none.
  */
-export function useStoredDraft(userId: string): Draft | null | undefined {
+export function useStoredDraft(key: string): Draft | null | undefined {
   // The snapshot is the raw string, which is stable between renders; `undefined` = not loaded.
   const raw = useSyncExternalStore(
     subscribe,
-    () => readRaw(userId),
+    () => readRaw(key),
     () => undefined,
   );
   return useMemo(() => (raw === undefined ? undefined : parseDraft(raw)), [raw]);
@@ -110,7 +112,7 @@ export function useStoredDraft(userId: string): Draft | null | undefined {
  * The editable draft. Mount it only once `useStoredDraft` has loaded and pass that draft as
  * `initial`; changes are written back to localStorage after a short pause.
  */
-export function useApplicationDraft(userId: string, initial: DraftContent, initialSavedAt: string | null) {
+export function useApplicationDraft(key: string, initial: DraftContent, initialSavedAt: string | null) {
   const [content, setContent] = useState(initial);
   const [savedAt, setSavedAt] = useState(initialSavedAt);
   const [saveFailed, setSaveFailed] = useState(false);
@@ -125,10 +127,10 @@ export function useApplicationDraft(userId: string, initial: DraftContent, initi
     window.clearTimeout(timer.current);
     if (!dirty.current) return;
     dirty.current = false;
-    const time = writeDraft(userId, latest.current);
+    const time = writeDraft(key, latest.current);
     setSaveFailed(time === null);
     if (time) setSavedAt(time);
-  }, [userId]);
+  }, [key]);
 
   const change = useCallback(
     (next: DraftContent) => {
@@ -158,8 +160,8 @@ export function useApplicationDraft(userId: string, initial: DraftContent, initi
   const clear = useCallback(() => {
     window.clearTimeout(timer.current);
     dirty.current = false;
-    removeDraft(userId);
-  }, [userId]);
+    removeDraft(key);
+  }, [key]);
 
   // Don't lose the last few keystrokes when the tab is hidden or closed, or on navigating away.
   useEffect(() => {
@@ -174,10 +176,10 @@ export function useApplicationDraft(userId: string, initial: DraftContent, initi
       window.clearTimeout(timer.current);
       if (dirty.current) {
         dirty.current = false;
-        writeDraft(userId, latest.current);
+        writeDraft(key, latest.current);
       }
     };
-  }, [save, userId]);
+  }, [save, key]);
 
   return { answers: content.answers, step: content.step, savedAt, saveFailed, setAnswer, setStep, save, clear };
 }

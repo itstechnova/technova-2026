@@ -4,7 +4,10 @@
 
 import {
   OTHER_PREFIX,
+  gridCellValue,
   type AnswerValue,
+  type CheckboxGridQuestion,
+  type FileQuestion,
   type Answers,
   type Form,
   type FormSection,
@@ -58,6 +61,7 @@ export function isAnswered(question: Question, value: AnswerValue | undefined): 
     case "consent":
       return value === true;
     case "multi_choice":
+    case "checkbox_grid":
       return Array.isArray(value) && value.length > 0;
     default:
       return typeof value === "string" && value.trim() !== "";
@@ -132,6 +136,41 @@ function validateChoices(question: MultiChoiceQuestion, values: string[]): strin
   return null;
 }
 
+/** Every cell of a checkbox grid that exists, as stored values. */
+export function gridCells(question: CheckboxGridQuestion): string[] {
+  const skip = new Set(question.skip);
+  return question.rows.flatMap((row) =>
+    question.columns.map((column) => gridCellValue(column, row)).filter((cell) => !skip.has(cell)),
+  );
+}
+
+function validateGrid(question: CheckboxGridQuestion, values: string[]): string | null {
+  if (new Set(values).size !== values.length) return INVALID;
+  const cells = new Set(gridCells(question));
+  return values.every((value) => cells.has(value)) ? null : INVALID;
+}
+
+// `<user id>/<question id>/<timestamp>-<file name>`; see FileQuestion.
+const FILE_PATH_PATTERN = /^[0-9a-f-]{36}\/[a-z0-9_]+\/\d+-[^/\\]+$/;
+
+/** The file name an applicant picked, from a stored path: ".../1700000000000-resume.pdf" → "resume.pdf". */
+export function fileNameFromPath(path: string): string {
+  return path.slice(path.lastIndexOf("/") + 1).replace(/^\d+-/, "");
+}
+
+/** The owner's user id from a stored path (its first folder). */
+export function fileOwner(path: string): string {
+  return path.split("/", 1)[0];
+}
+
+function validateFile(question: FileQuestion, path: string): string | null {
+  if (!FILE_PATH_PATTERN.test(path) || path.split("/")[1] !== question.id) return INVALID;
+  const name = path.toLowerCase();
+  return question.accept.some((extension) => name.endsWith(extension))
+    ? null
+    : `Please upload a ${question.accept.join(" or ")} file`;
+}
+
 /** A human-readable problem with this question's answer, or null when it is fine. */
 export function validateQuestion(question: Question, answers: Answers): string | null {
   if (!isVisible(question, answers)) return null;
@@ -151,6 +190,21 @@ export function validateQuestion(question: Question, answers: Answers): string |
       const values = value.map((item) => item.trim());
       if (values.length === 0) return question.required ? REQUIRED : null;
       return validateChoices(question, values);
+    }
+
+    case "checkbox_grid": {
+      if (value === undefined) return question.required ? REQUIRED : null;
+      if (!Array.isArray(value) || !value.every((item) => typeof item === "string")) {
+        return INVALID;
+      }
+      if (value.length === 0) return question.required ? REQUIRED : null;
+      return validateGrid(question, value);
+    }
+
+    case "file": {
+      if (value === undefined || value === "") return question.required ? "Please upload a file" : null;
+      if (typeof value !== "string") return INVALID;
+      return validateFile(question, value);
     }
 
     default: {

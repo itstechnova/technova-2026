@@ -5,6 +5,7 @@ import type { Form } from "../types";
 import { OTHER_INSTITUTION, institutions, programs, toOptions } from "./options";
 import {
   GENDER_NOT_LISTED,
+  age,
   firstName,
   genderIdentity,
   lastName,
@@ -33,13 +34,7 @@ export const hackerForm: Form = [
           "Please provide an email address where we can reach you and send application updates.",
         required: true,
       },
-      {
-        id: "age",
-        type: "short_text",
-        inputType: "number",
-        prompt: "How old will you be as of January 22, 2027?",
-        required: true,
-      },
+      age,
     ],
   },
   {

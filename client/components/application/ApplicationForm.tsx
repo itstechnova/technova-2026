@@ -8,6 +8,7 @@ import { QuestionList, focusQuestion } from "@/components/application/QuestionLi
 import { ReviewStep } from "@/components/application/ReviewStep";
 import { StepTabs, type Step } from "@/components/application/StepTabs";
 import {
+  draftKey,
   savedLabel,
   useApplicationDraft,
   useNow,
@@ -18,9 +19,9 @@ import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPag
 import { buttonPrimary, buttonSecondary } from "@/components/portal/ui";
 import { cn } from "@/lib/utils";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
-import { hackerForm } from "@/lib/application/forms/hacker";
-import { submitHackerApplication } from "@/lib/application/submit";
-import type { AnswerValue, Answers } from "@/lib/application/types";
+import { APPLICATIONS, type ApplicationConfig, type ApplicationType } from "@/lib/application/roles";
+import { submitApplication } from "@/lib/application/submit";
+import type { AnswerValue, Answers, FormSection, Question } from "@/lib/application/types";
 import {
   isAnswered,
   reviewSections,
@@ -33,40 +34,61 @@ import {
 // The action bar's buttons: the portal buttons, a size down so three fit a phone's width.
 const compactButton = "min-h-11 px-5 py-2.5 text-base";
 
-// The hacker application as a stepper: one step per form section, then Review. The current step
-// is in the URL (`?step=<section id | review>`); answers are a localStorage draft until submitted.
+// Any application (hacker, volunteer, …) as a stepper: one step per form section, then Review. The
+// current step is in the URL (`?step=<section id | review>`); answers are a localStorage draft
+// until submitted.
 
 const DASHBOARD = "/applicant/dashboard";
 const REVIEW = "review";
 const SUBMIT_FAILED = "Something went wrong while submitting your application. Please try again.";
 
-const SECTIONS = stepSections(hackerForm);
-const AGREEMENTS = reviewSections(hackerForm);
-const STEPS: Step[] = [
-  ...SECTIONS.map((section) => ({ id: section.id, label: section.shortTitle ?? section.title })),
-  { id: REVIEW, label: "Review" },
-];
-const REVIEW_INDEX = SECTIONS.length;
-const QUESTIONS = hackerForm.flatMap((section) => section.questions);
+/** An application type's form laid out as steps (tabs, sections, Review), worked out once per type. */
+type StepLayout = {
+  config: ApplicationConfig;
+  sections: FormSection[];
+  agreements: FormSection[];
+  steps: Step[];
+  reviewIndex: number;
+  questions: Question[];
+};
+
+function makeStepLayout(config: ApplicationConfig): StepLayout {
+  const sections = stepSections(config.form);
+  return {
+    config,
+    sections,
+    agreements: reviewSections(config.form),
+    steps: [
+      ...sections.map((section) => ({ id: section.id, label: section.shortTitle ?? section.title })),
+      { id: REVIEW, label: "Review" },
+    ],
+    reviewIndex: sections.length,
+    questions: config.form.flatMap((section) => section.questions),
+  };
+}
+
+const STEP_LAYOUTS = Object.fromEntries(
+  Object.values(APPLICATIONS).map((config) => [config.applicationType, makeStepLayout(config)]),
+) as Record<ApplicationType, StepLayout>;
 
 /** Index of the first step whose answers don't validate; the Review step when they all do. */
-function firstInvalidStep(answers: Answers): number {
-  const index = SECTIONS.findIndex((section) => Object.keys(validateSection(section, answers)).length > 0);
-  return index === -1 ? REVIEW_INDEX : index;
+function firstInvalidStep(layout: StepLayout, answers: Answers): number {
+  const index = layout.sections.findIndex((section) => Object.keys(validateSection(section, answers)).length > 0);
+  return index === -1 ? layout.reviewIndex : index;
 }
 
 /** The step holding the first question (in form order) that has an error, and that question. */
-function firstError(errors: Record<string, string>): { step: number; question: string } | null {
-  const question = QUESTIONS.find((candidate) => errors[candidate.id]);
+function firstError(layout: StepLayout, errors: Record<string, string>): { step: number; question: string } | null {
+  const question = layout.questions.find((candidate) => errors[candidate.id]);
   if (!question) return null;
-  const step = SECTIONS.findIndex((section) => section.questions.includes(question));
-  return { step: step === -1 ? REVIEW_INDEX : step, question: question.id };
+  const step = layout.sections.findIndex((section) => section.questions.includes(question));
+  return { step: step === -1 ? layout.reviewIndex : step, question: question.id };
 }
 
 /** Account details fill in the matching questions the draft hasn't answered yet. */
-function withPrefill(answers: Answers, prefill: Answers): Answers {
+function withPrefill(layout: StepLayout, answers: Answers, prefill: Answers): Answers {
   const merged = { ...answers };
-  for (const question of QUESTIONS) {
+  for (const question of layout.questions) {
     const value = prefill[question.id];
     if (value !== undefined && !isAnswered(question, merged[question.id])) merged[question.id] = value;
   }
@@ -89,11 +111,11 @@ function FormSkeleton() {
   );
 }
 
-function ClosedState() {
+function ClosedState({ title }: { title: string }) {
   return (
     <PortalPage>
-      <PageHeading eyebrow="Application / Closed" title="Applications are closed">
-        The deadline to apply to TechNova has passed, so new applications can no longer be submitted.
+      <PageHeading eyebrow={`${title} / Closed`} title="Applications are closed">
+        The deadline for this application has passed, so new applications can no longer be submitted.
       </PageHeading>
       <p className="text-lg text-tn-muted">
         Questions? Email{" "}
@@ -112,7 +134,8 @@ function ClosedState() {
 }
 
 type FormProps = {
-  /** Keys the localStorage draft. */
+  applicationType: ApplicationType;
+  /** With `applicationType`, keys the localStorage draft. */
   userId: string;
   /** Answers known from the account (email, name), used where the draft has none. */
   prefill: Answers;
@@ -120,22 +143,34 @@ type FormProps = {
   closed: boolean;
 };
 
-export default function ApplicationForm({ userId, prefill, closed }: FormProps) {
-  const stored = useStoredDraft(userId);
+export default function ApplicationForm({ applicationType, userId, prefill, closed }: FormProps) {
+  const key = draftKey(applicationType, userId);
+  const stored = useStoredDraft(key);
 
-  if (closed) return <ClosedState />;
+  if (closed) return <ClosedState title={APPLICATIONS[applicationType].title} />;
   // Not known on the server or during hydration: localStorage is read after that.
   if (stored === undefined) return <FormSkeleton />;
-  return <Stepper userId={userId} prefill={prefill} stored={stored} />;
+  return <Stepper layout={STEP_LAYOUTS[applicationType]} storageKey={key} prefill={prefill} stored={stored} />;
 }
 
-function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stored: Draft | null }) {
+function Stepper({
+  layout,
+  storageKey,
+  prefill,
+  stored,
+}: {
+  layout: StepLayout;
+  storageKey: string;
+  prefill: Answers;
+  stored: Draft | null;
+}) {
+  const { config, sections: SECTIONS, agreements: AGREEMENTS, steps: STEPS, reviewIndex: REVIEW_INDEX } = layout;
   const router = useRouter();
   const searchParams = useSearchParams();
   // `stored` is only the starting point; the hook owns the draft from here on.
   const draft = useApplicationDraft(
-    userId,
-    { answers: withPrefill(stored?.answers ?? {}, prefill), step: stored?.step || STEPS[0].id },
+    storageKey,
+    { answers: withPrefill(layout, stored?.answers ?? {}, prefill), step: stored?.step || STEPS[0].id },
     stored?.savedAt || null,
   );
   const { answers } = draft;
@@ -150,7 +185,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   // first step that still has invalid answers.
   const requested = searchParams.get("step");
   const requestedIndex = STEPS.findIndex((step) => step.id === (requested ?? draft.step));
-  const reachable = firstInvalidStep(answers);
+  const reachable = firstInvalidStep(layout, answers);
   const current = Math.min(Math.max(requestedIndex, 0), reachable);
   const stepId = STEPS[current].id;
   const section = current < REVIEW_INDEX ? SECTIONS[current] : null;
@@ -188,7 +223,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   /** Shows validation errors and takes the applicant to the first one. */
   function showErrors(next: Record<string, string>) {
     setErrors(next);
-    const first = firstError(next);
+    const first = firstError(layout, next);
     if (!first) return;
     if (first.step === current) {
       // Wait for the error messages to render before moving focus.
@@ -221,18 +256,20 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
 
   function submit() {
     setSubmitError(null);
-    const formErrors = validateForm(hackerForm, answers);
+    const formErrors = validateForm(config.form, answers);
     if (Object.keys(formErrors).length > 0) {
       showErrors(formErrors);
       return;
     }
     startTransition(async () => {
       try {
-        const result = await submitHackerApplication(visibleAnswers(hackerForm, answers));
+        const result = await submitApplication(config.applicationType, visibleAnswers(config.form, answers));
         if (result.ok) {
           setSubmitted(true);
           draft.clear();
-          router.push(DASHBOARD);
+          // The hacker dashboard shows the submitted status; other application types show it on their own page.
+          if (config.applicationType === "hacker") router.push(DASHBOARD);
+          else router.refresh();
           return;
         }
         setSubmitError(result.error);
@@ -254,7 +291,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     <PortalPage>
       <div ref={containerRef} className="flex flex-col gap-5 xl:gap-[30px]">
         <PageHeading
-          eyebrow={`Application / ${section ? (section.shortTitle ?? section.title) : "Review"}`}
+          eyebrow={`${config.title} / ${section ? (section.shortTitle ?? section.title) : "Review"}`}
           title={section ? section.title : "Review your application"}
         >
           {!section && <p>Check your answers before submitting.</p>}
