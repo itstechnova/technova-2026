@@ -86,14 +86,14 @@ export function Countdown() {
       <p aria-hidden className="text-[15px] leading-none text-tn-muted">
         {open ? "Applications close in" : "The hackathon starts in"}
       </p>
-      <dl aria-hidden className="flex items-start gap-3 sm:gap-4">
-        {units.map(({ label, value }, index) => (
-          <div key={label} className="flex items-start gap-3 sm:gap-4">
-            {index > 0 && <span className={`${heading} text-[clamp(2rem,1.5rem+1.8vw,2.75rem)] leading-none text-tn-muted/50!`}>:</span>}
-            <div className="flex flex-col items-center gap-1.5">
-              <dd className={`${heading} text-[clamp(2rem,1.5rem+1.8vw,2.75rem)] leading-none tabular-nums`}>{value}</dd>
-              <dt className="text-xs leading-none text-tn-muted">{label}</dt>
-            </div>
+      <dl aria-hidden className="flex gap-2 sm:gap-2.5">
+        {units.map(({ label, value }) => (
+          <div
+            key={label}
+            className="flex w-[4.5rem] flex-col items-center gap-1.5 rounded-xl border border-tn-line/80 bg-[#120838]/80 pt-3.5 pb-2.5 sm:w-[5.25rem]"
+          >
+            <dd className={`${heading} text-[clamp(1.875rem,1.4rem+1.8vw,2.5rem)] leading-none tabular-nums`}>{value}</dd>
+            <dt className="text-xs leading-none text-tn-muted">{label}</dt>
           </div>
         ))}
       </dl>
