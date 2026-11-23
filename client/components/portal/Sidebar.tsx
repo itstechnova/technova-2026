@@ -35,8 +35,10 @@ function Deadline() {
   return (
     <div className="flex flex-col gap-[5px] leading-none">
       <p className="text-xs tracking-wide text-tn-muted uppercase">Applications close</p>
-      <p className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</p>
-      <p className="text-base text-tn-cyan xl:text-lg">{APPLICATIONS_CLOSE_TIME_LABEL}</p>
+      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
+        <span className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</span>
+        <span className="text-xs text-tn-cyan">{APPLICATIONS_CLOSE_TIME_LABEL}</span>
+      </p>
       <TimeLeft className="pt-1 text-sm font-semibold text-tn-yellow tabular-nums" />
     </div>
   );
