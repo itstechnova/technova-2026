@@ -24,7 +24,7 @@ export const firstName: ShortTextQuestion = {
   type: "short_text",
   table: "user",
   prompt: "What's your first name?",
-  description: "e.g. Jane",
+  placeholder: "e.g. Jane",
   required: true,
 };
 
@@ -33,7 +33,7 @@ export const lastName: ShortTextQuestion = {
   type: "short_text",
   table: "user",
   prompt: "What's your last name?",
-  description: "e.g. Smith",
+  placeholder: "e.g. Smith",
   required: true,
 };
 
@@ -42,7 +42,7 @@ export const pronouns: ShortTextQuestion = {
   type: "short_text",
   table: "user",
   prompt: "What are your pronouns?",
-  description: "e.g. she/her/hers (all lowercase)",
+  placeholder: "e.g. she/her/hers (all lowercase)",
 };
 
 export const phoneNumber: ShortTextQuestion = {
@@ -51,6 +51,7 @@ export const phoneNumber: ShortTextQuestion = {
   inputType: "tel",
   table: "user",
   prompt: "What is your phone number?",
+  placeholder: "Your phone number",
   required: true,
 };
 
@@ -62,7 +63,7 @@ export const shirtSize: SingleChoiceQuestion = {
   description:
     "Unisex sizing. Measurements are given in inches. Please note that size availability may vary.",
   required: true,
-  options: toOptions(["XS", "S", "M", "L", "XL", "XXL"]),
+  options: toOptions(["XS", "S", "M", "L", "XL", "2XL", "3XL"]),
 };
 
 export const genderIdentity: SingleChoiceQuestion = {
@@ -70,6 +71,7 @@ export const genderIdentity: SingleChoiceQuestion = {
   type: "single_choice",
   table: "user",
   prompt: "What is your gender identity?",
+  required: true,
   options: [
     ...toOptions(["Female", "Male", "Non-binary"]),
     {
@@ -83,6 +85,7 @@ export const mlhCodeOfConduct: ConsentQuestion = {
   id: "mlh_code_of_conduct",
   type: "consent",
   prompt: "I have read and agree to the MLH Code of Conduct.",
+  checkboxLabel: "I agree!",
   required: true,
   links: [policyLink("mlh-code-of-conduct")],
 };
@@ -92,6 +95,7 @@ export const mlhDataSharing: ConsentQuestion = {
   type: "consent",
   prompt:
     "I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy. I further agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy.",
+  checkboxLabel: "I agree!",
   required: true,
   links: [policyLink("mlh-privacy-policy"), policyLink("mlh-contest-terms")],
 };
@@ -101,4 +105,5 @@ export const mlhEmails: ConsentQuestion = {
   type: "consent",
   prompt:
     "I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements.",
+  checkboxLabel: "I agree!",
 };

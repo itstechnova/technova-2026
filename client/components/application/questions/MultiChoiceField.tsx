@@ -3,7 +3,7 @@ import { useState } from "react";
 import { OTHER_PREFIX, type MultiChoiceQuestion } from "@/lib/application/types";
 import { isOtherValue } from "@/lib/application/validate";
 
-import { ChoiceOption, optionGridClass } from "./ChoiceOption";
+import { ChoiceOption, optionGroupClass } from "./ChoiceOption";
 import { otherDraftText, OtherTextInput } from "./OtherTextInput";
 import { QuestionShell, useFieldIds } from "./QuestionShell";
 
@@ -57,7 +57,7 @@ export function MultiChoiceField({ question, value = NONE, onChange, error, disa
         )
       }
     >
-      <div className={optionGridClass(question.options, question.allowOther ? 1 : 0)}>
+      <div className={optionGroupClass}>
         {question.options.map((option) => {
           const checked = picked.has(option.value);
           return (

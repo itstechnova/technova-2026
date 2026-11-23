@@ -1,6 +1,6 @@
 import { useId, type ReactNode } from "react";
 
-import { fieldError, fieldLabel } from "@/components/portal/ui";
+import { fieldError, questionLabel } from "@/components/portal/ui";
 import { PolicyLink } from "@/components/application/questions/PolicyLink";
 import type { Question } from "@/lib/application/types";
 
@@ -39,13 +39,28 @@ export function describedBy(
   return parts.length > 0 ? parts.join(" ") : undefined;
 }
 
-export function OptionalHint() {
-  return <span className="ml-1.5 text-sm font-normal text-tn-muted">(optional)</span>;
+/** "Required" / "Optional", at the right of a question's prompt. */
+export function RequirementTag({ required }: { required?: boolean }) {
+  return (
+    <span className={`shrink-0 text-[13px] leading-[1.35] font-semibold ${required ? "text-tn-ink/85" : "text-tn-muted"}`}>
+      {required ? "Required" : "Optional"}
+    </span>
+  );
+}
+
+/** Prompt on the left, requirement tag on the right. Lives inside the `<label>` / `<legend>`. */
+export function PromptRow({ question }: { question: Question }) {
+  return (
+    <span className="flex items-baseline justify-between gap-4">
+      <span className="min-w-0">{question.prompt}</span>
+      <RequirementTag required={question.required} />
+    </span>
+  );
 }
 
 export function QuestionDescription({ id, children }: { id: string; children: ReactNode }) {
   return (
-    <p id={id} className="text-base leading-[1.45] whitespace-pre-line text-tn-muted">
+    <p id={id} className="text-[15px] leading-[1.45] whitespace-pre-line text-tn-muted">
       {children}
     </p>
   );
@@ -107,14 +122,9 @@ type QuestionShellProps = {
   children: ReactNode;
 };
 
-/** Shared chrome of a question: prompt, optional marker, description, links, control, error. */
+/** Shared chrome of a question: prompt, Required/Optional tag, description, links, control, error. */
 export function QuestionShell({ question, ids, error, group, groupProps, hint, children }: QuestionShellProps) {
-  const prompt = (
-    <>
-      {question.prompt}
-      {!question.required && <OptionalHint />}
-    </>
-  );
+  const prompt = <PromptRow question={question} />;
   const meta = (
     <>
       {question.description && (
@@ -130,10 +140,10 @@ export function QuestionShell({ question, ids, error, group, groupProps, hint, c
       <fieldset
         {...groupProps}
         aria-describedby={describedBy(question, ids, { error, hint: Boolean(hint) })}
-        className="m-0 flex min-w-0 flex-col gap-2 border-0 p-0"
+        className="m-0 flex min-w-0 flex-col gap-2.5 border-0 p-0"
       >
         {/* A legend ignores flex gap in some browsers, so it carries its own spacing. */}
-        <legend className={`${fieldLabel} float-left w-full p-0`}>{prompt}</legend>
+        <legend className={`${questionLabel} float-left w-full p-0`}>{prompt}</legend>
         {meta}
         {children}
         {footer}
@@ -142,8 +152,8 @@ export function QuestionShell({ question, ids, error, group, groupProps, hint, c
   }
 
   return (
-    <div className="flex min-w-0 flex-col gap-2">
-      <label htmlFor={ids.control} className={fieldLabel}>
+    <div className="flex min-w-0 flex-col gap-2.5">
+      <label htmlFor={ids.control} className={questionLabel}>
         {prompt}
       </label>
       {meta}

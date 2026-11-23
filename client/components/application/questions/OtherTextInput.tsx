@@ -1,4 +1,4 @@
-import { fieldInput } from "@/components/portal/ui";
+import { controlInput } from "@/components/portal/ui";
 import { OTHER_PREFIX } from "@/lib/application/types";
 
 /**
@@ -39,7 +39,7 @@ export function OtherTextInput({
     <input
       id={id}
       type="text"
-      className={`${fieldInput} col-span-full`}
+      className={`${controlInput} basis-full`}
       value={value}
       onChange={(event) => onChange(event.target.value)}
       placeholder="Please specify"

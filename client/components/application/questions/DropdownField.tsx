@@ -1,4 +1,4 @@
-import { fieldInput } from "@/components/portal/ui";
+import { controlInput } from "@/components/portal/ui";
 import type { DropdownQuestion } from "@/lib/application/types";
 
 import { describedBy, QuestionShell, useFieldIds } from "./QuestionShell";
@@ -21,7 +21,7 @@ export function DropdownField({ question, value = "", onChange, error, disabled 
         <select
           id={ids.control}
           name={question.id}
-          className={`${fieldInput} cursor-pointer appearance-none truncate pr-12 disabled:cursor-not-allowed ${value === "" ? "text-tn-muted/70!" : ""}`}
+          className={`${controlInput} cursor-pointer appearance-none truncate pr-12 disabled:cursor-not-allowed ${value === "" ? "text-tn-muted/85!" : ""}`}
           value={value}
           onChange={(event) => onChange(event.target.value)}
           aria-required={question.required || undefined}
@@ -42,7 +42,7 @@ export function DropdownField({ question, value = "", onChange, error, disabled 
         <svg
           aria-hidden
           viewBox="0 0 20 20"
-          className="pointer-events-none absolute top-1/2 right-[18px] size-5 -translate-y-1/2 text-tn-muted"
+          className="pointer-events-none absolute top-1/2 right-[18px] size-5 -translate-y-1/2 text-tn-cyan"
           fill="none"
           stroke="currentColor"
           strokeWidth="2"

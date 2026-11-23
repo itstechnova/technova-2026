@@ -134,6 +134,10 @@ export async function submitHackerApplication(answers: Answers): Promise<SubmitR
     return { ok: false, error: GENERIC_ERROR }
   }
 
+  // The saved draft has done its job. Best effort: a leftover draft is ignored once a hacker row exists.
+  const { error: draftError } = await supabase.from('hacker_draft').delete().eq('user_id', user.id)
+  if (draftError) console.error('submitHackerApplication: failed to delete the saved draft', draftError)
+
   revalidatePath('/applicant', 'layout')
   return { ok: true }
 }

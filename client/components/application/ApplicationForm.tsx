@@ -3,22 +3,22 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { FormAside } from "@/components/application/FormAside";
 import { QuestionList, focusQuestion } from "@/components/application/QuestionList";
 import { ReviewStep } from "@/components/application/ReviewStep";
 import { StepTabs, type Step } from "@/components/application/StepTabs";
 import {
   savedLabel,
   useApplicationDraft,
+  newerDraft,
   useNow,
   useStoredDraft,
   type Draft,
 } from "@/components/application/useApplicationDraft";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
-import { buttonPrimary, buttonSecondary } from "@/components/portal/ui";
-import { cn } from "@/lib/utils";
+import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
+import { saveHackerDraft } from "@/lib/application/draft";
 import { submitHackerApplication } from "@/lib/application/submit";
 import type { AnswerValue, Answers } from "@/lib/application/types";
 import {
@@ -30,13 +30,26 @@ import {
   visibleAnswers,
 } from "@/lib/application/validate";
 
-// The action bar's buttons: the portal buttons, a size down so three fit a phone's width.
-const compactButton = "min-h-11 px-5 py-2.5 text-base";
+// "My application" in the hacker dashboard (Figma "07 · Hacker application · redesign v2"): a
+// stepper with one step per form section, then Review. The current step is in the URL
+// (`?step=<section id | review>`); answers are a localStorage draft until submitted.
 
-// The hacker application as a stepper: one step per form section, then Review. The current step
-// is in the URL (`?step=<section id | review>`); answers are a localStorage draft until submitted.
+// The welcome step's extras, under its introduction (Figma "01 · My application / Welcome").
+const KEY_DATES = [
+  { label: "Hackathon", value: "Jan 22-24", note: "2027 · in person, Waterloo" },
+  { label: "Applications opened", value: "Nov 16", note: "2026" },
+];
+const OPPORTUNITIES = [
+  "Bring your ideas to life and build a project.",
+  "Receive mentorship and learn from others.",
+  "Connect with fellow students and industry professionals.",
+  "Showcase and demo your submission.",
+  "Build meaningful connections within the Women+ in Tech community.",
+];
 
 const DASHBOARD = "/applicant/dashboard";
+// Where a successful submit lands: the confirmation, on the application page.
+const SUBMITTED = "/applicant/application?submitted=1";
 const REVIEW = "review";
 const SUBMIT_FAILED = "Something went wrong while submitting your application. Please try again.";
 
@@ -49,10 +62,9 @@ const STEPS: Step[] = [
 const REVIEW_INDEX = SECTIONS.length;
 const QUESTIONS = hackerForm.flatMap((section) => section.questions);
 
-/** Index of the first step whose answers don't validate; the Review step when they all do. */
-function firstInvalidStep(answers: Answers): number {
-  const index = SECTIONS.findIndex((section) => Object.keys(validateSection(section, answers)).length > 0);
-  return index === -1 ? REVIEW_INDEX : index;
+/** Which sections have every required answer, in order. */
+function completedSteps(answers: Answers): boolean[] {
+  return SECTIONS.map((section) => Object.keys(validateSection(section, answers)).length === 0);
 }
 
 /** The step holding the first question (in form order) that has an error, and that question. */
@@ -92,7 +104,7 @@ function FormSkeleton() {
 function ClosedState() {
   return (
     <PortalPage>
-      <PageHeading eyebrow="Application / Closed" title="Applications are closed">
+      <PageHeading title="Applications are closed">
         The deadline to apply to TechNova has passed, so new applications can no longer be submitted.
       </PageHeading>
       <p className="text-lg text-tn-muted">
@@ -104,7 +116,7 @@ function ClosedState() {
       </p>
       <div>
         <Link href={DASHBOARD} className={buttonSecondary}>
-          Back to overview
+          Back to dashboard
         </Link>
       </div>
     </PortalPage>
@@ -116,20 +128,36 @@ type FormProps = {
   userId: string;
   /** Answers known from the account (email, name), used where the draft has none. */
   prefill: Answers;
+  /** The draft saved to the applicant's account, if any. */
+  accountDraft: Draft | null;
   /** True once the application deadline has passed. */
   closed: boolean;
 };
 
-export default function ApplicationForm({ userId, prefill, closed }: FormProps) {
+export default function ApplicationForm({ userId, prefill, accountDraft, closed }: FormProps) {
   const stored = useStoredDraft(userId);
 
   if (closed) return <ClosedState />;
   // Not known on the server or during hydration: localStorage is read after that.
   if (stored === undefined) return <FormSkeleton />;
-  return <Stepper userId={userId} prefill={prefill} stored={stored} />;
+  // Start from whichever copy was saved last: this browser's, or the one on their account.
+  return (
+    <Stepper
+      userId={userId}
+      prefill={prefill}
+      stored={newerDraft(stored, accountDraft)}
+      accountSavedAt={accountDraft?.savedAt || null}
+    />
+  );
 }
 
-function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stored: Draft | null }) {
+type StepperProps = Pick<FormProps, "userId" | "prefill"> & {
+  stored: Draft | null;
+  /** When the account copy was last saved. */
+  accountSavedAt: string | null;
+};
+
+function Stepper({ userId, prefill, stored, accountSavedAt }: StepperProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // `stored` is only the starting point; the hook owns the draft from here on.
@@ -146,16 +174,36 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
 
-  // The step to show: the one in the URL (else where the draft left off), but never past the
-  // first step that still has invalid answers.
+  // The copy on the applicant's account, saved at milestones (switching step, save and exit).
+  const [account, setAccount] = useState<{ savedAt: string | null; failed: boolean }>({
+    savedAt: accountSavedAt,
+    failed: false,
+  });
+  const accountSave = useRef(0);
+  async function saveToAccount(step: string) {
+    const attempt = ++accountSave.current;
+    let result: Awaited<ReturnType<typeof saveHackerDraft>> = { ok: false };
+    try {
+      result = await saveHackerDraft(answers, step);
+    } catch {
+      // Offline or the request failed: the browser copy is still there.
+    }
+    // Only the latest save decides what is shown.
+    if (attempt !== accountSave.current) return;
+    setAccount((previous) => (result.ok ? { savedAt: result.savedAt, failed: false } : { ...previous, failed: true }));
+  }
+
+  // The step to show: the one in the URL, else where the draft left off. Any step can be opened
+  // in any order; what is still missing is checked when the application is submitted.
   const requested = searchParams.get("step");
   const requestedIndex = STEPS.findIndex((step) => step.id === (requested ?? draft.step));
-  const reachable = firstInvalidStep(answers);
-  const current = Math.min(Math.max(requestedIndex, 0), reachable);
+  const done = completedSteps(answers);
+  const incomplete = SECTIONS.map((_, index) => index).filter((index) => !done[index]);
+  const current = Math.max(requestedIndex, 0);
   const stepId = STEPS[current].id;
   const section = current < REVIEW_INDEX ? SECTIONS[current] : null;
 
-  // Keep the URL in step with what is shown (no step given, an unknown one, or one out of reach).
+  // Keep the URL in step with what is shown (no step given, or an unknown one).
   useEffect(() => {
     if (requested !== stepId) window.history.replaceState(null, "", `?step=${stepId}`);
   }, [requested, stepId]);
@@ -181,7 +229,10 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     const id = STEPS[index].id;
     if (!keepErrors) setErrors({});
     setSubmitError(null);
+    // Leaving a step saves it, finished or not.
     draft.setStep(id);
+    draft.save();
+    if (id !== stepId) void saveToAccount(id);
     if (id !== stepId) window.history.pushState(null, "", `?step=${id}`);
   }
 
@@ -208,14 +259,12 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   }
 
   function continueToNext() {
-    if (!section) return;
-    const sectionErrors = validateSection(section, answers);
-    if (Object.keys(sectionErrors).length > 0) showErrors(sectionErrors);
-    else goTo(current + 1);
+    if (section) goTo(current + 1);
   }
 
-  function saveAndExit() {
+  async function saveAndExit() {
     draft.save();
+    await saveToAccount(stepId);
     router.push(DASHBOARD);
   }
 
@@ -232,7 +281,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
         if (result.ok) {
           setSubmitted(true);
           draft.clear();
-          router.push(DASHBOARD);
+          router.push(SUBMITTED);
           return;
         }
         setSubmitError(result.error);
@@ -243,83 +292,157 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     });
   }
 
-  const saveStatus = draft.saveFailed
-    ? "Couldn’t save your draft on this device"
-    : draft.savedAt
-      ? savedLabel(draft.savedAt, now)
-      : "Not saved yet";
+  // What the header says about the draft. The account copy is the one that follows them around.
+  const saveStatus = account.failed
+    ? draft.saveFailed
+      ? "Couldn’t save your draft"
+      : "Saved on this device only. We’ll try your account again when you switch sections"
+    : account.savedAt
+      ? `${savedLabel(account.savedAt, now)} to your account`
+      : draft.saveFailed
+        ? "Not saved yet"
+        : draft.savedAt
+          ? `${savedLabel(draft.savedAt, now)} on this device`
+          : "Not saved yet";
   const errorCount = Object.keys(errors).length;
+
+  const title = section ? section.title : "Review and submit";
+  const intro = section
+    ? section.description
+    : "Thanks so much for your interest in applying to TechNova! Check your answers, then submit.";
 
   return (
     <PortalPage>
-      <div ref={containerRef} className="flex flex-col gap-5 xl:gap-[30px]">
-        <PageHeading
-          eyebrow={`Application / ${section ? (section.shortTitle ?? section.title) : "Review"}`}
-          title={section ? section.title : "Review your application"}
-        >
-          {!section && <p>Check your answers before submitting.</p>}
-          <p>
-            Step {current + 1} of {STEPS.length} · {saveStatus}
-          </p>
-        </PageHeading>
+      <div ref={containerRef} className="flex flex-col gap-6 xl:gap-8">
+        {/* This page of the dashboard: its name, the draft's state, and the way back. */}
+        <div className="flex max-w-[988px] flex-col gap-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-x-6">
+            <p className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1">
+              <span className={`${heading} text-2xl leading-[1.25]`}>My application</span>
+              <span className="text-sm text-tn-muted">Draft · {saveStatus}</span>
+            </p>
+            <button
+              type="button"
+              onClick={saveAndExit}
+              className={`${textLink} flex min-h-11 cursor-pointer items-center text-[15px] font-semibold`}
+            >
+              Save and exit to dashboard
+            </button>
+          </div>
+          <StepTabs steps={STEPS} current={current} done={done} onSelect={(index) => goTo(index)} />
+        </div>
 
-        <StepTabs steps={STEPS} current={current} reachable={reachable} onSelect={(index) => goTo(index)} />
+        <div className="flex max-w-[820px] flex-col gap-3">
+          <h1
+            tabIndex={-1}
+            className={`${heading} text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}
+          >
+            {title}
+          </h1>
+          {intro && <p className="text-base leading-[1.45] whitespace-pre-line text-tn-muted xl:text-lg">{intro}</p>}
+        </div>
+
+        {current === 0 && (
+          <div className="flex max-w-[820px] flex-col gap-6">
+            <dl className="grid grid-cols-2 gap-x-8 gap-y-4">
+              {KEY_DATES.map(({ label, value, note }) => (
+                <div key={label} className="flex flex-col gap-1">
+                  <dt className="text-xs text-tn-muted">{label}</dt>
+                  <dd className="flex flex-col gap-1">
+                    <span className={`${heading} text-[clamp(1.5rem,1.2rem+1vw,2rem)] leading-[1.1]`}>{value}</span>
+                    <span className="text-[13px] text-tn-muted">{note}</span>
+                  </dd>
+                </div>
+              ))}
+            </dl>
+            <div className="flex flex-col gap-3">
+              <p className="text-[17px] font-semibold text-tn-ink">
+                Join us for an in-person hackathon where you&apos;ll have the opportunity to:
+              </p>
+              <ul className="flex flex-col gap-2 text-base text-tn-ink">
+                {OPPORTUNITIES.map((item) => (
+                  <li key={item} className="flex items-baseline gap-3">
+                    <span aria-hidden className="size-2 shrink-0 -translate-y-px rounded-full bg-tn-yellow" />
+                    {item}
+                  </li>
+                ))}
+              </ul>
+              <p className="text-[15px] leading-[1.45] text-tn-muted">
+                Applications will be reviewed on a rolling basis, so we encourage you to apply early! If you require
+                accommodations or have any questions, please email us at{" "}
+                <a href={`mailto:${SUPPORT_EMAIL}`} className={textLink}>
+                  {SUPPORT_EMAIL}
+                </a>
+                .
+              </p>
+            </div>
+          </div>
+        )}
 
         {section ? (
-          <div className="flex items-start gap-10">
-            <form
-              noValidate
-              className="flex max-w-[820px] min-w-0 flex-1 flex-col gap-5 xl:gap-[30px]"
-              onSubmit={(event) => {
-                event.preventDefault();
-                continueToNext();
-              }}
-            >
-              {section.description && (
-                <p className="text-base leading-[1.45] whitespace-pre-line text-tn-muted xl:text-lg">{section.description}</p>
-              )}
-              <QuestionList
-                questions={section.questions}
-                answers={answers}
-                errors={errors}
-                onChange={changeAnswer}
-              />
-              {errorCount > 0 && (
-                <p role="alert" className="text-base text-tn-error">
-                  {errorCount === 1
-                    ? "Please fix the highlighted question to continue."
-                    : `Please fix the ${errorCount} highlighted questions to continue.`}
-                </p>
-              )}
-              {/* Pinned to the bottom of the window, so the way forward is in view on long steps. */}
-              <div className="sticky bottom-0 z-10 -mx-5 flex flex-wrap items-center gap-2.5 border-t border-tn-line/60 bg-tn-bg/75 px-5 py-3 backdrop-blur-md sm:-mx-8 sm:gap-3 sm:px-8 md:mx-0 md:rounded-t-2xl md:border-x md:px-4">
-                <button type="submit" className={cn(buttonPrimary, compactButton)}>
-                  {current === REVIEW_INDEX - 1 ? "Review application" : "Continue"}
+          <form
+            noValidate
+            className="flex max-w-[820px] min-w-0 flex-col gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              continueToNext();
+            }}
+          >
+            <QuestionList questions={section.questions} answers={answers} errors={errors} onChange={changeAnswer} />
+            {errorCount > 0 && (
+              <p role="alert" className="text-base text-tn-error">
+                {errorCount === 1
+                  ? "Please fix the highlighted question before submitting."
+                  : `Please fix the ${errorCount} highlighted questions before submitting.`}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-3">
+              {current > 0 && (
+                <button type="button" onClick={() => goTo(current - 1)} className={buttonSecondary}>
+                  Back
                 </button>
-                {current > 0 && (
-                  <button type="button" onClick={() => goTo(current - 1)} className={cn(buttonSecondary, compactButton)}>
-                    Back
-                  </button>
-                )}
-                <button type="button" onClick={saveAndExit} className={cn(buttonSecondary, compactButton, "ml-auto")}>
-                  Save &amp; exit
-                </button>
-              </div>
-            </form>
-            <FormAside />
-          </div>
+              )}
+              <button type="submit" className={buttonPrimary}>
+                {current === REVIEW_INDEX - 1 ? "Save and review" : "Save and continue"}
+              </button>
+            </div>
+          </form>
         ) : (
-          <ReviewStep
-              steps={SECTIONS}
-              agreements={AGREEMENTS}
-              answers={answers}
-              errors={errors}
-              submitError={submitError}
-              pending={pending || submitted}
-              onChange={changeAnswer}
-              onEdit={(index) => goTo(index)}
-              onSubmit={submit}
+          <>
+            {incomplete.length > 0 && (
+              <div className="flex max-w-[820px] flex-col gap-2 rounded-[10px] border border-tn-yellow/70 px-[18px] py-3.5">
+                <p className="text-base font-semibold text-tn-ink">
+                  {incomplete.length === 1
+                    ? "One section still has required questions to answer:"
+                    : `${incomplete.length} sections still have required questions to answer:`}
+                </p>
+                <ul className="flex flex-wrap gap-x-5 gap-y-1">
+                  {incomplete.map((index) => (
+                    <li key={STEPS[index].id}>
+                      <button
+                        type="button"
+                        onClick={() => goTo(index)}
+                        className={`${textLink} flex min-h-9 cursor-pointer items-center text-[15px] font-semibold`}
+                      >
+                        {index + 1}. {STEPS[index].label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <ReviewStep
+            steps={SECTIONS}
+            agreements={AGREEMENTS}
+            answers={answers}
+            errors={errors}
+            submitError={submitError}
+            pending={pending || submitted}
+            onChange={changeAnswer}
+            onEdit={(index) => goTo(index)}
+            onSubmit={submit}
           />
+          </>
         )}
       </div>
     </PortalPage>

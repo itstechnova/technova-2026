@@ -3,35 +3,35 @@ import { Check } from "lucide-react";
 export type Step = { id: string; label: string };
 
 /**
- * Progress through the form: a bar, then one pill per step on a single row. Steps up to
- * `reachable` can be jumped to. Every pill shows its name when the row is wide enough (a container
+ * Progress through the form: a bar, then one pill per step on a single row. Any step can be
+ * opened at any time; a tick marks the ones whose required questions are all answered. Every pill shows its name when the row is wide enough (a container
  * query); otherwise only the current step does, and the row scrolls sideways rather than wrapping.
  */
 export function StepTabs({
   steps,
   current,
-  reachable,
+  done,
   onSelect,
 }: {
   steps: Step[];
   current: number;
-  /** Index of the furthest step the applicant may open. */
-  reachable: number;
+  /** Whether each step's required questions are all answered (Review has no entry). */
+  done: boolean[];
   onSelect: (index: number) => void;
 }) {
   return (
     <nav aria-label="Application steps" className="@container flex flex-col gap-3">
-      <div aria-hidden className="h-1 max-w-[820px] overflow-hidden rounded-full bg-tn-line/70">
+      <div aria-hidden className="h-1.5 overflow-hidden rounded-full bg-tn-line/70">
         <div
           className="h-full rounded-full bg-tn-cyan transition-[width] duration-300 ease-out"
-          style={{ width: `${((current + 1) / steps.length) * 100}%` }}
+          style={{ width: `${(done.filter(Boolean).length / steps.length) * 100}%` }}
         />
       </div>
 
       <ol className="-mx-1 flex gap-1.5 overflow-x-auto px-1 py-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
         {steps.map((step, index) => {
           const isCurrent = index === current;
-          const isDone = index < current;
+          const isDone = !isCurrent && done[index] === true;
           const content = (
             <>
               <span
@@ -49,24 +49,18 @@ export function StepTabs({
 
           return (
             <li key={step.id} className="shrink-0">
-              {index <= reachable ? (
-                <button
-                  type="button"
-                  aria-current={isCurrent ? "step" : undefined}
-                  onClick={() => onSelect(index)}
-                  className={`${layout} cursor-pointer transition focus-visible:outline-2 focus-visible:outline-tn-cyan ${
-                    isCurrent
-                      ? "bg-white/10 pr-3.5 font-semibold text-tn-ink"
-                      : "text-tn-muted hover:bg-white/5 hover:text-tn-ink"
-                  }`}
-                >
-                  {content}
-                </button>
-              ) : (
-                <span aria-disabled="true" className={`${layout} text-tn-muted/60`}>
-                  {content}
-                </span>
-              )}
+              <button
+                type="button"
+                aria-current={isCurrent ? "step" : undefined}
+                onClick={() => onSelect(index)}
+                className={`${layout} cursor-pointer transition focus-visible:outline-2 focus-visible:outline-tn-cyan ${
+                  isCurrent
+                    ? "bg-white/10 pr-3.5 font-semibold text-tn-ink"
+                    : "text-tn-muted hover:bg-white/5 hover:text-tn-ink"
+                }`}
+              >
+                {content}
+              </button>
             </li>
           );
         })}

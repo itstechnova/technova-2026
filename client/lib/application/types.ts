@@ -62,9 +62,11 @@ export type MultiChoiceQuestion = QuestionBase & {
   allowOther?: boolean;
 };
 
-/** A single checkbox the applicant agrees to. */
+/** A single checkbox the applicant agrees to. `prompt` is what they agree to. */
 export type ConsentQuestion = QuestionBase & {
   type: "consent";
+  /** Text beside the checkbox. Defaults to "I agree". */
+  checkboxLabel?: string;
 };
 
 export type Question =

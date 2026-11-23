@@ -22,13 +22,14 @@ export const hackerForm: Form = [
     title: "Welcome to TechNova!",
     shortTitle: "Welcome",
     description:
-      "Thanks for your interest in attending TechNova, the University of Waterloo's Women+ in Tech Hackathon!\n\nOur in-person event is open to women and non-binary identifying students. Student attendees may be enrolled at a university or a non-traditional institution (code bootcamp, homeschool, online program, etc.).",
+      "Thanks for your interest in attending TechNova, the University of Waterloo's Women+ in Tech Hackathon!\n\nOur in-person event is open to women and non-binary identifying students. Student attendees may be enrolled at a university or a non-traditional institution (code bootcamp, homeschool, online program, etc.).\n\nYou do not need any prior coding experience to apply as a hacker! Whether you're just starting your journey in technology or have years of experience, we'd love to hear from you.\n\nThis is the Hacker Application. Interested in becoming a mentor or volunteer instead? Stay tuned — those applications will be opening soon!",
     questions: [
       {
         id: "contact_email",
         type: "short_text",
         inputType: "email",
         prompt: "Email address",
+        placeholder: "you@example.com",
         description:
           "Please provide an email address where we can reach you and send application updates.",
         required: true,
@@ -38,14 +39,14 @@ export const hackerForm: Form = [
         type: "short_text",
         inputType: "number",
         prompt: "How old will you be as of January 22, 2027?",
+        placeholder: "Your age",
         required: true,
       },
     ],
   },
   {
     id: "general",
-    title: "General Questions",
-    shortTitle: "About you",
+    title: "About you",
     description: "These are some basic questions to get to know you better!",
     questions: [
       firstName,
@@ -53,31 +54,24 @@ export const hackerForm: Form = [
       pronouns,
       phoneNumber,
       {
-        id: "transportation",
-        type: "single_choice",
-        prompt:
-          "Would you require transportation to travel to Waterloo for TechNova on January 22, 2027? If so, where would you be located?",
-        description: "Please note that transportation is not guaranteed.",
+        // Replaces the old "do you need transportation?" question (column `transportation`).
+        id: "transportation_ack",
+        type: "consent",
+        prompt: "Getting to Waterloo",
+        description:
+          "TechNova does not provide or arrange transportation. You are responsible for getting to and from the event in Waterloo, Ontario, and for the cost of travel.",
+        checkboxLabel: "I understand that I’m responsible for my own transportation.",
         required: true,
-        allowOther: true,
-        options: toOptions([
-          "No, I don't require transportation",
-          "Toronto",
-          "Mississauga/Brampton",
-          "Markham",
-          "Richmond Hill",
-          "London/Windsor area",
-        ]),
       },
       shirtSize,
       {
         id: "level_of_study",
-        type: "single_choice",
+        type: "dropdown",
         prompt: "What is your current level of study?",
         description:
           "If you are between levels, please select the level you will be entering in the upcoming fall term.",
         required: true,
-        allowOther: true,
+        placeholder: "Select your level of study",
         options: toOptions([
           "Less than Secondary / High School",
           "Secondary / High School",
@@ -89,6 +83,7 @@ export const hackerForm: Form = [
           "Post Doctorate",
           "I'm not currently a student",
           "Prefer not to answer",
+          "Other",
         ]),
       },
       {
@@ -98,7 +93,7 @@ export const hackerForm: Form = [
         description: "Please answer based on the education level you selected above.",
         required: true,
         allowOther: true,
-        options: toOptions(["2022", "2023", "2024", "2025", "2026", "2027", "2028+"]),
+        options: toOptions(["2027", "2028", "2029", "2030", "2031", "2032+"]),
       },
       {
         id: "school",
@@ -106,6 +101,7 @@ export const hackerForm: Form = [
         prompt: "Please select which institution you are/will be attending.",
         description: "If you attend a school or program not listed, select Other.",
         required: true,
+        placeholder: "Select your institution",
         options: institutions,
       },
       {
@@ -114,6 +110,7 @@ export const hackerForm: Form = [
         prompt: 'If you selected "Other," what is the name of your school?',
         description:
           "Please provide the institution's name as it would appear on Google (e.g. University of ABC, XYZ Bootcamp).",
+        placeholder: "School name",
         showIf: { question: "school", equals: OTHER_INSTITUTION },
       },
       {
@@ -123,6 +120,7 @@ export const hackerForm: Form = [
         description:
           "If you are in high school, select your program of interest. If you don't see your exact program, select the closest option.",
         required: true,
+        placeholder: "Select your program",
         options: programs,
       },
       {
@@ -165,7 +163,7 @@ export const hackerForm: Form = [
   },
   {
     id: "short_answer",
-    title: "Short Answer Questions",
+    title: "Short answer questions",
     shortTitle: "Short answers",
     description:
       "Our mission is to create a more gender-equitable future in technology. Check out our social media for more information!",
@@ -199,7 +197,7 @@ export const hackerForm: Form = [
       {
         id: "prompt_a_response",
         type: "paragraph",
-        prompt: "If you chose Option A, enter your response here.",
+        prompt: "Enter your response to Option A.",
         description: "150 words maximum.",
         required: true,
         maxWords: 150,
@@ -208,7 +206,7 @@ export const hackerForm: Form = [
       {
         id: "prompt_b_response",
         type: "paragraph",
-        prompt: "If you chose Option B, enter your response here.",
+        prompt: "Enter your response to Option B.",
         description: "150 words maximum.",
         required: true,
         maxWords: 150,
@@ -217,14 +215,16 @@ export const hackerForm: Form = [
       {
         id: "superpower",
         type: "paragraph",
-        prompt:
-          "Here's a fun question: What kind of superpower do you believe would help you in a hackathon?",
+        prompt: "What kind of superpower do you believe would help you in a hackathon?",
+        description: "50 words maximum.",
         required: true,
+        maxWords: 50,
       },
       {
         id: "problem_solving",
         type: "short_text",
         prompt: "Summarize your approach to problem-solving in 10 words.",
+        placeholder: "Ten words",
         required: true,
         maxWords: 10,
       },
@@ -232,7 +232,7 @@ export const hackerForm: Form = [
   },
   {
     id: "event",
-    title: "Event-Specific Questions",
+    title: "Event-specific questions",
     shortTitle: "Event",
     description:
       "Help us identify what you'd like to see at the event!\n\nPlease note that these are early ideas, so we cannot guarantee that every session will be included. However, your responses will help us figure out which sessions would be most helpful. Feel free to share any additional ideas in the final question!",
@@ -372,14 +372,14 @@ export const hackerForm: Form = [
         type: "paragraph",
         prompt: "Are there any other sessions that you would like to see at the event?",
         description:
-          "Share any topics, speakers, workshops, or activities you'd love us to include.",
+          "Share any topics, speakers, workshops, or activities you'd love us to include. 50 words maximum.",
+        maxWords: 50,
       },
     ],
   },
   {
     id: "women_in_tech",
-    title: "Women+ in Tech",
-    shortTitle: "Women+ in tech",
+    title: "Women+ in tech",
     description:
       "At TechNova, we believe that building a more inclusive future in technology starts with listening to the people shaping it. We want to understand your experiences, aspirations, and what community means to you. There are no right or wrong answers — we'd love to hear your perspective.",
     questions: [
@@ -388,60 +388,32 @@ export const hackerForm: Form = [
         type: "paragraph",
         prompt: "What does being a woman+ in technology mean to you?",
         description:
-          "This can be about your identity, your experiences, your ambitions, or what being part of this community represents to you.",
+          "This can be about your identity, your experiences, your ambitions, or what being part of this community represents to you. 100 words maximum.",
+        required: true,
+        maxWords: 100,
       },
       {
         id: "wit_community",
         type: "paragraph",
         prompt: "What does having a community of women+ in tech mean to you?",
         description:
-          "How do you think spaces like TechNova can help people feel supported, encouraged, and represented?",
-      },
-      {
-        id: "wit_experience",
-        type: "paragraph",
-        prompt:
-          "Can you share an experience where you felt empowered, challenged, or out of place in a technology-related environment?",
-        description:
-          "This could be a classroom, workplace, hackathon, club, or any other space. Share only what you're comfortable with.",
-      },
-      {
-        id: "wit_inspiration",
-        type: "paragraph",
-        prompt:
-          "Is there a woman+ in technology who inspires you? What about their journey resonates with you?",
-        description:
-          "They can be someone well-known, someone in your life, or someone whose work you've come across.",
-      },
-      {
-        id: "wit_understanding",
-        type: "paragraph",
-        prompt:
-          "What is one thing you wish more people understood about the experiences of women+ in technology?",
+          "How do you think spaces like TechNova can help people feel supported, encouraged, and represented? 100 words maximum.",
+        required: true,
+        maxWords: 100,
       },
       {
         id: "wit_change",
         type: "paragraph",
         prompt:
           "If you could change one thing about the tech industry to make it more inclusive, what would it be?",
-      },
-      {
-        id: "wit_advice",
-        type: "paragraph",
-        prompt:
-          "What advice would you give to someone entering tech who doesn't see many people like themselves represented in the industry?",
-      },
-      {
-        id: "wit_future",
-        type: "paragraph",
-        prompt:
-          "When you imagine the future of technology, what do you hope the next generation of women+ will experience that you may not have?",
+        description: "100 words maximum.",
+        maxWords: 100,
       },
     ],
   },
   {
     id: "demographics",
-    title: "Demographic Questions",
+    title: "Demographic questions",
     shortTitle: "Demographics",
     description:
       "One of our most important team pillars is diversity. We would like to better understand the backgrounds of our applicants in order to gain insight into how to improve accessibility as an organization.\n\nThe following questions have no effect on your application and will only be used for statistical purposes to further our event's mission.\n\nYour information will be kept confidential in accordance with our Privacy Policy.",
@@ -451,6 +423,7 @@ export const hackerForm: Form = [
         type: "multi_choice",
         prompt: "What is your ethnicity?",
         description: "Select all that apply.",
+        required: true,
         allowOther: true,
         options: toOptions([
           "Hispanic/Latinx",
@@ -493,6 +466,7 @@ export const hackerForm: Form = [
         type: "single_choice",
         prompt:
           "If you are pursuing technology, are you the first in your immediate family to pursue tech?",
+        required: true,
         options: toOptions(["Yes", "No"]),
       },
       {
@@ -500,23 +474,24 @@ export const hackerForm: Form = [
         type: "single_choice",
         prompt:
           "How long have you been studying, working, or self-learning in tech (if applicable)?",
+        required: true,
         options: toOptions(["Less than 1 year", "1–2 years", "3 or more years"]),
       },
     ],
   },
   {
     id: "final",
-    title: "You're Almost Done!",
+    title: "You're almost done!",
     shortTitle: "Almost done",
     placement: "review",
-    description: "Thanks so much for your interest in applying to TechNova!",
+    description:
+      "By applying to TechNova, you are automatically subscribed to our mailing list and may receive updates about the event and future opportunities. You can opt out at any time by emailing team@itstechnova.org.",
     questions: [
       {
         id: "final_acknowledgment",
         type: "consent",
-        prompt: "I understand the above and accept.",
-        description:
-          "By applying to TechNova, you are automatically subscribed to our mailing list and may receive updates about the event and future opportunities. You can opt out at any time by emailing team@itstechnova.org.",
+        prompt: "I understand the above and:",
+        checkboxLabel: "I accept!",
         required: true,
       },
     ],
