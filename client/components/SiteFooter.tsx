@@ -1,4 +1,4 @@
-import { heading } from '@/components/portal/ui'
+import { LogoMark, heading } from '@/components/portal/ui'
 import { SUPPORT_EMAIL } from '@/lib/application/config'
 
 // The site footer (Figma "08 · Footer / #contact", node 125:1306). Its background is a see-through
@@ -23,9 +23,8 @@ export function SiteFooter() {
       <div className={`${contentWidth} flex flex-col items-start gap-5 pt-24 pb-10 lg:gap-8 lg:pt-32 lg:pb-[52px]`}>
         <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
           <span className="flex items-center gap-7 lg:w-[600px]">
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img src="/images/logo-white.svg" alt="" width={48} height={49} />
-            <span className={`${heading} text-4xl leading-[1.08]`}>TechNova</span>
+            <LogoMark size={48} />
+            <span className={`${heading} title-shade pb-[0.08em] text-4xl leading-[1.08]`}>TechNova</span>
           </span>
           <a href={`mailto:${SUPPORT_EMAIL}`} className={`${link} text-xl leading-[1.35]`}>
             {SUPPORT_EMAIL}
