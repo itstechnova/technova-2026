@@ -15,6 +15,7 @@ const MISSING: Record<string, string> = {
   first_name: 'Enter your first name.',
   last_name: 'Enter your last name.',
   phone_number: 'Enter your phone number.',
+  shirt_size: 'Choose your t-shirt size.',
 }
 const INVALID: Record<string, string> = {
   shirt_size: 'Choose a size from the list.',

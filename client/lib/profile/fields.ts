@@ -7,7 +7,7 @@ import { isPhoneNumber } from '@/lib/application/validate'
 export const PROFILE_FIELDS = [firstName, lastName, pronouns, phoneNumber, shirtSize] as const
 
 /** The details the profile cannot be saved without. */
-export const REQUIRED_PROFILE_FIELDS: readonly string[] = [firstName.id, lastName.id, phoneNumber.id]
+export const REQUIRED_PROFILE_FIELDS: readonly string[] = [firstName.id, lastName.id, phoneNumber.id, shirtSize.id]
 
 export type ProfileField = (typeof PROFILE_FIELDS)[number]['id']
 export type ProfileValues = Record<ProfileField, string>
