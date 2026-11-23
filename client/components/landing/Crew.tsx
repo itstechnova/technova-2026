@@ -38,7 +38,7 @@ function Member({ member, index }: { member: CrewMember; index: number }) {
         {/* Always shown where there is no hover (touch screens); otherwise on hover or focus. */}
         <figcaption className="flex flex-col items-center gap-1 text-center opacity-0 transition-opacity duration-200 group-hover/member:opacity-100 group-focus-within/strip:opacity-100 [@media(hover:none)]:opacity-100">
           <span className={`${heading} text-xl leading-none`}>{member.name}</span>
-          <span className="text-[13px] leading-[1.2] text-tn-muted">{member.role}</span>
+          <span className="text-sm leading-[1.2] text-tn-muted">{member.role}</span>
         </figcaption>
         {/* Floating in low gravity: a slow bob and a slight sway (`.anim-float`). */}
         <div className="anim-float origin-bottom" style={bob(index)}>

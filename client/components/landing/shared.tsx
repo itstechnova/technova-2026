@@ -6,11 +6,11 @@ import { heading } from "@/components/portal/ui";
 /** The page column: at most 1080px of content, with gutters that grow with the screen. */
 export const wrap = "mx-auto w-full max-w-[1208px] px-6 sm:px-10 lg:px-16";
 
-// The landing page's buttons: squarer and lighter than the portal's pills.
+// The landing page's buttons: one pill shape, lighter than the portal's.
 const actionBase =
-  "inline-flex cursor-pointer items-center justify-center rounded-[10px] px-5 py-3 text-base leading-[1.25] font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
+  "inline-flex cursor-pointer items-center justify-center rounded-full px-6 py-3 text-base leading-[1.2] font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
 // The main action is a clear pill with a white outline; the quiet one is bare text until hovered.
-export const action = `${actionBase} rounded-full! border border-white/70 px-6! text-white hover:border-white hover:bg-white/10`;
+export const action = `${actionBase} border border-white/70 text-white hover:border-white hover:bg-white/10`;
 export const actionQuiet = `${actionBase} text-tn-ink hover:bg-white/10`;
 
 /** Small caps label. */

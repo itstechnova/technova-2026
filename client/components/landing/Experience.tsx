@@ -28,7 +28,7 @@ function Waypoint({ number, className = "", style }: { number: string; className
 function Copy({ title, children }: { title: string; children: ReactNode }) {
   return (
     <div className="flex flex-col gap-2">
-      <h3 className={`${heading} text-[26px] leading-[1.1] lg:text-3xl`}>{title}</h3>
+      <h3 className={`${heading} text-2xl leading-[1.1] lg:text-3xl`}>{title}</h3>
       <p className="text-lg leading-[1.4] text-tn-muted lg:text-xl">{children}</p>
     </div>
   );
@@ -115,7 +115,7 @@ function FlightList() {
       {STOPS.map(({ number, title, text }, index) => (
         <li key={number} className="scroll-in relative flex gap-4">
           <Waypoint number={number} />
-          <div className="flex min-w-0 flex-1 flex-col gap-5 pt-1">
+          <div className="flex min-w-0 flex-1 flex-col gap-6 pt-1">
             <div aria-hidden className="max-w-[440px]">
               {pictures[index]}
             </div>

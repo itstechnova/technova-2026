@@ -88,7 +88,7 @@ function Constellation() {
 function LogoGrid() {
   return (
     <div className="mt-10 lg:hidden">
-      <ul className="grid grid-cols-2 items-center gap-x-8 gap-y-9 sm:grid-cols-3">
+      <ul className="grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
         {SPONSORS.map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in flex justify-center">
             <img src={`/images/sponsors/${file}.webp`} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-14 w-auto max-w-full" />
@@ -104,11 +104,11 @@ export function Sponsors() {
   return (
     <section id="sponsors" className="relative">
       <div className={`${wrap} py-20 lg:py-28`}>
-        <div className="flex flex-col gap-x-10 gap-y-7 md:flex-row md:items-end md:justify-between">
+        <div className="flex flex-col gap-x-12 gap-y-8 md:flex-row md:items-end md:justify-between">
           <SectionHeading title="Our sponsors">Helping make TechNova possible.</SectionHeading>
           {/* MLH, the event's official partner, sits apart from the sponsors. */}
           <div className="scroll-in flex items-center gap-4 md:pb-1">
-            <p className="text-sm leading-[1.3] text-tn-muted">Official event partner</p>
+            <p className="text-sm leading-[1.4] text-tn-muted">Official event partner</p>
             <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[104px]" />
           </div>
         </div>
@@ -118,12 +118,12 @@ export function Sponsors() {
         {/* The invitation: one line, one action that opens an email, and the address under it. */}
         <div className="scroll-in mt-16 flex flex-col items-start gap-4 border-t border-tn-line/70 pt-8">
           <div className="flex flex-wrap items-center gap-x-8 gap-y-4">
-            <h3 className={`${heading} text-[clamp(1.875rem,1.4rem+1.6vw,2.75rem)] leading-[1.15]`}>Join the constellation.</h3>
+            <h3 className={`${heading} text-[clamp(1.875rem,1.4rem+1.6vw,2.75rem)] leading-[1.2]`}>Join the constellation.</h3>
             <a href={`mailto:${SPONSOR_EMAIL}`} className={action}>
               Become a sponsor
             </a>
           </div>
-          <a href={`mailto:${SPONSOR_EMAIL}`} className="text-[15px] text-tn-muted underline decoration-from-font underline-offset-4 hover:text-tn-ink">
+          <a href={`mailto:${SPONSOR_EMAIL}`} className="text-base text-tn-muted underline decoration-from-font underline-offset-4 hover:text-tn-ink">
             {SPONSOR_EMAIL}
           </a>
         </div>

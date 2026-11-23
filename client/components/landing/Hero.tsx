@@ -67,8 +67,8 @@ function Rings({ half }: { half: "far" | "near" }) {
 
 function Scene() {
   return (
-    // The scene keeps to the page column (a little wider), so it doesn't grow with a very wide window.
-    <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1320px] -translate-x-1/2 select-none lg:block">
+    // The scene spans the window (up to 1680px), so the planet stays as grand as the design has it.
+    <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1680px] -translate-x-1/2 select-none lg:block">
       {/* eslint-disable @next/next/no-img-element */}
       {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
       <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={13} delay={1.5} />
@@ -85,12 +85,6 @@ function Scene() {
       <div className="anim-float absolute" style={{ ...at(1128, 419, 305), ...float(16, "-5%", "-3%") }}>
         <Planet kind="green" className="w-full" />
       </div>
-      <img
-        src="/images/satellite.svg"
-        alt=""
-        className="anim-float absolute h-auto"
-        style={{ ...at(569, 633, 220), ...float(16, "-90%", "35%", "-12deg") }}
-      />
       {/* eslint-enable @next/next/no-img-element */}
 
       <TwinkleStar className="absolute" dur={4.2} style={at(838, 700, 72)} />
@@ -109,8 +103,8 @@ export function Hero() {
         <Planet kind="pink" className="w-full" />
       </div>
 
-      <div className={`${wrap} flex flex-col items-start gap-6 pt-14 pb-24 sm:pt-20 lg:min-h-[min(58vw,780px)] lg:gap-6 lg:pt-24 lg:pb-28`}>
-        <p className={`${caps} rise text-sm leading-[1.4] text-tn-cyan sm:text-[15px]`} style={order(0)}>
+      <div className={`${wrap} flex flex-col items-start gap-6 pt-14 pb-24 sm:pt-20 lg:min-h-[min(62vw,980px)] lg:gap-6 lg:pt-24 lg:pb-28`}>
+        <p className={`${caps} rise text-sm leading-[1.4] text-tn-cyan sm:text-base`} style={order(0)}>
           Waterloo’s largest women+ hackathon
         </p>
 
@@ -122,12 +116,12 @@ export function Hero() {
             TechNova 6
           </h1>
           {/* The hackathon's dates sit right under the title, as its subheader. */}
-          <p className={`${heading} rise text-[clamp(1.5rem,1.1rem+1.7vw,2.25rem)] leading-[1.15]`} style={order(2)}>
+          <p className={`${heading} rise text-[clamp(1.5rem,1.1rem+1.7vw,2.25rem)] leading-[1.2]`} style={order(2)}>
             {EVENT_DATES_SHORT_LABEL}
           </p>
         </div>
 
-        <p className="rise max-w-[30ch] text-lg leading-[1.4] sm:text-[22px]" style={order(3)}>
+        <p className="rise max-w-[30ch] text-lg leading-[1.4] sm:text-xl" style={order(3)}>
           A universe of possibility. Hack with us.
         </p>
 

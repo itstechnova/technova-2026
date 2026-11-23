@@ -70,7 +70,7 @@ function useHiddenOnScrollDown(): boolean {
 }
 
 const anchor =
-  "flex min-h-11 items-center rounded-md px-3 text-base leading-none font-semibold transition focus-visible:outline-2 focus-visible:outline-tn-cyan";
+  "flex min-h-11 items-center rounded-full px-3 text-base leading-none font-semibold transition focus-visible:outline-2 focus-visible:outline-tn-cyan";
 
 export function Nav() {
   const current = useCurrentSection();
@@ -108,7 +108,7 @@ export function Nav() {
 
         {/* Room on the far right for the MLH banner, which hangs from the top of the page. */}
         <div className="ml-auto flex items-center gap-2 lg:ml-0">
-          <ApplyLink className="px-4! py-2.5! text-[15px]!" />
+          <ApplyLink className="px-4! py-3! text-base!" />
           <button
             type="button"
             aria-expanded={open}

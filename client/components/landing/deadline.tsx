@@ -76,28 +76,28 @@ export function Countdown() {
     : EVENT_DATES_LABEL;
 
   return (
-    <div className="flex flex-col gap-2.5">
+    <div className="flex flex-col gap-3">
       {/* Screen readers get the date once; the ticking digits are hidden from them. */}
       <p className="sr-only">
         {open
           ? `Applications close on ${APPLICATIONS_CLOSE_DATE_LABEL} at ${APPLICATIONS_CLOSE_TIME_LABEL}.`
           : `The hackathon runs ${EVENT_DATES_LABEL}.`}
       </p>
-      <p aria-hidden className="text-[15px] leading-none text-tn-muted">
+      <p aria-hidden className="text-base leading-none text-tn-muted">
         {open ? "Applications close in" : "The hackathon starts in"}
       </p>
-      <dl aria-hidden className="flex gap-2 sm:gap-2.5">
+      <dl aria-hidden className="flex gap-2 sm:gap-3">
         {units.map(({ label, value }) => (
           <div
             key={label}
-            className="flex w-[4.5rem] flex-col items-center gap-1.5 rounded-xl border border-tn-line/80 bg-[#120838]/80 pt-3.5 pb-2.5 sm:w-[5.25rem]"
+            className="flex w-[4.5rem] flex-col items-center gap-2 rounded-xl border border-tn-line/80 bg-[#120838]/80 pt-4 pb-3 sm:w-[5.25rem]"
           >
             <dd className={`${heading} text-[clamp(1.875rem,1.4rem+1.8vw,2.5rem)] leading-none tabular-nums`}>{value}</dd>
             <dt className="text-xs leading-none text-tn-muted">{label}</dt>
           </div>
         ))}
       </dl>
-      <p aria-hidden className="text-[17px] leading-[1.3] font-semibold text-tn-yellow">{when}</p>
+      <p aria-hidden className="text-lg leading-[1.4] font-semibold text-tn-yellow">{when}</p>
     </div>
   );
 }

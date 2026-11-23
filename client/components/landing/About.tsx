@@ -51,13 +51,13 @@ function Collage() {
 export function About() {
   return (
     <section id="about" className="relative">
-      <div className={`${wrap} grid items-center gap-x-14 gap-y-14 py-20 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)] lg:py-24`}>
-        <div className="flex flex-col gap-7">
+      <div className={`${wrap} grid items-center gap-x-16 gap-y-16 py-20 lg:grid-cols-[minmax(0,480px)_minmax(0,1fr)] lg:py-24`}>
+        <div className="flex flex-col gap-8">
           <SectionHeading title="About TechNova" size="stacked">
             A hackathon for women and non-binary people.
           </SectionHeading>
 
-          <div className="scroll-in flex flex-col gap-4 text-[17px] leading-[1.55] text-tn-muted sm:text-lg">
+          <div className="scroll-in flex flex-col gap-4 text-lg leading-[1.5] text-tn-muted sm:text-lg">
             <p>
               <strong className="font-semibold text-tn-ink">Our mission</strong> is to give women and non-binary
               students a safe, welcoming place to start, grow and thrive in tech. We bring people together, connect
@@ -73,7 +73,7 @@ export function About() {
             {FACTS.map(({ value, label }) => (
               <div key={label} className="flex flex-col gap-1">
                 <dd className={`${heading} text-[clamp(1.5rem,1.2rem+1vw,2rem)] leading-none`}>{value}</dd>
-                <dt className="text-sm leading-[1.3] text-tn-muted">{label}</dt>
+                <dt className="text-sm leading-[1.4] text-tn-muted">{label}</dt>
               </div>
             ))}
           </dl>

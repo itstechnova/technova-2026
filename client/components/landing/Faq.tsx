@@ -30,7 +30,7 @@ function VenueMap() {
         className={`absolute inset-0 flex flex-col items-center justify-center gap-3 transition-opacity duration-500 ${loaded ? "opacity-0" : "opacity-100"}`}
       >
         <div className="map-shimmer absolute inset-0" />
-        <MapPin size={28} strokeWidth={1.75} className="relative text-tn-cyan motion-safe:animate-bounce" />
+        <MapPin size={28} strokeWidth={1.75} className="relative text-tn-cyan" />
         <p className="relative text-sm text-tn-muted">Finding {VENUE.short} on the map…</p>
       </div>
       <iframe
@@ -94,7 +94,7 @@ export function Faq() {
           <SectionHeading title="Questions?" size="stacked">
             A few things to know before you apply.
           </SectionHeading>
-          <p className="scroll-in text-lg leading-[1.35] text-tn-cyan">
+          <p className="scroll-in text-lg leading-[1.4] text-tn-cyan">
             Ask us at
             <br />
             <a href={`mailto:${SUPPORT_EMAIL}`} className="underline decoration-from-font underline-offset-4 hover:text-tn-ink">
@@ -121,7 +121,7 @@ export function Faq() {
                       aria-expanded={expanded}
                       aria-controls={`faq-answer-${index}`}
                       onClick={() => setOpen(expanded ? null : index)}
-                      className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left text-lg leading-[1.35] font-semibold text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan sm:text-xl"
+                      className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left text-lg leading-[1.4] font-semibold text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan sm:text-xl"
                     >
                       {q}
                       <span aria-hidden className={`text-2xl leading-none text-tn-cyan transition-transform duration-200 ${expanded ? "rotate-45" : ""}`}>
@@ -147,7 +147,7 @@ export function Faq() {
                             href={mapLink}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="w-fit text-[15px] text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink"
+                            className="w-fit text-base text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink"
                           >
                             Open in Google Maps<span className="sr-only"> (opens in a new tab)</span>
                           </a>
