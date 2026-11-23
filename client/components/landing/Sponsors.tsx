@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { SectionHeading, art, caps, panel, wrap } from "@/components/landing/shared";
+import { SectionHeading, caps, panel, wrap } from "@/components/landing/shared";
 import { TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
 
 // Figma "03 · Sponsors / #sponsors": the sponsors as a constellation. From `lg` up the logos, stars
@@ -109,14 +109,6 @@ export function Sponsors() {
         <LogoGrid />
 
         <div className={`${panel} scroll-in relative mt-16 flex flex-col gap-x-10 gap-y-9 px-7 py-9 md:flex-row md:items-center md:justify-between lg:px-10 lg:py-8`}>
-          {/* The UFO hovers over the panel, its beam pointing at the button. */}
-          <img
-            src={art("ufo")}
-            alt=""
-            aria-hidden
-            className="anim-float pointer-events-none absolute bottom-[calc(100%-56px)] left-[36%] hidden h-auto w-[150px] select-none lg:block"
-            style={{ "--dur": "8s", "--float-y": "-5%", "--float-x": "2%" } as CSSProperties}
-          />
           <div className="flex flex-wrap items-center gap-x-9 gap-y-5">
             <div className="flex flex-col gap-2.5">
               <h3 className={`${heading} text-[28px] leading-[1.25] sm:text-[32px]`}>Join the constellation.</h3>
