@@ -1,4 +1,4 @@
-import { fieldInput } from "@/components/portal/ui";
+import { controlInput } from "@/components/portal/ui";
 import type { ParagraphQuestion } from "@/lib/application/types";
 
 import { describedBy, QuestionShell, useFieldIds } from "./QuestionShell";
@@ -29,10 +29,10 @@ export function ParagraphField({ question, value = "", onChange, error, disabled
         rows={5}
         // Grows with its content where `field-sizing` is supported; elsewhere it is a
         // comfortable fixed height the applicant can drag taller.
-        className={`${fieldInput} field-sizing-content block min-h-40 resize-y`}
+        className={`${controlInput} field-sizing-content block min-h-40 resize-y`}
         value={value}
         onChange={(event) => onChange(event.target.value)}
-        placeholder={question.placeholder}
+        placeholder={question.placeholder ?? "Your answer"}
         aria-required={question.required || undefined}
         aria-invalid={error ? true : undefined}
         aria-describedby={describedBy(question, ids, { error, hint: hasCounter })}

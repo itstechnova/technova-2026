@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useRef, useState, useTransition } from "react";
-import { FormAside } from "@/components/application/FormAside";
 import { QuestionList, focusQuestion } from "@/components/application/QuestionList";
 import { ReviewStep } from "@/components/application/ReviewStep";
 import { StepTabs, type Step } from "@/components/application/StepTabs";
@@ -15,9 +14,12 @@ import {
   type Draft,
 } from "@/components/application/useApplicationDraft";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
-import { buttonPrimary, buttonSecondary } from "@/components/portal/ui";
-import { cn } from "@/lib/utils";
-import { SUPPORT_EMAIL } from "@/lib/application/config";
+import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
+import {
+  APPLICATIONS_CLOSE_DATE_LABEL,
+  APPLICATIONS_CLOSE_TIME_LABEL,
+  SUPPORT_EMAIL,
+} from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
 import { submitHackerApplication } from "@/lib/application/submit";
 import type { AnswerValue, Answers } from "@/lib/application/types";
@@ -30,13 +32,19 @@ import {
   visibleAnswers,
 } from "@/lib/application/validate";
 
-// The action bar's buttons: the portal buttons, a size down so three fit a phone's width.
-const compactButton = "min-h-11 px-5 py-2.5 text-base";
+// "My application" in the hacker dashboard (Figma "07 · Hacker application · redesign v2"): a
+// stepper with one step per form section, then Review. The current step is in the URL
+// (`?step=<section id | review>`); answers are a localStorage draft until submitted.
 
-// The hacker application as a stepper: one step per form section, then Review. The current step
-// is in the URL (`?step=<section id | review>`); answers are a localStorage draft until submitted.
+// Shown under the welcome step's introduction.
+const KEY_DATES = [
+  { label: "Hackathon", value: "Jan 22–24, 2027 · in person, Waterloo" },
+  { label: "Applications close", value: `${APPLICATIONS_CLOSE_DATE_LABEL}, ${APPLICATIONS_CLOSE_TIME_LABEL}` },
+];
 
 const DASHBOARD = "/applicant/dashboard";
+// Where a successful submit lands: the confirmation, on the application page.
+const SUBMITTED = "/applicant/application?submitted=1";
 const REVIEW = "review";
 const SUBMIT_FAILED = "Something went wrong while submitting your application. Please try again.";
 
@@ -92,7 +100,7 @@ function FormSkeleton() {
 function ClosedState() {
   return (
     <PortalPage>
-      <PageHeading eyebrow="Application / Closed" title="Applications are closed">
+      <PageHeading title="Applications are closed">
         The deadline to apply to TechNova has passed, so new applications can no longer be submitted.
       </PageHeading>
       <p className="text-lg text-tn-muted">
@@ -104,7 +112,7 @@ function ClosedState() {
       </p>
       <div>
         <Link href={DASHBOARD} className={buttonSecondary}>
-          Back to overview
+          Back to dashboard
         </Link>
       </div>
     </PortalPage>
@@ -232,7 +240,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
         if (result.ok) {
           setSubmitted(true);
           draft.clear();
-          router.push(DASHBOARD);
+          router.push(SUBMITTED);
           return;
         }
         setSubmitError(result.error);
@@ -250,75 +258,92 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
       : "Not saved yet";
   const errorCount = Object.keys(errors).length;
 
+  const title = section ? section.title : "Review and submit";
+  const intro = section
+    ? section.description
+    : "Thanks so much for your interest in applying to TechNova! Check your answers, then submit.";
+
   return (
     <PortalPage>
-      <div ref={containerRef} className="flex flex-col gap-5 xl:gap-[30px]">
-        <PageHeading
-          eyebrow={`Application / ${section ? (section.shortTitle ?? section.title) : "Review"}`}
-          title={section ? section.title : "Review your application"}
-        >
-          {!section && <p>Check your answers before submitting.</p>}
-          <p>
-            Step {current + 1} of {STEPS.length} · {saveStatus}
-          </p>
-        </PageHeading>
+      <div ref={containerRef} className="flex flex-col gap-6 xl:gap-8">
+        {/* This page of the dashboard: its name, the draft's state, and the way back. */}
+        <div className="flex max-w-[988px] flex-col gap-3.5">
+          <div className="flex flex-wrap items-center justify-between gap-x-6">
+            <p className="flex flex-wrap items-baseline gap-x-3.5 gap-y-1">
+              <span className={`${heading} text-2xl leading-[1.25]`}>My application</span>
+              <span className="text-sm text-tn-muted">Draft · {saveStatus}</span>
+            </p>
+            <button
+              type="button"
+              onClick={saveAndExit}
+              className={`${textLink} flex min-h-11 cursor-pointer items-center text-[15px] font-semibold`}
+            >
+              Save and exit to dashboard
+            </button>
+          </div>
+          <StepTabs steps={STEPS} current={current} reachable={reachable} onSelect={(index) => goTo(index)} />
+        </div>
 
-        <StepTabs steps={STEPS} current={current} reachable={reachable} onSelect={(index) => goTo(index)} />
+        <div className="flex max-w-[820px] flex-col gap-3">
+          <h1
+            tabIndex={-1}
+            className={`${heading} text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}
+          >
+            {title}
+          </h1>
+          {intro && <p className="text-base leading-[1.45] whitespace-pre-line text-tn-muted xl:text-lg">{intro}</p>}
+        </div>
+
+        {current === 0 && (
+          <dl className="flex max-w-[820px] flex-wrap gap-x-12 gap-y-4 border-y border-tn-line/70 py-5">
+            {KEY_DATES.map(({ label, value }) => (
+              <div key={label} className="flex flex-col gap-1">
+                <dt className="text-sm text-tn-muted">{label}</dt>
+                <dd className="text-[17px] font-semibold text-tn-ink">{value}</dd>
+              </div>
+            ))}
+          </dl>
+        )}
 
         {section ? (
-          <div className="flex items-start gap-10">
-            <form
-              noValidate
-              className="flex max-w-[820px] min-w-0 flex-1 flex-col gap-5 xl:gap-[30px]"
-              onSubmit={(event) => {
-                event.preventDefault();
-                continueToNext();
-              }}
-            >
-              {section.description && (
-                <p className="text-base leading-[1.45] whitespace-pre-line text-tn-muted xl:text-lg">{section.description}</p>
-              )}
-              <QuestionList
-                questions={section.questions}
-                answers={answers}
-                errors={errors}
-                onChange={changeAnswer}
-              />
-              {errorCount > 0 && (
-                <p role="alert" className="text-base text-tn-error">
-                  {errorCount === 1
-                    ? "Please fix the highlighted question to continue."
-                    : `Please fix the ${errorCount} highlighted questions to continue.`}
-                </p>
-              )}
-              {/* Pinned to the bottom of the window, so the way forward is in view on long steps. */}
-              <div className="sticky bottom-0 z-10 -mx-5 flex flex-wrap items-center gap-2.5 border-t border-tn-line/60 bg-tn-bg/75 px-5 py-3 backdrop-blur-md sm:-mx-8 sm:gap-3 sm:px-8 md:mx-0 md:rounded-t-2xl md:border-x md:px-4">
-                <button type="submit" className={cn(buttonPrimary, compactButton)}>
-                  {current === REVIEW_INDEX - 1 ? "Review application" : "Continue"}
+          <form
+            noValidate
+            className="flex max-w-[820px] min-w-0 flex-col gap-6"
+            onSubmit={(event) => {
+              event.preventDefault();
+              continueToNext();
+            }}
+          >
+            <QuestionList questions={section.questions} answers={answers} errors={errors} onChange={changeAnswer} />
+            {errorCount > 0 && (
+              <p role="alert" className="text-base text-tn-error">
+                {errorCount === 1
+                  ? "Please fix the highlighted question to continue."
+                  : `Please fix the ${errorCount} highlighted questions to continue.`}
+              </p>
+            )}
+            <div className="flex flex-wrap gap-3">
+              {current > 0 && (
+                <button type="button" onClick={() => goTo(current - 1)} className={buttonSecondary}>
+                  Back
                 </button>
-                {current > 0 && (
-                  <button type="button" onClick={() => goTo(current - 1)} className={cn(buttonSecondary, compactButton)}>
-                    Back
-                  </button>
-                )}
-                <button type="button" onClick={saveAndExit} className={cn(buttonSecondary, compactButton, "ml-auto")}>
-                  Save &amp; exit
-                </button>
-              </div>
-            </form>
-            <FormAside />
-          </div>
+              )}
+              <button type="submit" className={buttonPrimary}>
+                {current === REVIEW_INDEX - 1 ? "Save and review" : "Save and continue"}
+              </button>
+            </div>
+          </form>
         ) : (
           <ReviewStep
-              steps={SECTIONS}
-              agreements={AGREEMENTS}
-              answers={answers}
-              errors={errors}
-              submitError={submitError}
-              pending={pending || submitted}
-              onChange={changeAnswer}
-              onEdit={(index) => goTo(index)}
-              onSubmit={submit}
+            steps={SECTIONS}
+            agreements={AGREEMENTS}
+            answers={answers}
+            errors={errors}
+            submitError={submitError}
+            pending={pending || submitted}
+            onChange={changeAnswer}
+            onEdit={(index) => goTo(index)}
+            onSubmit={submit}
           />
         )}
       </div>

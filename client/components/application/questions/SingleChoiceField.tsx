@@ -3,7 +3,7 @@ import { useState } from "react";
 import { OTHER_PREFIX, type SingleChoiceQuestion } from "@/lib/application/types";
 import { isOtherValue } from "@/lib/application/validate";
 
-import { ChoiceOption, optionGridClass } from "./ChoiceOption";
+import { ChoiceOption, optionGroupClass } from "./ChoiceOption";
 import { otherDraftText, OtherTextInput } from "./OtherTextInput";
 import { QuestionShell, useFieldIds } from "./QuestionShell";
 
@@ -46,7 +46,7 @@ export function SingleChoiceField({ question, value = "", onChange, error, disab
         )
       }
     >
-      <div className={optionGridClass(question.options, question.allowOther ? 1 : 0)}>
+      <div className={optionGroupClass}>
         {question.options.map((option) => (
           <ChoiceOption
             key={option.value}

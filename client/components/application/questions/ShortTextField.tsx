@@ -1,6 +1,6 @@
 import type { HTMLAttributes, HTMLInputTypeAttribute } from "react";
 
-import { fieldInput } from "@/components/portal/ui";
+import { controlInput } from "@/components/portal/ui";
 import type { ShortTextQuestion } from "@/lib/application/types";
 
 import { describedBy, QuestionShell, useFieldIds } from "./QuestionShell";
@@ -51,7 +51,7 @@ export function ShortTextField({ question, value = "", onChange, error, disabled
         type={kind.type}
         inputMode={kind.inputMode}
         autoComplete={AUTOCOMPLETE_BY_ID[question.id] ?? kind.autoComplete}
-        className={fieldInput}
+        className={controlInput}
         value={value}
         onChange={(event) => onChange(event.target.value)}
         placeholder={question.placeholder}

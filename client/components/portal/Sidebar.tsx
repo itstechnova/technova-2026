@@ -8,8 +8,8 @@ import { signOut } from "@/lib/auth/actions";
 import { APPLICATIONS_CLOSE_DATE_LABEL, APPLICATIONS_CLOSE_TIME_LABEL } from "@/lib/application/config";
 import { BrandLockup } from "@/components/portal/ui";
 
-// The participant portal's navigation (Figma "Sidebar", 240px). From `md` up it is a column pinned to
-// the viewport: brand and deadline on top, the links scrolling if the window is short, and
+// The hacker dashboard's navigation (Figma "Sidebar / hacker dashboard", 240px). From `md` up it is a
+// flush rail pinned to the viewport with one hairline on its right: brand and deadline on top, the links scrolling if the window is short, and
 // "Back to website" / "Sign out" always in view at the bottom. On phones it is a top bar whose menu
 // button reveals the same links.
 
@@ -21,19 +21,19 @@ const NAV_ITEMS: NavItem[] = [
   { label: "My application", href: "/applicant/application" },
   { label: "My schedule" },
   { label: "Resources" },
-  { label: "Profile & settings" },
-  { label: "Help & support" },
+  { label: "Profile & settings", href: "/applicant/profile" },
+  { label: "Help & support", href: "/applicant/help" },
 ];
 
-const navItem =
-  "flex min-h-11 items-center border-l-[3px] px-3 py-2.5 text-base leading-[1.35] whitespace-nowrap 2xl:text-[17px]";
+// Labels line up with the logo; the current page is marked by a cyan bar and a small indent.
+const navItem = "flex min-h-11 items-center py-2.5 text-base leading-[1.35] whitespace-nowrap 2xl:text-[17px]";
 const footerLink =
   "flex min-h-10 cursor-pointer items-center text-base leading-[1.35] font-semibold text-tn-muted transition hover:text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan";
 
 function Deadline() {
   return (
     <div className="flex flex-col gap-[5px] leading-none">
-      <p className="text-xs text-tn-muted uppercase">Applications close</p>
+      <p className="text-xs text-tn-muted">Applications close</p>
       <p className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</p>
       <p className="text-base text-tn-cyan xl:text-lg">{APPLICATIONS_CLOSE_TIME_LABEL}</p>
     </div>
@@ -42,17 +42,17 @@ function Deadline() {
 
 function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate: () => void }) {
   return (
-    <ul className="flex flex-col gap-1 [@media(min-height:900px)]:md:gap-3">
+    <ul className="flex flex-col gap-1">
       {NAV_ITEMS.map(({ label, href }) => {
         if (!href) {
           return (
             <li key={label}>
               <span
                 aria-disabled="true"
-                className={`${navItem} cursor-not-allowed justify-between gap-2 border-transparent font-semibold text-tn-muted/50`}
+                className={`${navItem} cursor-not-allowed justify-between gap-2 font-semibold text-tn-muted/50`}
               >
                 {label}
-                <span className="rounded-full border border-tn-line px-1.5 py-0.5 text-[10px] leading-none tracking-wide uppercase">
+                <span className="rounded border border-tn-line px-1.5 pt-1 pb-[3px] text-[10px] leading-none font-semibold tracking-[0.12em] text-tn-muted/80 uppercase">
                   Soon
                 </span>
               </span>
@@ -68,8 +68,8 @@ function NavLinks({ pathname, onNavigate }: { pathname: string; onNavigate: () =
               onClick={onNavigate}
               className={`${navItem} transition focus-visible:outline-2 focus-visible:outline-tn-cyan ${
                 active
-                  ? "border-tn-cyan font-bold text-tn-cyan"
-                  : "border-transparent font-semibold text-tn-muted hover:text-tn-ink"
+                  ? "border-l-[3px] border-tn-cyan pl-3.5 font-bold text-tn-cyan"
+                  : "font-semibold text-tn-muted hover:text-tn-ink"
               }`}
             >
               {label}
@@ -87,8 +87,8 @@ export default function Sidebar() {
   const close = () => setOpen(false);
 
   return (
-    <header className="sticky top-0 z-30 bg-tn-bg/80 backdrop-blur-md md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col md:bg-tn-bg/45">
-      <div className="flex items-center justify-between px-4 py-3 md:block md:pt-[clamp(1rem,4vh,2.25rem)] md:pb-0">
+    <header className="sticky top-0 z-30 border-b border-tn-line/60 bg-tn-bg/85 md:flex md:h-dvh md:w-60 md:shrink-0 md:flex-col md:border-r md:border-b-0 md:bg-tn-bg/55">
+      <div className="flex items-center justify-between px-5 py-3 md:block md:px-6 md:pt-[clamp(1rem,3.5vh,2rem)] md:pb-0">
         <BrandLockup />
         <button
           type="button"
@@ -104,11 +104,11 @@ export default function Sidebar() {
 
       <div
         id="portal-nav"
-        className={`${open ? "flex" : "hidden"} max-h-[calc(100dvh-68px)] flex-col gap-4 overflow-y-auto px-4 pt-2 pb-6 md:flex md:max-h-none md:min-h-0 md:flex-1 md:gap-[clamp(0.75rem,2.5vh,1.5rem)] md:overflow-visible md:pt-[clamp(0.75rem,2.5vh,1.5rem)] md:pb-4`}
+        className={`${open ? "flex" : "hidden"} max-h-[calc(100dvh-68px)] flex-col gap-4 overflow-y-auto px-5 pt-2 pb-6 md:flex md:max-h-none md:min-h-0 md:flex-1 md:gap-[clamp(0.75rem,2.2vh,1.25rem)] md:overflow-visible md:px-6 md:pt-[clamp(0.625rem,1.6vh,0.875rem)] md:pb-[clamp(1rem,3.5vh,2rem)]`}
       >
-        <p className="text-xs leading-[1.35] font-semibold text-tn-cyan uppercase">Participant portal</p>
+        <p className="text-xs leading-[1.35] font-semibold text-tn-cyan uppercase">Hacker dashboard</p>
         <Deadline />
-        <nav aria-label="Participant portal" className="md:min-h-0 md:flex-1 md:overflow-y-auto">
+        <nav aria-label="Hacker dashboard" className="md:min-h-0 md:flex-1 md:overflow-y-auto">
           <NavLinks pathname={pathname} onNavigate={close} />
         </nav>
         <div className="flex flex-col gap-1 md:border-t md:border-tn-line/60 md:pt-2">

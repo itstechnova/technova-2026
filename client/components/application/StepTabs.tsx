@@ -21,7 +21,7 @@ export function StepTabs({
 }) {
   return (
     <nav aria-label="Application steps" className="@container flex flex-col gap-3">
-      <div aria-hidden className="h-1 max-w-[820px] overflow-hidden rounded-full bg-tn-line/70">
+      <div aria-hidden className="h-1.5 overflow-hidden rounded-full bg-tn-line/70">
         <div
           className="h-full rounded-full bg-tn-cyan transition-[width] duration-300 ease-out"
           style={{ width: `${((current + 1) / steps.length) * 100}%` }}

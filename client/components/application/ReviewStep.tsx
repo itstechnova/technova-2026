@@ -2,13 +2,13 @@
 
 import { QuestionList } from "@/components/application/QuestionList";
 import { SectionSummary } from "@/components/application/SectionSummary";
-import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
+import { buttonPrimary, buttonSecondary } from "@/components/portal/ui";
 import { textLink } from "@/components/portal/PortalPage";
 import type { AnswerValue, Answers, FormSection } from "@/lib/application/types";
 
 /**
- * The last step (Figma frame 06): every step's answers with an Edit link, then the "Before you
- * submit" agreements (the form's review-placement sections) and the submit button.
+ * The last step (Figma "07 · My application / Review"): every step's answers with an Edit link,
+ * then the "Before you submit" agreements (the form's review-placement sections) and Submit.
  */
 export function ReviewStep({
   steps,
@@ -35,7 +35,7 @@ export function ReviewStep({
   return (
     <form
       noValidate
-      className="flex max-w-[1080px] flex-col gap-[30px]"
+      className="flex max-w-[820px] flex-col gap-7"
       onSubmit={(event) => {
         event.preventDefault();
         onSubmit();
@@ -52,7 +52,7 @@ export function ReviewStep({
               type="button"
               disabled={pending}
               onClick={() => onEdit(index)}
-              className={`${textLink} flex min-h-11 cursor-pointer items-center text-lg`}
+              className={`${textLink} flex min-h-11 cursor-pointer items-center text-[15px] font-semibold`}
             >
               Edit<span className="sr-only"> {section.title}</span>
             </button>
@@ -60,12 +60,12 @@ export function ReviewStep({
         />
       ))}
 
-      <section className="flex flex-col gap-6 border-t border-tn-line/70 pt-7">
-        <h2 className={`${heading} text-[32px] leading-[1.35]`}>Before you submit</h2>
+      <section className="flex flex-col gap-6 border-t border-tn-line/70 pt-6">
+        <h2 className="text-xl leading-[1.35] font-semibold text-tn-ink">Before you submit</h2>
         {agreements.map((section) => (
-          <div key={section.id} className="flex flex-col gap-3">
+          <div key={section.id} className="flex flex-col gap-4">
             {section.description && (
-              <p className="text-lg leading-[1.45] whitespace-pre-line text-tn-muted">{section.description}</p>
+              <p className="text-[15px] leading-[1.45] whitespace-pre-line text-tn-muted">{section.description}</p>
             )}
             <QuestionList
               questions={section.questions}
@@ -79,17 +79,22 @@ export function ReviewStep({
       </section>
 
       {submitError && (
-        <p role="alert" className="rounded-[10px] border border-tn-error px-[18px] py-3 text-lg text-tn-error">
+        <p role="alert" className="rounded-[10px] border border-tn-error px-[18px] py-3 text-base text-tn-error">
           {submitError}
         </p>
       )}
 
-      <div className="flex flex-col gap-4 sm:flex-row">
+      <div className="flex flex-wrap gap-3">
+        <button
+          type="button"
+          disabled={pending}
+          onClick={() => onEdit(steps.length - 1)}
+          className={buttonSecondary}
+        >
+          Back
+        </button>
         <button type="submit" disabled={pending} className={buttonPrimary}>
           {pending ? "Submitting…" : "Submit application"}
-        </button>
-        <button type="button" disabled={pending} onClick={() => onEdit(0)} className={buttonSecondary}>
-          Edit answers
         </button>
       </div>
     </form>

@@ -19,6 +19,16 @@ export const fieldLabel = "text-base leading-[1.35] font-semibold text-tn-ink";
 export const fieldInput =
   "w-full rounded-[10px] border border-tn-line bg-tn-bg px-4 py-3 text-[17px] leading-[1.35] 2xl:px-[18px] 2xl:py-4 2xl:text-lg text-tn-ink outline-none transition placeholder:text-tn-muted/70 focus:border-tn-cyan focus:ring-1 focus:ring-tn-cyan aria-[invalid=true]:border-tn-error disabled:opacity-70";
 
+// Controls in the hacker dashboard (Figma "Form atoms · v2"): a light tint and a visible border so
+// they read as controls on the dark page, and a 2px cyan ring on focus.
+export const controlSurface = "border border-tn-muted/55 bg-white/10 transition hover:border-tn-muted";
+
+export const controlInput =
+  `w-full rounded-[10px] ${controlSurface} px-[18px] py-3.5 text-[17px] leading-[1.35] text-tn-ink outline-none placeholder:text-tn-muted/85 focus:border-tn-cyan focus:ring-2 focus:ring-tn-cyan aria-[invalid=true]:border-tn-error disabled:opacity-70`;
+
+/** A question's prompt. */
+export const questionLabel = "text-[19px] leading-[1.35] font-semibold text-tn-ink";
+
 export const fieldError = "text-sm leading-[1.35] text-tn-error";
 
 export const eyebrow = "text-sm leading-[1.45] tracking-wide text-tn-cyan uppercase";
