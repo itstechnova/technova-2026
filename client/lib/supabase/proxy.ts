@@ -73,6 +73,26 @@ export async function updateSession(request: NextRequest) {
     if (pathname.startsWith('/applicant') && role !== 'applicant' && role !== 'admin') {
       return NextResponse.redirect(new URL('/login', request.url))
     }
+
+    // Already signed in: the login and signup screens (where "Apply now" points) go straight to the
+    // dashboard. Accounts without a role stay put, so the screen can explain what went wrong.
+    if (pathname === '/login' || pathname === '/signup') {
+      const next = request.nextUrl.searchParams.get('next')
+      const destination =
+        role === 'applicant'
+          ? next?.startsWith('/applicant/') && !next.includes('//') && !next.includes('\\')
+            ? next
+            : '/applicant/dashboard'
+          : role === 'admin'
+            ? '/admin/dashboard'
+            : null
+      if (destination) {
+        const response = NextResponse.redirect(new URL(destination, request.url))
+        // Keep any session cookies refreshed on this request.
+        supabaseResponse.cookies.getAll().forEach((cookie) => response.cookies.set(cookie))
+        return response
+      }
+    }
   }
 
   return supabaseResponse
