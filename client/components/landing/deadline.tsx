@@ -54,18 +54,6 @@ export function ApplyLink({ className = "" }: { className?: string }) {
   );
 }
 
-/** The navigation's yellow "Apply by Dec 4" note; "Closes today" on the last day, gone after. */
-export function DeadlineChip({ className = "" }: { className?: string }) {
-  const now = useNow(30_000);
-  if (now !== null && now > CLOSE) return null;
-  const lastDay = now !== null && CLOSE - now < DAY;
-  return (
-    <span className={`text-[15px] leading-none font-semibold whitespace-nowrap text-tn-yellow ${className}`}>
-      {lastDay ? "Closes today" : `Apply by ${APPLICATIONS_CLOSE_DAY_LABEL}`}
-    </span>
-  );
-}
-
 /**
  * The hero's yellow deadline card, the next thing a visitor has to act on. (The hackathon's own
  * dates are the subheader under the title.) Once applications close it turns muted and says so.

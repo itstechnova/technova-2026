@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { ApplyLink, Countdown, DeadlineCard } from "@/components/landing/deadline";
-import { art, caps, place, wrap } from "@/components/landing/shared";
+import { ShootingStar, art, caps, place, wrap } from "@/components/landing/shared";
 import { Planet, TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
 import { EVENT_DATES_SHORT_LABEL } from "@/lib/application/config";
 
@@ -10,7 +10,6 @@ import { EVENT_DATES_SHORT_LABEL } from "@/lib/application/config";
 const FRAME = { w: 1440, h: 980 };
 const at = (x: number, y: number, w: number) => place(FRAME, x, y, w);
 const order = (i: number) => ({ "--i": i }) as CSSProperties;
-const shoot = (dur: number, delay: number) => ({ "--dur": `${dur}s`, "--delay": `${delay}s` }) as CSSProperties;
 const float = (dur: number, y: string, x = "0", rotate = "0deg") =>
   ({ "--dur": `${dur}s`, "--float-y": y, "--float-x": x, "--float-rotate": rotate }) as CSSProperties;
 
@@ -71,9 +70,10 @@ function Scene() {
     <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden aspect-[1440/980] select-none lg:block">
       {/* eslint-disable @next/next/no-img-element */}
       <img src={art("saturn")} alt="" className="anim-float absolute h-auto" style={{ ...at(706, 24, 124), ...float(18, "-10%", "6%") }} />
-      {/* Shooting stars: the design's comet, and a smaller one further left, on different beats. */}
-      <img src={art("comet")} alt="" className="shooting-star absolute h-auto" style={{ ...at(950, 40, 230), ...shoot(9, 1.5) }} />
-      <img src={art("comet")} alt="" className="shooting-star absolute h-auto motion-reduce:hidden" style={{ ...at(430, 150, 150), ...shoot(13, 6) }} />
+      {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
+      <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={9} delay={1.5} />
+      <ShootingStar className="absolute" style={at(330, 120, 300)} seconds={14} delay={6} />
+      <img src={art("comet")} alt="" className="absolute hidden h-auto motion-reduce:block" style={at(950, 40, 230)} />
 
       <div className="anim-float absolute inset-0" style={float(20, "-1.5%", "0.8%")}>
         <Rings half="far" />

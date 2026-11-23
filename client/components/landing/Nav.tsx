@@ -2,11 +2,11 @@
 
 import { Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
-import { ApplyLink, DeadlineChip } from "@/components/landing/deadline";
+import { ApplyLink } from "@/components/landing/deadline";
 import { BrandLockup } from "@/components/portal/ui";
 
-// The sticky navigation (Figma "Sticky navbar"): logo left, section anchors centre, the deadline
-// note and Apply now on the right. The link of the section on screen is highlighted. On phones the
+// The sticky navigation (Figma "Sticky navbar"): logo left, section anchors centre, Apply now on
+// the right. The link of the section on screen is highlighted. On phones the
 // anchors move into a menu. The bar slides away while the page is scrolled down and comes back on
 // scrolling up, or when the pointer reaches the top of the window.
 
@@ -107,9 +107,6 @@ export function Nav() {
 
         {/* Room on the far right for the MLH banner, which hangs from the top of the page. */}
         <div className="ml-auto flex items-center gap-3.5 lg:ml-0 xl:mr-[120px]">
-          <span className="hidden sm:block">
-            <DeadlineChip />
-          </span>
           <ApplyLink className="px-5! py-3! text-base! sm:px-6! sm:py-[15px]! sm:text-lg!" />
           <button
             type="button"

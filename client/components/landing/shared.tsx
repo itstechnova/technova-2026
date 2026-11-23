@@ -68,3 +68,82 @@ export function SectionHeading({
 export function place(frame: { w: number; h: number }, x: number, y: number, w: number): CSSProperties {
   return { left: `${(x / frame.w) * 100}%`, top: `${(y / frame.h) * 100}%`, width: `${(w / frame.w) * 100}%` };
 }
+
+// A shooting star's flight: a shallow arc from lower left to upper right, in a 400 x 160 box.
+const FLIGHT = "M 4 152 Q 230 118 396 8";
+// Its tail: three strokes along that same arc, from long and faint to short and bright, so it
+// tapers and fades away from the head. `length` is a share of the flight (the path is 100 long).
+const TAIL = [
+  { length: 60, width: 1.25, colour: "#cfc4ff", opacity: 0.35 },
+  { length: 40, width: 2, colour: "#ffd0f0", opacity: 0.5 },
+  { length: 22, width: 2.75, colour: "#ffe3d0", opacity: 0.7 },
+  { length: 9, width: 3.5, colour: "#fdf4b8", opacity: 0.95 },
+];
+
+/**
+ * A shooting star that flies along its own curved trail: the head follows the arc, the tail is drawn
+ * along the same arc behind it, and once the head burns out the tail drains after it. It then waits
+ * out the rest of `seconds` before the next pass. Size and place it with `className`/`style` (it is
+ * a 5:2 box). Left out entirely for visitors who prefer reduced motion.
+ */
+export function ShootingStar({
+  seconds = 9,
+  delay = 0,
+  className = "",
+  style,
+}: {
+  /** Time between passes. */
+  seconds?: number;
+  /** Seconds before the first pass. */
+  delay?: number;
+  className?: string;
+  style?: CSSProperties;
+}) {
+  // Shares of `seconds`: the flight takes about a second, the tail a little longer to drain.
+  const flight = 1 / seconds;
+  const drained = 1.45 / seconds;
+  const timing = { dur: `${seconds}s`, begin: `${delay}s`, repeatCount: "indefinite" } as const;
+
+  return (
+    <svg
+      aria-hidden
+      viewBox="0 0 400 160"
+      fill="none"
+      style={style}
+      className={`pointer-events-none aspect-[5/2] overflow-visible select-none motion-reduce:hidden ${className}`}
+    >
+      {TAIL.map(({ length, width, colour, opacity }) => (
+        <path
+          key={length}
+          d={FLIGHT}
+          pathLength={100}
+          stroke={colour}
+          strokeOpacity={opacity}
+          strokeWidth={width}
+          strokeLinecap="round"
+          // One dash of the tail's length, parked before the start of the path until the flight begins.
+          strokeDasharray={`${length} 300`}
+          strokeDashoffset={length}
+        >
+          {/* Leading edge runs the whole arc with the head, then the dash slides off its far end. */}
+          <animate
+            attributeName="stroke-dashoffset"
+            values={`${length};${length - 100};-100;-100`}
+            keyTimes={`0;${flight};${drained};1`}
+            {...timing}
+          />
+        </path>
+      ))}
+      <g opacity={0}>
+        <path d="M0-13C1.2-3.600 3.600-1.200 13 0 3.600 1.200 1.200 3.600 0 13-1.200 3.600-3.600 1.200-13 0-3.600-1.200-1.200-3.600 0-13Z" fill="#fdf4b8" className="drop-shadow-[0_0_6px_#fdf4b8]" />
+        <animateMotion path={FLIGHT} keyPoints="0;1;1" keyTimes={`0;${flight};1`} calcMode="linear" {...timing} />
+        <animate
+          attributeName="opacity"
+          values="0;1;1;0;0"
+          keyTimes={`0;${flight * 0.12};${flight * 0.92};${flight * 1.12};1`}
+          {...timing}
+        />
+      </g>
+    </svg>
+  );
+}

@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { ApplyLink, DateChips } from "@/components/landing/deadline";
-import { art, caps, wrap } from "@/components/landing/shared";
+import { ShootingStar, art, caps, wrap } from "@/components/landing/shared";
 import { TwinkleStar, heading } from "@/components/portal/ui";
 
 // Figma "07 · Community & contact / #community": the closing call to action. The rocket bobs at
@@ -22,13 +22,7 @@ export function Closing() {
         <div aria-hidden className="liftoff pointer-events-none absolute top-44 right-[2%] hidden w-[130px] select-none lg:block">
           <img src={art("rocket-liftoff")} alt="" className="anim-float h-auto w-full" style={{ "--dur": "5s", "--float-y": "-5%" } as CSSProperties} />
         </div>
-        <img
-          src={art("comet")}
-          alt=""
-          aria-hidden
-          className="shooting-star pointer-events-none absolute top-10 left-[30%] hidden h-auto w-[170px] select-none motion-reduce:hidden! lg:block"
-          style={{ "--dur": "11s", "--delay": "3s" } as CSSProperties}
-        />
+        <ShootingStar className="absolute top-6 left-[26%] hidden w-[320px] lg:block" seconds={11} delay={3} />
         <TwinkleStar className="absolute top-[58%] left-[22%] hidden w-[70px] lg:block" dur={4.8} />
         <TwinkleStar className="absolute top-14 right-[27%] hidden w-12 lg:block" dur={3.9} />
         <TwinkleStar className="absolute top-12 left-[53%] w-9" dur={5.3} />
