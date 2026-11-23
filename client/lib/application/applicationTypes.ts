@@ -1,6 +1,7 @@
-// Every application the portal accepts. Each application type is a form config (lib/application/forms/*) plus
-// where its answers are stored and when it closes; the stepper, submit action and submitted view
-// are shared. Adding mentor or judge = a form file, an entry here, a migration and a page.
+// Every application the portal accepts. Each application type is a form config
+// (lib/application/forms/*) plus where its answers are stored and when it closes; the stepper,
+// submit action and submitted view are shared. Adding a type = a form file, an entry here, a
+// migration and a page.
 
 import { APPLICATIONS_CLOSE_AT, APPLICATIONS_CLOSE_DATE_LABEL, APPLICATIONS_CLOSE_TIME_LABEL } from "./config";
 import { hackerForm } from "./forms/hacker";

@@ -19,7 +19,7 @@ import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPag
 import { buttonPrimary, buttonSecondary } from "@/components/portal/ui";
 import { cn } from "@/lib/utils";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
-import { APPLICATIONS, type ApplicationConfig, type ApplicationType } from "@/lib/application/roles";
+import { APPLICATIONS, type ApplicationConfig, type ApplicationType } from "@/lib/application/applicationTypes";
 import { submitApplication } from "@/lib/application/submit";
 import type { AnswerValue, Answers, FormSection, Question } from "@/lib/application/types";
 import {

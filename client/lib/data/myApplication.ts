@@ -1,6 +1,6 @@
 import 'server-only'
 
-import { APPLICATIONS, type ApplicationType } from '@/lib/application/roles'
+import { APPLICATIONS, type ApplicationType } from '@/lib/application/applicationTypes'
 import type { Answers, AnswerValue, Form, Question } from '@/lib/application/types'
 import { requireRole } from '@/lib/auth/dal'
 import { createClient } from '@/lib/supabase/server'

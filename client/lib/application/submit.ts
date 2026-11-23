@@ -2,7 +2,7 @@
 
 import { revalidatePath } from 'next/cache'
 
-import { APPLICATIONS, applicationOpen, isApplicationType, type ApplicationType } from '@/lib/application/roles'
+import { APPLICATIONS, applicationOpen, isApplicationType, type ApplicationType } from '@/lib/application/applicationTypes'
 import type { Answers, AnswerValue, Question, SubmitResult } from '@/lib/application/types'
 import { fileOwner, isVisible, validateForm, visibleAnswers } from '@/lib/application/validate'
 import { requireRole } from '@/lib/auth/dal'

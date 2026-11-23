@@ -6,7 +6,7 @@ import { SectionSummary } from "@/components/application/SectionSummary";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
 import { buttonSecondary } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
-import { APPLICATIONS, applicationOpen, type ApplicationType } from "@/lib/application/roles";
+import { APPLICATIONS, applicationOpen, type ApplicationType } from "@/lib/application/applicationTypes";
 import type { Answers } from "@/lib/application/types";
 import { requireRole } from "@/lib/auth/dal";
 import { getMyApplication } from "@/lib/data/myApplication";
