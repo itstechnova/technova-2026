@@ -46,12 +46,6 @@ export function Sky() {
       {/* eslint-disable @next/next/no-img-element */}
       <img src="/images/satellite.svg" alt="" className="anim-satellite-drift absolute top-[47%] left-[3%] hidden h-auto w-[84px] opacity-80 md:block" />
 
-      <img
-        src={art("saturn")}
-        alt=""
-        className={`anim-float absolute top-[34%] hidden h-auto w-[92px] opacity-90 xl:block ${rightMargin}`}
-        style={float(23, "-14%", "-6%", "-4deg")}
-      />
       <BandedPlanet className={`anim-float absolute top-[52%] hidden w-[64px] opacity-90 xl:block ${leftMargin}`} style={float(19, "-18%", "8%")} />
       <img
         src={art("purple-planet")}

@@ -70,7 +70,6 @@ function Scene() {
     // The scene keeps to the page column (a little wider), so it doesn't grow with a very wide window.
     <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1320px] -translate-x-1/2 select-none lg:block">
       {/* eslint-disable @next/next/no-img-element */}
-      <img src={art("saturn")} alt="" className="anim-float absolute h-auto" style={{ ...at(706, 24, 124), ...float(18, "-10%", "6%") }} />
       {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
       <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={9} delay={1.5} />
       <ShootingStar className="absolute" style={at(330, 120, 300)} seconds={14} delay={6} />
