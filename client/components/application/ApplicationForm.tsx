@@ -129,7 +129,7 @@ type FormProps = {
   userId: string;
   /** Answers known from the account (email, name), used where the draft has none. */
   prefill: Answers;
-  /** What Profile & settings has saved (name, pronouns, phone, t-shirt size). These win over the draft. */
+  /** What Profile & settings has saved (name, pronouns, t-shirt size). These win over the draft. */
   profile: Answers;
   /** The draft saved to the applicant's account, if any. */
   accountDraft: Draft | null;

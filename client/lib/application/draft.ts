@@ -36,7 +36,7 @@ export async function saveHackerDraft(answers: unknown, step: unknown): Promise<
     return { ok: false }
   }
 
-  // Name, pronouns, phone and t-shirt size are the applicant's profile: keep Profile & settings
+  // Name, pronouns and t-shirt size are the applicant's profile: keep Profile & settings
   // showing what they have typed here. Best effort; submitting writes them again.
   const profile = profileColumns(cleaned)
   if (Object.keys(profile).length > 0) {

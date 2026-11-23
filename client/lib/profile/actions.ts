@@ -16,7 +16,6 @@ export async function saveProfile(prevState: ProfileState, formData: FormData): 
   const errors: ProfileState['errors'] = {}
   if (!values.first_name) errors.first_name = 'Enter your first name.'
   if (!values.last_name) errors.last_name = 'Enter your last name.'
-  if (!values.phone_number) errors.phone_number = 'Enter your phone number.'
   for (const { id } of PROFILE_FIELDS) {
     if (errors[id] || validProfileValue(id, values[id])) continue
     errors[id] = id === 'shirt_size' ? 'Choose a size from the list.' : 'That’s too long.'

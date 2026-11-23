@@ -26,8 +26,8 @@ export default async function ProfilePage() {
   return (
     <PortalPage>
       <PageHeading title="Profile & settings">
-        Keep your details up to date. Your name, pronouns, phone number and t-shirt size are the same ones used
-        on your application, so a change here shows there too.
+        Keep your details up to date. Your name, pronouns and t-shirt size are the same ones used on your
+        application, so a change here shows there too.
       </PageHeading>
       <ProfileForm userId={user.id} initial={initial} email={user.email ?? ""} />
     </PortalPage>

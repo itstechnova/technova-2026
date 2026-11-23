@@ -6,7 +6,7 @@ import { patchStoredDraft } from "@/components/application/useApplicationDraft";
 import { Section, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, controlInput, fieldError } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
-import { firstName, lastName, phoneNumber, pronouns, shirtSize } from "@/lib/application/forms/shared";
+import { firstName, lastName, pronouns, shirtSize } from "@/lib/application/forms/shared";
 import { saveProfile } from "@/lib/profile/actions";
 import type { ProfileField, ProfileState, ProfileValues } from "@/lib/profile/fields";
 
@@ -62,7 +62,6 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
           {text(firstName, { name: "First name", autoComplete: "given-name", required: true })}
           {text(lastName, { name: "Last name", autoComplete: "family-name", required: true })}
           {text(pronouns, { name: "Pronouns" })}
-          {text(phoneNumber, { name: "Phone number", type: "tel", autoComplete: "tel", required: true })}
           <div className="flex min-w-0 flex-col gap-2">
             <label htmlFor="shirt_size" className={label}>
               T-shirt size
