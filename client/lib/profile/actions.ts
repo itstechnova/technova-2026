@@ -1,9 +1,25 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { PROFILE_FIELDS, validProfileValue, type ProfileState, type ProfileValues } from '@/lib/profile/fields'
+import {
+  PROFILE_FIELDS,
+  REQUIRED_PROFILE_FIELDS,
+  validProfileValue,
+  type ProfileState,
+  type ProfileValues,
+} from '@/lib/profile/fields'
 import { requireRole } from '@/lib/auth/dal'
 import { createClient } from '@/lib/supabase/server'
+
+const MISSING: Record<string, string> = {
+  first_name: 'Enter your first name.',
+  last_name: 'Enter your last name.',
+  phone_number: 'Enter your phone number.',
+}
+const INVALID: Record<string, string> = {
+  shirt_size: 'Choose a size from the list.',
+  phone_number: 'Enter a valid phone number.',
+}
 
 export async function saveProfile(prevState: ProfileState, formData: FormData): Promise<ProfileState> {
   const user = await requireRole(['applicant', 'admin'])
@@ -14,11 +30,12 @@ export async function saveProfile(prevState: ProfileState, formData: FormData): 
   ) as ProfileValues
 
   const errors: ProfileState['errors'] = {}
-  if (!values.first_name) errors.first_name = 'Enter your first name.'
-  if (!values.last_name) errors.last_name = 'Enter your last name.'
+  for (const id of REQUIRED_PROFILE_FIELDS) {
+    if (!values[id]) errors[id] = MISSING[id] ?? 'This is required.'
+  }
   for (const { id } of PROFILE_FIELDS) {
     if (errors[id] || validProfileValue(id, values[id])) continue
-    errors[id] = id === 'shirt_size' ? 'Choose a size from the list.' : 'That’s too long.'
+    errors[id] = INVALID[id] ?? 'That’s too long.'
   }
   if (Object.keys(errors).length > 0) return { values, errors }
 

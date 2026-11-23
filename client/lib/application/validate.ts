@@ -32,6 +32,12 @@ const MAX_AGE = 100;
 const MAX_SHORT_TEXT_CHARS = 300;
 const MAX_PARAGRAPH_CHARS = 10_000;
 
+/** Whether `value` reads as a phone number: digits with the usual separators, 7 to 15 digits. */
+export function isPhoneNumber(value: string): boolean {
+  const digits = value.replace(/\D/g, "").length;
+  return PHONE_PATTERN.test(value) && digits >= MIN_PHONE_DIGITS && digits <= MAX_PHONE_DIGITS;
+}
+
 export function countWords(text: string): number {
   const trimmed = text.trim();
   return trimmed === "" ? 0 : trimmed.split(/\s+/).length;
@@ -106,14 +112,8 @@ function validateText(
       const age = Number(value);
       return age >= MIN_AGE && age <= MAX_AGE ? null : "Please enter a valid age";
     }
-    case "tel": {
-      const digits = value.replace(/\D/g, "").length;
-      const valid =
-        PHONE_PATTERN.test(value) &&
-        digits >= MIN_PHONE_DIGITS &&
-        digits <= MAX_PHONE_DIGITS;
-      return valid ? null : "Please enter a valid phone number";
-    }
+    case "tel":
+      return isPhoneNumber(value) ? null : "Please enter a valid phone number";
     default:
       return null;
   }
