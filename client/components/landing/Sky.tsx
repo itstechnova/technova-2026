@@ -1,9 +1,10 @@
 import type { CSSProperties } from "react";
-import { BandedPlanet, ShootingStar, art } from "@/components/landing/shared";
+import { Drifters } from "@/components/landing/Drifters";
+import { ShootingStar } from "@/components/landing/shared";
 
 // The living sky behind the whole landing page, kept quiet: a field of small stars that twinkle in
 // three out-of-step layers (fixed to the window, like the nebula), a meteor every so often down the
-// page, a satellite wandering past, and a few small planets drifting in the margins.
+// page, and distant planets and a satellite wandering across with parallax (Drifters).
 // Everything here is decoration and holds still for visitors who prefer reduced motion.
 
 // Each layer is one tile of dots, repeated. The tiles are different sizes so the repeats never line up.
@@ -21,13 +22,6 @@ const METEORS = [
   { top: "74%", side: "right-[22%]", width: 210, seconds: 37, delay: 21 },
 ];
 
-const float = (dur: number, y: string, x = "0", rotate = "0deg") =>
-  ({ "--dur": `${dur}s`, "--float-y": y, "--float-x": x, "--float-rotate": rotate }) as CSSProperties;
-
-// Just outside the page column, on screens wide enough to have margins.
-const leftMargin = "left-[max(0.5rem,calc(50%-720px))]";
-const rightMargin = "right-[max(0.5rem,calc(50%-720px))]";
-
 export function Sky() {
   return (
     <div aria-hidden className="pointer-events-none absolute inset-0 -z-10 overflow-hidden select-none">
@@ -43,23 +37,7 @@ export function Sky() {
         <ShootingStar key={top} className={`absolute opacity-80 ${side}`} style={{ top, width }} seconds={seconds} delay={delay} />
       ))}
 
-      {/* eslint-disable @next/next/no-img-element */}
-      <img src="/images/satellite.svg" alt="" className="anim-satellite-drift absolute top-[47%] left-[3%] hidden h-auto w-[84px] opacity-80 md:block" />
-
-      <BandedPlanet className={`anim-float absolute top-[52%] hidden w-[64px] opacity-90 xl:block ${leftMargin}`} style={float(19, "-18%", "8%")} />
-      <img
-        src={art("purple-planet")}
-        alt=""
-        className={`anim-float absolute top-[68%] hidden h-auto w-[76px] opacity-80 xl:block ${rightMargin}`}
-        style={float(27, "-12%", "-10%")}
-      />
-      <img
-        src={art("ringed-planet-green")}
-        alt=""
-        className={`anim-float absolute top-[86%] hidden h-auto w-[110px] -rotate-12 opacity-85 xl:block ${leftMargin}`}
-        style={float(21, "-10%", "6%", "5deg")}
-      />
-      {/* eslint-enable @next/next/no-img-element */}
+      <Drifters />
     </div>
   );
 }

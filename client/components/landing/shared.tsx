@@ -12,8 +12,9 @@ export const panel = "rounded-2xl border border-tn-line/80 bg-[#120838]/50";
 // The landing page's buttons: squarer and lighter than the portal's pills.
 const actionBase =
   "inline-flex cursor-pointer items-center justify-center rounded-[10px] px-5 py-3 text-base leading-[1.25] font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
-export const action = `${actionBase} bg-tn-cyan text-tn-bg hover:bg-white`;
-export const actionQuiet = `${actionBase} border border-tn-muted/60 text-tn-ink hover:border-tn-ink hover:bg-white/5`;
+// Frosted white glass for the main action; the quiet one is bare text until hovered.
+export const action = `${actionBase} border border-white/35 bg-white/15 text-white backdrop-blur-md hover:bg-white/25`;
+export const actionQuiet = `${actionBase} text-tn-ink hover:bg-white/10`;
 
 /** Small caps label. */
 export const caps = "font-semibold uppercase leading-none tracking-[0.12em]";
