@@ -15,6 +15,7 @@ import {
   type Draft,
 } from "@/components/application/useApplicationDraft";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
+import { TimeLeft } from "@/components/portal/TimeLeft";
 import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
@@ -128,13 +129,15 @@ type FormProps = {
   userId: string;
   /** Answers known from the account (email, name), used where the draft has none. */
   prefill: Answers;
+  /** What Profile & settings has saved (name, pronouns, t-shirt size). These win over the draft. */
+  profile: Answers;
   /** The draft saved to the applicant's account, if any. */
   accountDraft: Draft | null;
   /** True once the application deadline has passed. */
   closed: boolean;
 };
 
-export default function ApplicationForm({ userId, prefill, accountDraft, closed }: FormProps) {
+export default function ApplicationForm({ userId, prefill, profile, accountDraft, closed }: FormProps) {
   const stored = useStoredDraft(userId);
 
   if (closed) return <ClosedState />;
@@ -145,25 +148,26 @@ export default function ApplicationForm({ userId, prefill, accountDraft, closed 
     <Stepper
       userId={userId}
       prefill={prefill}
+      profile={profile}
       stored={newerDraft(stored, accountDraft)}
       accountSavedAt={accountDraft?.savedAt || null}
     />
   );
 }
 
-type StepperProps = Pick<FormProps, "userId" | "prefill"> & {
+type StepperProps = Pick<FormProps, "userId" | "prefill" | "profile"> & {
   stored: Draft | null;
   /** When the account copy was last saved. */
   accountSavedAt: string | null;
 };
 
-function Stepper({ userId, prefill, stored, accountSavedAt }: StepperProps) {
+function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // `stored` is only the starting point; the hook owns the draft from here on.
   const draft = useApplicationDraft(
     userId,
-    { answers: withPrefill(stored?.answers ?? {}, prefill), step: stored?.step || STEPS[0].id },
+    { answers: { ...withPrefill(stored?.answers ?? {}, prefill), ...profile }, step: stored?.step || STEPS[0].id },
     stored?.savedAt || null,
   );
   const { answers } = draft;
@@ -329,6 +333,8 @@ function Stepper({ userId, prefill, stored, accountSavedAt }: StepperProps) {
               Save and exit to dashboard
             </button>
           </div>
+          {/* On phones the sidebar's deadline is behind the menu button. */}
+          <TimeLeft prefix="Applications close in" className="text-sm font-semibold text-tn-yellow md:hidden" />
           <StepTabs steps={STEPS} current={current} done={done} onSelect={(index) => goTo(index)} />
         </div>
 

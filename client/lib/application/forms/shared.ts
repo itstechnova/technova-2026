@@ -52,7 +52,6 @@ export const phoneNumber: ShortTextQuestion = {
   table: "user",
   prompt: "What is your phone number?",
   placeholder: "Your phone number",
-  required: true,
 };
 
 export const shirtSize: SingleChoiceQuestion = {
