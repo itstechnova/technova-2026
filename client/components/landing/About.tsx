@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { DrawnPlanet, SectionHeading, Tag, art, place, wrap } from "@/components/landing/shared";
+import { DrawnPlanet, SectionHeading, art, place, wrap } from "@/components/landing/shared";
 import { TwinkleStar } from "@/components/portal/ui";
 
 // Figma "02 · Your people / #about". The collage is placed as shares of its 670 x 600 design box.
@@ -36,9 +36,6 @@ function Collage() {
       <div className="anim-spin absolute aspect-square" style={{ ...at(50, 10, 560), "--dur": "54s" } as CSSProperties}>
         <DrawnPlanet kind="rose" className="absolute" style={{ left: "76%", top: "4%", width: "11%" }} />
       </div>
-      <Tag className="absolute rotate-[5deg] whitespace-nowrap shadow-lg" style={{ left: "59.7%", top: "75.3%" }}>
-        Find your people
-      </Tag>
       <TwinkleStar className="absolute" dur={4.4} style={at(600, 250, 56)} />
       {/* eslint-enable @next/next/no-img-element */}
     </div>

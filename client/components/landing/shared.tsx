@@ -80,18 +80,6 @@ export function DrawnPlanet({ kind, className = "", style }: { kind: PlanetKind;
   );
 }
 
-/** A small dark label that sits on the artwork. A label, not a button. */
-export function Tag({ children, className = "", style }: { children: ReactNode; className?: string; style?: CSSProperties }) {
-  return (
-    <span
-      style={style}
-      className={`inline-flex items-center rounded-md bg-tn-bg/90 px-3 pt-2 pb-1.5 text-[15px] leading-none font-semibold text-tn-ink ${className}`}
-    >
-      {children}
-    </span>
-  );
-}
-
 /** A section's big Righteous title and one-line subheader. */
 export function SectionHeading({
   title,
