@@ -49,6 +49,19 @@ export function SignupForm() {
       </div>
 
       {state?.error && <AuthBanner tone="error">{state.error}</AuthBanner>}
+      {state?.existing && (
+        <AuthBanner tone="message">
+          You already have an account with this email.{' '}
+          <Link href={withNext('/login', state.next ?? next)} className="underline underline-offset-4">
+            Log in
+          </Link>{' '}
+          instead, or{' '}
+          <Link href="/forgot-password" className="underline underline-offset-4">
+            reset your password
+          </Link>{' '}
+          if you’ve forgotten it. If you signed up with Google, use the Google button.
+        </AuthBanner>
+      )}
 
       <form action={formAction} className="flex flex-col gap-5">
         {next && <input type="hidden" name="next" value={next} />}

@@ -3,7 +3,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
-import { safeNextPath } from '@/components/auth/safeNext'
+import { confirmRedirectUrl, safeNextPath } from '@/components/auth/safeNext'
 import { SUPPORT_EMAIL } from '@/lib/application/config'
 
 // Single sign-on. A first Google sign-in creates the account (the database gives it the applicant
@@ -60,7 +60,20 @@ export async function authenticate(prevState: AuthState, formData: FormData): Pr
   const { data, error } = await supabase.auth.signInWithPassword({ email, password })
 
   if (error) {
-    if (error.code === 'email_not_confirmed') return { unverified: true, email, next }
+    if (error.code === 'email_not_confirmed') {
+      // The form moves on to /verify-email, which says a link was sent: make that true with a fresh
+      // one, since the original may have expired. Best effort (Supabase allows one a minute).
+      const origin = (await headers()).get('origin') ?? process.env.NEXT_PUBLIC_SITE_URL
+      const { error: resendError } = await supabase.auth.resend({
+        type: 'signup',
+        email,
+        options: origin ? { emailRedirectTo: confirmRedirectUrl(origin, next) } : undefined,
+      })
+      if (resendError && resendError.status !== 429) {
+        console.error('authenticate: failed to resend the verification email', resendError)
+      }
+      return { unverified: true, email, next }
+    }
     if (error.code === 'invalid_credentials') {
       return {
         fieldErrors: { password: 'That email and password don’t match. Try again, or reset your password.' },

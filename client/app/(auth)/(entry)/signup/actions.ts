@@ -4,9 +4,12 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { headers } from 'next/headers'
 import { confirmRedirectUrl, safeNextPath } from '@/components/auth/safeNext'
+import { SUPPORT_EMAIL } from '@/lib/application/config'
 
 export type SignupState = {
   error?: string
+  /** The email already has a verified account: the form points to login instead. */
+  existing?: boolean
   /** Set once the confirmation email is on its way; the form then moves on to /verify-email. */
   success?: boolean
   // Echoed back so the fields keep their values after an error (and for /verify-email).
@@ -37,7 +40,28 @@ export async function signUp(prevState: SignupState, formData: FormData): Promis
     },
   })
 
-  if (error) return { error: error.message, name, email }
+  if (error) {
+    // Supabase limits how often one address (and the project) can be emailed.
+    if (error.status === 429) {
+      return { error: 'We just sent an email to this address. Check your inbox, or wait a minute and try again.', name, email }
+    }
+    // Its wording for these is already about the visitor's own input.
+    if (error.code === 'weak_password' || error.code === 'validation_failed' || error.code === 'email_address_invalid') {
+      return { error: error.message, name, email }
+    }
+    console.error('signUp: failed', error)
+    return {
+      error: `We couldn’t create your account just now. Please try again in a few minutes, or email ${SUPPORT_EMAIL}.`,
+      name,
+      email,
+    }
+  }
+
+  // Supabase answers a signup for an address that already has a verified account with a user that
+  // has no identities, and sends nothing. Say so, or they would wait for an email that never comes.
+  if (data.user && data.user.identities?.length === 0) {
+    return { existing: true, name, email, next }
+  }
 
   // Only when email confirmation is switched off in Supabase: the account is already signed in.
   if (data.session) redirect(next ?? '/applicant/application')
