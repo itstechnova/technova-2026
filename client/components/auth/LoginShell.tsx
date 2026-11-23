@@ -1,6 +1,6 @@
 import Link from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
-import { BrandLockup, Planet, TwinkleStar, heading } from '@/components/portal/ui'
+import { BrandLockup, EyebrowPill, Planet, TwinkleStar, heading } from '@/components/portal/ui'
 import { SiteFooter, contentWidth } from '@/components/SiteFooter'
 import { EVENT_DATES_SHORT_LABEL } from '@/lib/application/config'
 import { DeadlineCountdown } from './DeadlineCountdown'
@@ -10,9 +10,6 @@ import { DeadlineCountdown } from './DeadlineCountdown'
 // and the site footer over the same backdrop.
 
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white'
-
-/** Small caps label on the pill. */
-const capsLabel = 'font-semibold uppercase leading-none'
 
 /** Rendered by app/(auth)/(entry)/layout.tsx around both pages; `children` is the page's form. */
 export function LoginShell({ children }: { children: ReactNode }) {
@@ -49,10 +46,7 @@ export function LoginShell({ children }: { children: ReactNode }) {
             countdown share the left column and the form sits on the right. */}
         <main className={`${contentWidth} flex flex-col gap-8 pt-4 pb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-[clamp(2rem,6vw,5rem)] lg:gap-y-7 lg:pt-[clamp(1rem,6.5vh,3.9375rem)]`}>
           <div className={`${column} flex flex-col items-start gap-6 lg:gap-7`}>
-            <p className="inline-flex items-center gap-2.5 rounded-full border border-tn-line bg-tn-surface pt-[11px] pr-5 pb-[9px] pl-4 backdrop-blur-[10px]">
-              <span aria-hidden className="size-2 rounded-full bg-tn-yellow" />
-              <span className={`${capsLabel} text-sm tracking-[0.12em] text-tn-cyan`}>Applicant portal</span>
-            </p>
+            <EyebrowPill>Applicant portal</EyebrowPill>
 
             <p className={`${heading} text-[clamp(3rem,6.1vw,5rem)] leading-none`}>
               See you at
