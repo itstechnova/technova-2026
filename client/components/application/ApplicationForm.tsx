@@ -60,10 +60,9 @@ const STEPS: Step[] = [
 const REVIEW_INDEX = SECTIONS.length;
 const QUESTIONS = hackerForm.flatMap((section) => section.questions);
 
-/** Index of the first step whose answers don't validate; the Review step when they all do. */
-function firstInvalidStep(answers: Answers): number {
-  const index = SECTIONS.findIndex((section) => Object.keys(validateSection(section, answers)).length > 0);
-  return index === -1 ? REVIEW_INDEX : index;
+/** Which sections have every required answer, in order. */
+function completedSteps(answers: Answers): boolean[] {
+  return SECTIONS.map((section) => Object.keys(validateSection(section, answers)).length === 0);
 }
 
 /** The step holding the first question (in form order) that has an error, and that question. */
@@ -157,16 +156,17 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   const [submitted, setSubmitted] = useState(false);
   const [pending, startTransition] = useTransition();
 
-  // The step to show: the one in the URL (else where the draft left off), but never past the
-  // first step that still has invalid answers.
+  // The step to show: the one in the URL, else where the draft left off. Any step can be opened
+  // in any order; what is still missing is checked when the application is submitted.
   const requested = searchParams.get("step");
   const requestedIndex = STEPS.findIndex((step) => step.id === (requested ?? draft.step));
-  const reachable = firstInvalidStep(answers);
-  const current = Math.min(Math.max(requestedIndex, 0), reachable);
+  const done = completedSteps(answers);
+  const incomplete = SECTIONS.map((_, index) => index).filter((index) => !done[index]);
+  const current = Math.max(requestedIndex, 0);
   const stepId = STEPS[current].id;
   const section = current < REVIEW_INDEX ? SECTIONS[current] : null;
 
-  // Keep the URL in step with what is shown (no step given, an unknown one, or one out of reach).
+  // Keep the URL in step with what is shown (no step given, or an unknown one).
   useEffect(() => {
     if (requested !== stepId) window.history.replaceState(null, "", `?step=${stepId}`);
   }, [requested, stepId]);
@@ -192,7 +192,9 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
     const id = STEPS[index].id;
     if (!keepErrors) setErrors({});
     setSubmitError(null);
+    // Leaving a step saves it, finished or not.
     draft.setStep(id);
+    draft.save();
     if (id !== stepId) window.history.pushState(null, "", `?step=${id}`);
   }
 
@@ -219,10 +221,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
   }
 
   function continueToNext() {
-    if (!section) return;
-    const sectionErrors = validateSection(section, answers);
-    if (Object.keys(sectionErrors).length > 0) showErrors(sectionErrors);
-    else goTo(current + 1);
+    if (section) goTo(current + 1);
   }
 
   function saveAndExit() {
@@ -284,7 +283,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
               Save and exit to dashboard
             </button>
           </div>
-          <StepTabs steps={STEPS} current={current} reachable={reachable} onSelect={(index) => goTo(index)} />
+          <StepTabs steps={STEPS} current={current} done={done} onSelect={(index) => goTo(index)} />
         </div>
 
         <div className="flex max-w-[820px] flex-col gap-3">
@@ -347,8 +346,8 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
             {errorCount > 0 && (
               <p role="alert" className="text-base text-tn-error">
                 {errorCount === 1
-                  ? "Please fix the highlighted question to continue."
-                  : `Please fix the ${errorCount} highlighted questions to continue.`}
+                  ? "Please fix the highlighted question before submitting."
+                  : `Please fix the ${errorCount} highlighted questions before submitting.`}
               </p>
             )}
             <div className="flex flex-wrap gap-3">
@@ -363,7 +362,30 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
             </div>
           </form>
         ) : (
-          <ReviewStep
+          <>
+            {incomplete.length > 0 && (
+              <div className="flex max-w-[820px] flex-col gap-2 rounded-[10px] border border-tn-yellow/70 px-[18px] py-3.5">
+                <p className="text-base font-semibold text-tn-ink">
+                  {incomplete.length === 1
+                    ? "One section still has required questions to answer:"
+                    : `${incomplete.length} sections still have required questions to answer:`}
+                </p>
+                <ul className="flex flex-wrap gap-x-5 gap-y-1">
+                  {incomplete.map((index) => (
+                    <li key={STEPS[index].id}>
+                      <button
+                        type="button"
+                        onClick={() => goTo(index)}
+                        className={`${textLink} flex min-h-9 cursor-pointer items-center text-[15px] font-semibold`}
+                      >
+                        {index + 1}. {STEPS[index].label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+            <ReviewStep
             steps={SECTIONS}
             agreements={AGREEMENTS}
             answers={answers}
@@ -374,6 +396,7 @@ function Stepper({ userId, prefill, stored }: Omit<FormProps, "closed"> & { stor
             onEdit={(index) => goTo(index)}
             onSubmit={submit}
           />
+          </>
         )}
       </div>
     </PortalPage>

@@ -104,10 +104,15 @@ export default function DraftOverview({ userId, closed }: { userId: string; clos
                 </li>
               );
             })}
-            <li className="flex min-h-12 items-center gap-3.5 py-2.5 text-base">
-              <span aria-hidden className={`size-6 shrink-0 rounded-full ${marker.empty}`} />
-              <span className="min-w-0 flex-1 font-semibold">{TOTAL}. Review</span>
-              <span className="shrink-0 text-sm text-tn-muted">Unlocks when the rest is done</span>
+            <li>
+              <Link
+                href="/applicant/application?step=review"
+                className="flex min-h-12 items-center gap-3.5 py-2.5 text-base transition hover:text-tn-cyan focus-visible:outline-2 focus-visible:outline-tn-cyan"
+              >
+                <span aria-hidden className={`size-6 shrink-0 rounded-full ${marker.empty}`} />
+                <span className="min-w-0 flex-1 font-semibold">{TOTAL}. Review</span>
+                <span className="shrink-0 text-sm text-tn-muted">Check your answers and submit</span>
+              </Link>
             </li>
           </ol>
         </Section>
