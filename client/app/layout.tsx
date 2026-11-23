@@ -48,7 +48,7 @@ export const metadata: Metadata = {
   publisher: SITE_NAME,
   category: "technology",
   alternates: { canonical: "/" },
-  // The og:image / twitter:image tags come from app/opengraph-image.tsx.
+  // The og:image / twitter:image tags come from app/opengraph-image.jpg (scripts/render-og-image.mjs).
   openGraph: {
     type: "website",
     url: "/",
@@ -106,7 +106,7 @@ const jsonLd = {
       name: `${EVENT_NAME}: ${SITE_TAGLINE}`,
       description: SITE_DESCRIPTION,
       url: SITE_URL,
-      image: `${SITE_URL}/opengraph-image`,
+      image: `${SITE_URL}/opengraph-image.jpg`,
       startDate: EVENT_START_DATE,
       endDate: EVENT_END_DATE,
       eventStatus: "https://schema.org/EventScheduled",
