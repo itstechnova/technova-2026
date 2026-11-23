@@ -23,6 +23,13 @@
   --color-admin-muted: #9fabc0;
   --font-righteous: var(--font-righteous);
   --font-josefin: var(--font-josefin);
+  /* Login and participant portal (Figma "02 · Login & participant"). */
+  --color-tn-bg: #050026;
+  --color-tn-ink: #ffffff;
+  --color-tn-muted: #cfc4ff;
+  --color-tn-cyan: #9edae6;
+  --color-tn-line: #4b3a72;
+  --color-tn-error: #ffb4c8;
 }
 
 .admin-shell {
@@ -36,9 +43,9 @@ html {
   background: var(--background);
   /* The page never scrolls sideways: the artwork is wider than the screen on purpose. `clip` on the
      root becomes `hidden` on the viewport, which stays the (vertical) root scroller that the
-     parallax timeline follows; no sideways rubber-banding either. */
+     parallax timeline follows. No `overscroll-behavior-x: none` here: on the root it also switches
+     off the browser's two-finger swipe to go back or forward. */
   overflow-x: clip;
-  overscroll-behavior-x: none;
 }
 
 /* Rubber-band scrolling past the artwork reveals flat background; mice and trackpads don't need it.
@@ -128,11 +135,15 @@ body {
   white-space: nowrap;
 }
 
-.hero-subscribe {
-  margin: calc(110.83 * var(--u)) 0 0 calc(10 * var(--u));
-  font-size: calc(40 * var(--u));
-  line-height: 0.941;
-  white-space: nowrap;
+.hero .hero-apply {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: calc(96 * var(--u)) 0 0 calc(10 * var(--u));
+  height: max(48px, calc(80 * var(--u)));
+  padding: 0 max(28px, calc(64 * var(--u)));
+  font-size: max(18px, calc(34 * var(--u)));
+  line-height: 1;
 }
 
 /* Content, phones: mobile px, in the 20px-ish gutters. Type follows the frame's scale on phones
@@ -170,12 +181,11 @@ body {
     font-size: min(calc(20 * var(--u)), 26px);
   }
 
-  .hero-subscribe {
-    margin: 2.3em 0 0 0.1em;
-    font-size: min(calc(17.5 * var(--u)), 23px);
-    line-height: 1.25;
-    white-space: normal;
-    text-wrap: balance;
+  .hero .hero-apply {
+    margin: clamp(28px, calc(36 * var(--u)), 44px) 0 0;
+    height: clamp(52px, calc(56 * var(--u)), 62px);
+    padding: 0 clamp(28px, calc(34 * var(--u)), 40px);
+    font-size: clamp(17px, calc(18 * var(--u)), 21px);
   }
 }
 

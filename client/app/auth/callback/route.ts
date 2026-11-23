@@ -1,5 +1,6 @@
 import { createClient } from '@/lib/supabase/server'
 import { NextRequest, NextResponse } from 'next/server'
+import { safeNextPath } from '@/components/auth/safeNext'
 
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url)
@@ -16,7 +17,9 @@ export async function GET(request: NextRequest) {
       }
       const { data: { user } } = await supabase.auth.getUser()
       const role = user?.app_metadata?.role
-      if (role === 'applicant') return NextResponse.redirect(`${origin}/applicant/dashboard`)
+      if (role === 'applicant') {
+        return NextResponse.redirect(`${origin}${safeNextPath(next) ?? '/applicant/dashboard'}`)
+      }
       if (role === 'admin') return NextResponse.redirect(`${origin}/admin/dashboard`)
 
       await supabase.auth.signOut()
