@@ -1,7 +1,7 @@
 import { buttonPrimary, buttonSecondary, heading } from '@/components/portal/ui'
 import { cn } from '@/lib/utils'
 
-// The form column on the login and signup screens, in one place so the two match. It sits straight
+// The form column on the login, signup and verify-email screens, in one place so they match. It sits straight
 // on the artwork (no card behind it).
 
 export const authPanel = 'flex flex-col gap-5 lg:pt-2'
