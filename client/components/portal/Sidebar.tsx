@@ -5,8 +5,7 @@ import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
-import { APPLICATIONS_CLOSE_DATE_LABEL, APPLICATIONS_CLOSE_TIME_LABEL } from "@/lib/application/config";
-import { TimeLeft } from "@/components/portal/TimeLeft";
+import { timeLeftLabel, useTimeLeft } from "@/components/portal/TimeLeft";
 import { BrandLockup } from "@/components/portal/ui";
 
 // The hacker dashboard's navigation (Figma "Sidebar / hacker dashboard", 240px). From `md` up it is a
@@ -31,15 +30,20 @@ const navItem = "flex min-h-11 items-center py-2.5 text-base leading-[1.35] whit
 const footerLink =
   "flex min-h-10 cursor-pointer items-center text-base leading-[1.35] font-semibold text-tn-muted transition hover:text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan";
 
+/** How long is left to apply. The date itself is on the Overview page's deadline card. */
 function Deadline() {
+  const remaining = useTimeLeft();
+  const closed = remaining !== null && remaining <= 0;
+
   return (
     <div className="flex flex-col gap-[5px] leading-none">
-      <p className="text-xs tracking-wide text-tn-muted uppercase">Applications close</p>
-      <p className="flex flex-wrap items-baseline gap-x-2 gap-y-1">
-        <span className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</span>
-        <span className="text-xs text-tn-cyan">{APPLICATIONS_CLOSE_TIME_LABEL}</span>
-      </p>
-      <TimeLeft className="pt-1 text-sm font-semibold text-tn-yellow tabular-nums" />
+      <p className="text-xs tracking-wide text-tn-muted uppercase">{closed ? "Applications closed" : "Applications close"}</p>
+      {!closed && (
+        // Reserves its line before the visitor's clock is read, so the links below don't move.
+        <p className="min-h-[1em] text-sm font-semibold text-tn-yellow tabular-nums">
+          {remaining !== null && `${timeLeftLabel(remaining)} left`}
+        </p>
+      )}
     </div>
   );
 }

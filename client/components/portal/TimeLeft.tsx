@@ -20,11 +20,8 @@ export function timeLeftLabel(ms: number): string {
   return minutes > 0 ? `${minutes} min` : "less than a minute";
 }
 
-/**
- * Time left until applications close, e.g. "11 days 4 hr left". It runs on the visitor's clock, so
- * nothing is rendered on the server or the first paint, and nothing once the deadline has passed.
- */
-export function TimeLeft({ prefix, className }: { prefix?: string; className?: string }) {
+/** Milliseconds until applications close (zero or less once closed); null until the page has loaded. */
+export function useTimeLeft(): number | null {
   const [remaining, setRemaining] = useState<number | null>(null);
 
   useEffect(() => {
@@ -34,6 +31,15 @@ export function TimeLeft({ prefix, className }: { prefix?: string; className?: s
     return () => window.clearInterval(id);
   }, []);
 
+  return remaining;
+}
+
+/**
+ * Time left until applications close, e.g. "11 days 4 hr left". It runs on the visitor's clock, so
+ * nothing is rendered on the server or the first paint, and nothing once the deadline has passed.
+ */
+export function TimeLeft({ prefix, className }: { prefix?: string; className?: string }) {
+  const remaining = useTimeLeft();
   if (remaining === null || remaining <= 0) return null;
   const label = timeLeftLabel(remaining);
   return <p className={className}>{prefix ? `${prefix} ${label}` : `${label} left`}</p>;
