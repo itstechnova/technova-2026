@@ -97,7 +97,7 @@ export function BrandLockup({ className = "" }: { className?: string }) {
   return (
     <Link href="/" className={`inline-flex items-center gap-2.5 ${className}`}>
       <LogoMark />
-      <span className={`${heading} title-shade pb-[0.08em] text-[27px] leading-none`}>TechNova</span>
+      <span className={`${heading} text-[27px] leading-none`}>TechNova</span>
     </Link>
   );
 }

@@ -30,7 +30,7 @@ export function SiteFooter() {
         <div className="flex flex-wrap items-center gap-x-7 gap-y-2">
           <span className="flex items-center gap-7 lg:w-[600px]">
             <LogoMark size={48} />
-            <span className={`${heading} title-shade pb-[0.08em] text-4xl leading-[1.08]`}>TechNova</span>
+            <span className={`${heading} text-4xl leading-[1.08]`}>TechNova</span>
           </span>
           <a href={`mailto:${SUPPORT_EMAIL}`} className={`${link} text-xl leading-[1.35]`}>
             {SUPPORT_EMAIL}
