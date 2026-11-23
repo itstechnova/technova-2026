@@ -6,8 +6,9 @@ import { ApplyLink, DeadlineChip } from "@/components/landing/deadline";
 import { BrandLockup } from "@/components/portal/ui";
 
 // The sticky navigation (Figma "Sticky navbar"): logo left, section anchors centre, the deadline
-// chip and Apply now on the right. The link of the section on screen is highlighted. On phones the
-// anchors move into a menu.
+// note and Apply now on the right. The link of the section on screen is highlighted. On phones the
+// anchors move into a menu. The bar slides away while the page is scrolled down and comes back on
+// scrolling up, or when the pointer reaches the top of the window.
 
 const SECTIONS = [
   { id: "about", label: "About" },
@@ -40,12 +41,42 @@ function useCurrentSection(): string | null {
   return current;
 }
 
+/** True while the bar should be tucked away: scrolling down, away from the top of the page. */
+function useHiddenOnScrollDown(): boolean {
+  const [hidden, setHidden] = useState(false);
+
+  useEffect(() => {
+    let last = window.scrollY;
+    const onScroll = () => {
+      const y = window.scrollY;
+      // Ignore jitter, and always show the bar near the top of the page.
+      if (Math.abs(y - last) < 6) return;
+      setHidden(y > last && y > 120);
+      last = y;
+    };
+    // Reaching for the top of the window brings the bar back.
+    const onPointerMove = (event: PointerEvent) => {
+      if (event.pointerType === "mouse" && event.clientY < 72) setHidden(false);
+    };
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("pointermove", onPointerMove, { passive: true });
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("pointermove", onPointerMove);
+    };
+  }, []);
+
+  return hidden;
+}
+
 const anchor =
   "flex min-h-11 items-center rounded-full px-3.5 text-[17px] leading-none font-semibold transition focus-visible:outline-2 focus-visible:outline-tn-cyan";
 
 export function Nav() {
   const current = useCurrentSection();
   const [open, setOpen] = useState(false);
+  // An open menu, or keyboard focus inside the bar, keeps it on screen.
+  const hidden = useHiddenOnScrollDown() && !open;
 
   const links = (onNavigate?: () => void) =>
     SECTIONS.map(({ id, label }) => (
@@ -62,7 +93,11 @@ export function Nav() {
     ));
 
   return (
-    <header className="sticky top-0 z-40 bg-tn-bg/45 backdrop-blur-xl">
+    <header
+      className={`sticky top-0 z-40 bg-tn-bg/45 backdrop-blur-xl transition-transform duration-300 ease-out focus-within:translate-y-0 motion-reduce:transition-none ${
+        hidden ? "-translate-y-full" : "translate-y-0"
+      }`}
+    >
       <div className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center gap-4 px-5 sm:px-8 lg:h-24 lg:px-12">
         <BrandLockup />
 

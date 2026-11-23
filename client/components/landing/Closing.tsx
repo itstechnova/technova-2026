@@ -26,7 +26,7 @@ export function Closing() {
           src={art("comet")}
           alt=""
           aria-hidden
-          className="shooting-star pointer-events-none absolute top-10 left-[30%] hidden h-auto w-[170px] select-none lg:block"
+          className="shooting-star pointer-events-none absolute top-10 left-[30%] hidden h-auto w-[170px] select-none motion-reduce:hidden! lg:block"
           style={{ "--dur": "11s", "--delay": "3s" } as CSSProperties}
         />
         <TwinkleStar className="absolute top-[58%] left-[22%] hidden w-[70px] lg:block" dur={4.8} />

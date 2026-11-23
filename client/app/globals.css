@@ -391,6 +391,42 @@ body {
   }
 }
 
+/* The hero planet's rings (components/landing/Hero.tsx). The pair is tilted and rocks slowly about
+   the planet's centre (SVG units of the 1440 x 980 scene); the dotted ring's dots stream round. */
+.ring-rock {
+  transform: rotate(-16deg);
+  transform-origin: 1090px 410px;
+  animation: ring-rock 18s ease-in-out infinite alternate;
+}
+
+@keyframes ring-rock {
+  from {
+    transform: rotate(-23deg);
+  }
+  to {
+    transform: rotate(-9deg);
+  }
+}
+
+.ring-flow {
+  animation: ring-flow 1.6s linear infinite;
+}
+
+.ring-flow-back {
+  animation-direction: reverse;
+}
+
+/* One dot-and-gap (2 + 10) per cycle, so the loop is seamless. */
+@keyframes ring-flow {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.ring-bead {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
 /* Shooting stars: each streaks along its own tail (the artwork runs lower left to upper right, so
    equal shares of its width and height follow that line), fading in as it appears and out as it
    burns up, then waits out the rest of `--dur` before the next pass. */
@@ -442,8 +478,15 @@ body {
 
   .rise,
   .scroll-in,
-  .shooting-star {
+  .shooting-star,
+  .ring-rock,
+  .ring-flow {
     animation: none;
+  }
+
+  /* The beads are driven by SVG animation, which ignores this setting, so they are left out. */
+  .ring-bead {
+    display: none;
   }
 
   .liftoff {

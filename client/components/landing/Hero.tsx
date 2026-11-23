@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { ApplyLink, Countdown, DeadlineCard } from "@/components/landing/deadline";
-import { art, place, wrap } from "@/components/landing/shared";
-import { EyebrowPill, Planet, TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
+import { art, caps, place, wrap } from "@/components/landing/shared";
+import { Planet, TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
 import { EVENT_DATES_SHORT_LABEL } from "@/lib/application/config";
 
 // Figma "01 · Launch / #top". The scene on the right is placed as shares of the design's
@@ -15,27 +15,51 @@ const float = (dur: number, y: string, x = "0", rotate = "0deg") =>
   ({ "--dur": `${dur}s`, "--float-y": y, "--float-x": x, "--float-rotate": rotate }) as CSSProperties;
 
 // The planet's two orbit rings: ellipses through its middle, tilted like the artwork. Each is drawn
-// twice, the far half behind the planet and the near half in front of it.
+// twice, the far half behind the planet and the near half in front of it. They move three ways
+// (`.ring-*` in globals.css): the pair rocks slowly about the planet, the dotted ring's dots stream
+// round it, and a bright bead circles each ring, passing behind the planet and back in front.
+const RING = { cx: 1090, cy: 410 };
 const RINGS = [
-  { cx: 1090, cy: 410, rx: 396, ry: 150, stroke: "#ffd0f0", opacity: 0.55, width: 2.5 },
-  { cx: 1090, cy: 410, rx: 510, ry: 205, stroke: "#9edae6", opacity: 0.5, width: 2, dash: "2 10" },
+  { rx: 396, ry: 150, stroke: "#ffd0f0", opacity: 0.55, width: 2.5, bead: { r: 6, seconds: 14, start: 0.15 } },
+  { rx: 510, ry: 205, stroke: "#9edae6", opacity: 0.5, width: 2, dash: "2 10", bead: { r: 4.5, seconds: 22, start: 0.6 } },
 ];
 
+/** The whole ellipse as one path: from its left end over the top (the far half), then back under. */
+const lap = (rx: number, ry: number) =>
+  `M ${RING.cx - rx} ${RING.cy} A ${rx} ${ry} 0 0 1 ${RING.cx + rx} ${RING.cy} A ${rx} ${ry} 0 0 1 ${RING.cx - rx} ${RING.cy}`;
+
 function Rings({ half }: { half: "far" | "near" }) {
+  const far = half === "far";
   return (
     <svg viewBox={`0 0 ${FRAME.w} ${FRAME.h}`} fill="none" className="absolute inset-0 size-full overflow-visible">
-      <g transform="rotate(-16 1090 410)">
-        {RINGS.map(({ cx, cy, rx, ry, stroke, opacity, width, dash }) => (
-          <path
-            key={rx}
-            // An arc from the ellipse's left end to its right end: over the top (far) or under (near).
-            d={`M ${cx - rx} ${cy} A ${rx} ${ry} 0 0 ${half === "far" ? 1 : 0} ${cx + rx} ${cy}`}
-            stroke={stroke}
-            strokeOpacity={opacity}
-            strokeWidth={width}
-            strokeDasharray={dash}
-            strokeLinecap="round"
-          />
+      <g className="ring-rock">
+        {RINGS.map(({ rx, ry, stroke, opacity, width, dash, bead }) => (
+          <g key={rx}>
+            <path
+              // An arc from the ellipse's left end to its right end: over the top (far) or under (near).
+              d={`M ${RING.cx - rx} ${RING.cy} A ${rx} ${ry} 0 0 ${far ? 1 : 0} ${RING.cx + rx} ${RING.cy}`}
+              stroke={stroke}
+              strokeOpacity={opacity}
+              strokeWidth={width}
+              strokeDasharray={dash}
+              strokeLinecap="round"
+              // The near arc is drawn the other way round, so its dots run backwards to keep one direction.
+              className={dash ? (far ? "ring-flow" : "ring-flow ring-flow-back") : undefined}
+            />
+            {/* The bead laps the full ellipse in both copies; each shows it only on its own half. */}
+            <circle r={bead.r} fill={stroke} className="ring-bead" opacity={0}>
+              <animateMotion dur={`${bead.seconds}s`} begin={`${-bead.start * bead.seconds}s`} repeatCount="indefinite" path={lap(rx, ry)} />
+              <animate
+                attributeName="opacity"
+                dur={`${bead.seconds}s`}
+                begin={`${-bead.start * bead.seconds}s`}
+                repeatCount="indefinite"
+                calcMode="discrete"
+                keyTimes="0;0.5;1"
+                values={far ? "1;0;0" : "0;1;1"}
+              />
+            </circle>
+          </g>
         ))}
       </g>
     </svg>
@@ -49,7 +73,7 @@ function Scene() {
       <img src={art("saturn")} alt="" className="anim-float absolute h-auto" style={{ ...at(706, 24, 124), ...float(18, "-10%", "6%") }} />
       {/* Shooting stars: the design's comet, and a smaller one further left, on different beats. */}
       <img src={art("comet")} alt="" className="shooting-star absolute h-auto" style={{ ...at(950, 40, 230), ...shoot(9, 1.5) }} />
-      <img src={art("comet")} alt="" className="shooting-star absolute h-auto max-lg:hidden" style={{ ...at(430, 150, 150), ...shoot(13, 6) }} />
+      <img src={art("comet")} alt="" className="shooting-star absolute h-auto motion-reduce:hidden" style={{ ...at(430, 150, 150), ...shoot(13, 6) }} />
 
       <div className="anim-float absolute inset-0" style={float(20, "-1.5%", "0.8%")}>
         <Rings half="far" />
@@ -87,9 +111,9 @@ export function Hero() {
       </div>
 
       <div className={`${wrap} flex flex-col items-start gap-6 pt-14 pb-24 sm:pt-20 lg:min-h-[min(60vw,880px)] lg:gap-[22px] lg:pt-24 lg:pb-28`}>
-        <div className="rise" style={order(0)}>
-          <EyebrowPill>Waterloo’s largest women+ hackathon</EyebrowPill>
-        </div>
+        <p className={`${caps} rise text-sm leading-[1.4] text-tn-cyan sm:text-[15px]`} style={order(0)}>
+          Waterloo’s largest women+ hackathon
+        </p>
 
         <div className="flex flex-col gap-3 lg:gap-1">
           <h1

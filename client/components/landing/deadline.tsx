@@ -54,16 +54,13 @@ export function ApplyLink({ className = "" }: { className?: string }) {
   );
 }
 
-/** The navigation's yellow "Apply by Dec 4" chip; "Closes today" on the last day, gone after. */
+/** The navigation's yellow "Apply by Dec 4" note; "Closes today" on the last day, gone after. */
 export function DeadlineChip({ className = "" }: { className?: string }) {
   const now = useNow(30_000);
   if (now !== null && now > CLOSE) return null;
   const lastDay = now !== null && CLOSE - now < DAY;
   return (
-    <span
-      className={`inline-flex items-center gap-2 rounded-full border border-tn-yellow bg-tn-bg/85 pt-[9px] pr-3.5 pb-2 pl-3 text-[15px] leading-none font-semibold whitespace-nowrap text-tn-yellow ${className}`}
-    >
-      <span aria-hidden className="size-2 rounded-full bg-tn-yellow" />
+    <span className={`text-[15px] leading-none font-semibold whitespace-nowrap text-tn-yellow ${className}`}>
       {lastDay ? "Closes today" : `Apply by ${APPLICATIONS_CLOSE_DAY_LABEL}`}
     </span>
   );
