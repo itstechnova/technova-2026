@@ -32,6 +32,8 @@ function urlErrorText(error: string) {
       return 'We couldn’t log you in. Please try again.'
     case 'oauth':
       return 'We couldn’t start Google sign-in. Please try again.'
+    case 'confirm-link':
+      return 'That confirmation link has expired or was already used. If your email is confirmed, log in below. Otherwise, log in and we’ll send a new link.'
     case 'no-role':
       return `We couldn’t open your account. Email ${SUPPORT_EMAIL} and we’ll sort it out.`
     default:
@@ -41,7 +43,14 @@ function urlErrorText(error: string) {
 
 /** Plain words for the notices that arrive in the URL. */
 function urlMessageText(message: string) {
-  return message === 'session-expired' ? 'Your session ended. Please log in again.' : message
+  switch (message) {
+    case 'session-expired':
+      return 'Your session ended. Please log in again.'
+    case 'email-confirmed':
+      return 'Your email is confirmed. Log in to continue.'
+    default:
+      return message
+  }
 }
 
 export function LoginForm() {
