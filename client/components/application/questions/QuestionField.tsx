@@ -4,6 +4,7 @@ import type { AnswerValue, Question } from "@/lib/application/types";
 
 import { ConsentField } from "./ConsentField";
 import { DropdownField } from "./DropdownField";
+import { LookupField } from "./LookupField";
 import { MultiChoiceField } from "./MultiChoiceField";
 import { ParagraphField } from "./ParagraphField";
 import { ShortTextField } from "./ShortTextField";
@@ -36,6 +37,8 @@ export function QuestionField({ question, value, onChange, error, disabled }: Qu
       return <SingleChoiceField question={question} value={asString(value)} {...shared} />;
     case "dropdown":
       return <DropdownField question={question} value={asString(value)} {...shared} />;
+    case "lookup":
+      return <LookupField question={question} value={asString(value)} {...shared} />;
     case "multi_choice":
       return <MultiChoiceField question={question} value={asList(value)} {...shared} />;
     case "consent":

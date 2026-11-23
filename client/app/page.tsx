@@ -45,15 +45,26 @@ export default function Home() {
       <Sky />
       <EasterEggs />
       <Nav />
-      {/* MLH's season banner hangs from the top right corner, over the navigation. */}
-      {/* eslint-disable-next-line @next/next/no-img-element */}
-      <img
-        src="/images/sponsors/mlh-badge.webp"
-        alt="Major League Hacking 2027 hackathon season"
-        width={88}
-        height={154}
-        className="absolute top-0 right-[max(1rem,calc((100vw-1208px)/2-104px))] z-50 hidden h-auto w-[88px] xl:block"
-      />
+      {/* MLH's season badge hangs from the top right corner and links to MLH, as MLH asks of member
+          events. Wide screens have room for it beside the navigation; narrower ones hang a smaller
+          one just under the navigation row. */}
+      <a
+        id="mlh-trust-badge"
+        href="https://www.mlh.com/na?utm_source=na-hackathon&utm_medium=TrustBadge&utm_campaign=2027-season&utm_content=white"
+        target="_blank"
+        rel="noopener"
+        className="absolute top-[68px] right-4 z-50 block w-[52px] rounded-b-sm focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan sm:right-8 sm:w-[60px] lg:top-[84px] lg:right-12 lg:w-[72px] xl:top-0 xl:right-[max(1rem,calc((100vw-1208px)/2-104px))] xl:w-[88px]"
+      >
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src="/images/sponsors/mlh-badge.webp"
+          alt="Major League Hacking 2027 Hackathon Season"
+          width={88}
+          height={154}
+          className="h-auto w-full"
+        />
+        <span className="sr-only"> (opens in a new tab)</span>
+      </a>
       <main>
         <Hero />
         <About />

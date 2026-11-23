@@ -173,9 +173,14 @@ export function validateQuestion(question: Question, answers: Answers): string |
       if (typeof value !== "string") return INVALID;
       const text = value.trim();
       if (text === "") return question.required ? REQUIRED : null;
-      return question.type === "short_text" || question.type === "paragraph"
-        ? validateText(question, text)
-        : validateChoice(question, text);
+      if (question.type === "short_text" || question.type === "paragraph") {
+        return validateText(question, text);
+      }
+      // A lookup's list is not available here: the submit action checks the answer is on it.
+      if (question.type === "lookup") {
+        return text.length > MAX_SHORT_TEXT_CHARS ? INVALID : null;
+      }
+      return validateChoice(question, text);
     }
   }
 }

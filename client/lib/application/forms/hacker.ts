@@ -2,7 +2,7 @@
 // Question ids are the database column names; see ../types.ts for the question shapes.
 
 import type { Form } from "../types";
-import { OTHER_INSTITUTION, institutions, programs, toOptions } from "./options";
+import { OTHER_INSTITUTION, ages, countries, programs, toOptions } from "./options";
 import {
   GENDER_NOT_LISTED,
   firstName,
@@ -36,11 +36,12 @@ export const hackerForm: Form = [
       },
       {
         id: "age",
-        type: "short_text",
-        inputType: "number",
+        type: "dropdown",
+        numeric: true,
         prompt: "How old will you be as of January 22, 2027?",
-        placeholder: "Your age",
+        placeholder: "Select your age",
         required: true,
+        options: ages,
       },
     ],
   },
@@ -53,6 +54,14 @@ export const hackerForm: Form = [
       lastName,
       pronouns,
       phoneNumber,
+      {
+        id: "country_of_residence",
+        type: "dropdown",
+        prompt: "What is your country of residence?",
+        required: true,
+        placeholder: "Select your country",
+        options: countries,
+      },
       {
         // Replaces the old "do you need transportation?" question (column `transportation`).
         id: "transportation_ack",
@@ -96,13 +105,15 @@ export const hackerForm: Form = [
         options: toOptions(["2027", "2028", "2029", "2030", "2031", "2032+"]),
       },
       {
+        // MLH's list of verified schools, which is too long for a select menu.
         id: "school",
-        type: "dropdown",
+        type: "lookup",
+        list: "schools",
         prompt: "Please select which institution you are/will be attending.",
-        description: "If you attend a school or program not listed, select Other.",
+        description: "Type a few letters to search. If your school or program is not listed, select Other.",
         required: true,
-        placeholder: "Select your institution",
-        options: institutions,
+        placeholder: "Search for your institution",
+        otherValue: OTHER_INSTITUTION,
       },
       {
         id: "school_other",

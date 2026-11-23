@@ -52,6 +52,7 @@ export const phoneNumber: ShortTextQuestion = {
   table: "user",
   prompt: "What is your phone number?",
   placeholder: "Your phone number",
+  required: true,
 };
 
 export const shirtSize: SingleChoiceQuestion = {
@@ -80,6 +81,8 @@ export const genderIdentity: SingleChoiceQuestion = {
   ],
 };
 
+// The three MLH checkboxes. Their wording is MLH's and has to match it:
+// https://guide.mlh.com/general-information/managing-registrations/registrations
 export const mlhCodeOfConduct: ConsentQuestion = {
   id: "mlh_code_of_conduct",
   type: "consent",
@@ -93,7 +96,7 @@ export const mlhDataSharing: ConsentQuestion = {
   id: "mlh_data_sharing",
   type: "consent",
   prompt:
-    "I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and MLH administration in-line with the MLH Privacy Policy. I further agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy.",
+    "I authorize you to share my application/registration information with Major League Hacking for event administration, ranking, and administration (including the creation of linked accounts on MLH and DEV (dev.to)) in line with the MLH Privacy Policy. I further agree to the terms of both the MLH Contest Terms and Conditions and the MLH Privacy Policy.",
   checkboxLabel: "I agree!",
   required: true,
   links: [policyLink("mlh-privacy-policy"), policyLink("mlh-contest-terms")],
@@ -103,6 +106,6 @@ export const mlhEmails: ConsentQuestion = {
   id: "mlh_emails",
   type: "consent",
   prompt:
-    "I authorize MLH to send me occasional emails about relevant events, career opportunities, and community announcements.",
+    "I authorize MLH + DEV to send me occasional emails about relevant events, career opportunities, and community announcements.",
   checkboxLabel: "I agree!",
 };

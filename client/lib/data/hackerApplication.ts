@@ -20,9 +20,12 @@ export function questionsForTable(form: Form, table: ApplicationTable): Question
     .filter((question) => (question.table ?? 'hacker') === table)
 }
 
-/** Numeric short-text answers (e.g. `age`) are stored as integers. */
+/** Numeric answers (e.g. `age`) are stored as integers. */
 export function isNumberQuestion(question: Question): boolean {
-  return question.type === 'short_text' && question.inputType === 'number'
+  return (
+    (question.type === 'short_text' && question.inputType === 'number') ||
+    (question.type === 'dropdown' && question.numeric === true)
+  )
 }
 
 /** Maps a stored column value back to the form's answer shape. `undefined` = no answer. */
