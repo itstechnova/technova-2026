@@ -262,8 +262,21 @@ function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperPr
     setErrors(rest);
   }
 
+  /**
+   * "Save and continue": saves the section either way, but only moves on once its required
+   * questions are answered and nothing is over a limit. The tabs still open any section, so an
+   * applicant who wants to come back to this one later can.
+   */
   function continueToNext() {
-    if (section) goTo(current + 1);
+    if (!section) return;
+    const sectionErrors = validateSection(section, answers);
+    if (Object.keys(sectionErrors).length > 0) {
+      draft.save();
+      void saveToAccount(stepId);
+      showErrors(sectionErrors);
+      return;
+    }
+    goTo(current + 1);
   }
 
   async function saveAndExit() {
@@ -398,8 +411,9 @@ function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperPr
             {errorCount > 0 && (
               <p role="alert" className="text-base text-tn-error">
                 {errorCount === 1
-                  ? "Please fix the highlighted question before submitting."
-                  : `Please fix the ${errorCount} highlighted questions before submitting.`}
+                  ? "Please review the highlighted question before continuing."
+                  : `Please review the ${errorCount} highlighted questions before continuing.`}{" "}
+                Your answers so far are saved.
               </p>
             )}
             <div className="flex flex-wrap gap-3">
