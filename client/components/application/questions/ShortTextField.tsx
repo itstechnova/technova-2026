@@ -2,6 +2,7 @@ import type { HTMLAttributes, HTMLInputTypeAttribute } from "react";
 
 import { controlInput } from "@/components/portal/ui";
 import type { ShortTextQuestion } from "@/lib/application/types";
+import { wordLimitError } from "@/lib/application/validate";
 
 import { describedBy, QuestionShell, useFieldIds } from "./QuestionShell";
 import { WordCount } from "./WordCount";
@@ -37,12 +38,14 @@ export function ShortTextField({ question, value = "", onChange, error, disabled
   const ids = useFieldIds(question);
   const kind = INPUT_KINDS[question.inputType ?? "text"];
   const hasCounter = question.maxWords !== undefined;
+  // A problem found at Submit, or else being over the word limit right now.
+  const shownError = error ?? wordLimitError(question, value) ?? undefined;
 
   return (
     <QuestionShell
       question={question}
       ids={ids}
-      error={error}
+      error={shownError}
       hint={hasCounter && <WordCount id={ids.hint} text={value} max={question.maxWords!} />}
     >
       <input
@@ -56,8 +59,8 @@ export function ShortTextField({ question, value = "", onChange, error, disabled
         onChange={(event) => onChange(event.target.value)}
         placeholder={question.placeholder}
         aria-required={question.required || undefined}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(question, ids, { error, hint: hasCounter })}
+        aria-invalid={shownError ? true : undefined}
+        aria-describedby={describedBy(question, ids, { error: shownError, hint: hasCounter })}
         disabled={disabled}
       />
     </QuestionShell>

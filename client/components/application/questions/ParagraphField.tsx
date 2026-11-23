@@ -1,6 +1,8 @@
 import { controlInput } from "@/components/portal/ui";
 import type { ParagraphQuestion } from "@/lib/application/types";
 
+import { wordLimitError } from "@/lib/application/validate";
+
 import { describedBy, QuestionShell, useFieldIds } from "./QuestionShell";
 import { WordCount } from "./WordCount";
 
@@ -15,12 +17,14 @@ export type ParagraphFieldProps = {
 export function ParagraphField({ question, value = "", onChange, error, disabled }: ParagraphFieldProps) {
   const ids = useFieldIds(question);
   const hasCounter = question.maxWords !== undefined;
+  // A problem found at Submit, or else being over the word limit right now.
+  const shownError = error ?? wordLimitError(question, value) ?? undefined;
 
   return (
     <QuestionShell
       question={question}
       ids={ids}
-      error={error}
+      error={shownError}
       hint={hasCounter && <WordCount id={ids.hint} text={value} max={question.maxWords!} />}
     >
       <textarea
@@ -34,8 +38,8 @@ export function ParagraphField({ question, value = "", onChange, error, disabled
         onChange={(event) => onChange(event.target.value)}
         placeholder={question.placeholder ?? "Your answer"}
         aria-required={question.required || undefined}
-        aria-invalid={error ? true : undefined}
-        aria-describedby={describedBy(question, ids, { error, hint: hasCounter })}
+        aria-invalid={shownError ? true : undefined}
+        aria-describedby={describedBy(question, ids, { error: shownError, hint: hasCounter })}
         disabled={disabled}
       />
     </QuestionShell>
