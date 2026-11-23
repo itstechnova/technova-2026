@@ -474,16 +474,6 @@ body {
   }
 }
 
-/* The closing rocket lifts off while "Apply now" is hovered or focused. */
-.liftoff {
-  transition: transform 1.1s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 1.1s ease-in;
-}
-
-.closing:has(.closing-apply:hover, .closing-apply:focus-visible) .liftoff {
-  transform: translateY(-160%);
-  opacity: 0;
-}
-
 /* The crew strip scrolls sideways without showing a scrollbar. */
 .no-scrollbar {
   scrollbar-width: none;
@@ -511,10 +501,6 @@ body {
   /* The beads are driven by SVG animation, which ignores this setting, so they are left out. */
   .ring-bead {
     display: none;
-  }
-
-  .liftoff {
-    transition: none;
   }
 
   .anim-spin,
