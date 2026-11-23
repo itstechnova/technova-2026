@@ -9,7 +9,7 @@ import { SUPPORT_EMAIL } from "@/lib/application/config";
 // The venue, for the "Where is it held?" answer and its map.
 const VENUE = {
   name: "Pearl Sullivan Engineering Building (PSE)",
-  address: "University of Waterloo, 200 University Avenue West, Waterloo, Ontario N2L 3G1",
+  address: "200 University Avenue West, Waterloo, Ontario N2L 3G1",
   query: "Pearl Sullivan Engineering Building, University of Waterloo",
 };
 const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(VENUE.query)}&z=16&output=embed`;
@@ -28,7 +28,7 @@ const QUESTIONS: Question[] = [
   },
   {
     q: "Where is TechNova held?",
-    a: `TechNova 6 takes place in person at the ${VENUE.name}, on the ${VENUE.address.replace(" N2L 3G1", "")}.`,
+    a: `TechNova 6 takes place in person at the ${VENUE.name} at the University of Waterloo. The address is ${VENUE.address}.`,
     map: true,
   },
   {

@@ -78,10 +78,6 @@ export function About() {
             ))}
           </dl>
 
-          <p className="scroll-in text-[15px] leading-[1.5] text-tn-muted">
-            We say Women+ on purpose. It includes cis and trans women, non-binary, agender and intersex people, and
-            other gender minorities.
-          </p>
         </div>
         <Collage />
       </div>
