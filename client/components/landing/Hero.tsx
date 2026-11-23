@@ -69,7 +69,7 @@ function Rings({ half }: { half: "far" | "near" }) {
 function Scene() {
   return (
     // The scene spans the window (up to 1680px), so the planet stays as grand as the design has it.
-    <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1680px] -translate-x-1/2 select-none lg:block">
+    <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1680px] -translate-x-1/2 select-none md:block">
       {/* eslint-disable @next/next/no-img-element */}
       {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
       <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={13} delay={1.5} />
@@ -99,8 +99,9 @@ export function Hero() {
   return (
     <section id="top" className="relative isolate overflow-x-clip">
       <Scene />
-      {/* Phones and tablets: the planet alone, tucked into the top corner behind the text. */}
-      <div aria-hidden className="pointer-events-none absolute -top-10 -right-[38%] -z-10 w-[min(120vw,640px)] opacity-70 select-none lg:hidden">
+      {/* Phones: the planet alone, tucked into the top corner behind the text. It hangs off the edge by a
+          share of its own width, not the screen's, so the same slice of it shows at every width. */}
+      <div aria-hidden className="pointer-events-none absolute -top-10 right-0 -z-10 w-[min(120vw,640px)] translate-x-[30%] opacity-70 select-none md:hidden">
         <Planet kind="pink" className="w-full" />
       </div>
 
