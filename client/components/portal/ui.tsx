@@ -1,8 +1,7 @@
 import Link from "next/link";
 import type { CSSProperties, ReactNode } from "react";
 
-// Same URLs as `layerUrl` in components/background-layer.tsx, which is a client module and so
-// cannot be called from the server components that render these.
+// The artwork layers in public/images.
 const layerUrl = (name: string) => `/images/${name}.webp`;
 
 // Shared pieces of the login and participant-portal screens (Figma "02 · Login & participant").
