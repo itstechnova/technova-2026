@@ -6,11 +6,14 @@ import { patchStoredDraft } from "@/components/application/useApplicationDraft";
 import { Section, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, controlInput, fieldError } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
-import { firstName, lastName, pronouns, shirtSize } from "@/lib/application/forms/shared";
+import { RequirementTag } from "@/components/application/questions/QuestionShell";
+import { firstName, lastName, phoneNumber, pronouns, shirtSize } from "@/lib/application/forms/shared";
 import { saveProfile } from "@/lib/profile/actions";
-import type { ProfileField, ProfileState, ProfileValues } from "@/lib/profile/fields";
+import { REQUIRED_PROFILE_FIELDS, type ProfileField, type ProfileState, type ProfileValues } from "@/lib/profile/fields";
 
 const label = "text-[17px] leading-[1.35] font-semibold text-tn-ink";
+// A field's name on the left, Required or Optional on the right, as in the application.
+const labelRow = `${label} flex items-baseline justify-between gap-4`;
 const hint = "text-sm leading-[1.4] text-tn-muted";
 
 /** Profile & settings (Figma "04 · Hacker dashboard / Profile & settings"). */
@@ -25,13 +28,15 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
 
   const text = (
     question: { id: string; prompt: string; placeholder?: string },
-    props: { name: string; type?: string; autoComplete?: string; required?: boolean },
+    props: { name: string; type?: string; autoComplete?: string },
   ) => {
     const id = question.id as ProfileField;
+    const required = REQUIRED_PROFILE_FIELDS.includes(id);
     return (
       <div className="flex min-w-0 flex-col gap-2">
-        <label htmlFor={id} className={label}>
+        <label htmlFor={id} className={labelRow}>
           {props.name}
+          <RequirementTag required={required} />
         </label>
         <input
           id={id}
@@ -40,7 +45,7 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
           autoComplete={props.autoComplete}
           defaultValue={values[id]}
           placeholder={question.placeholder}
-          aria-required={props.required || undefined}
+          aria-required={required || undefined}
           aria-invalid={errors[id] ? true : undefined}
           aria-describedby={errors[id] ? `${id}-error` : undefined}
           className={controlInput}
@@ -59,12 +64,14 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
     <form action={formAction} noValidate key={JSON.stringify(values)} className="flex flex-col gap-6 xl:gap-8">
       <Section title="About you">
         <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
-          {text(firstName, { name: "First name", autoComplete: "given-name", required: true })}
-          {text(lastName, { name: "Last name", autoComplete: "family-name", required: true })}
+          {text(firstName, { name: "First name", autoComplete: "given-name" })}
+          {text(lastName, { name: "Last name", autoComplete: "family-name" })}
           {text(pronouns, { name: "Pronouns" })}
+          {text(phoneNumber, { name: "Phone number", type: "tel", autoComplete: "tel" })}
           <div className="flex min-w-0 flex-col gap-2">
-            <label htmlFor="shirt_size" className={label}>
+            <label htmlFor="shirt_size" className={labelRow}>
               T-shirt size
+              <RequirementTag />
             </label>
             <div className="relative">
               <select

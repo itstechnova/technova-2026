@@ -1,9 +1,14 @@
-import { firstName, lastName, pronouns, shirtSize } from '@/lib/application/forms/shared'
+import { firstName, lastName, phoneNumber, pronouns, shirtSize } from '@/lib/application/forms/shared'
+import { isPhoneNumber } from '@/lib/application/validate'
 
 // Profile & settings: the details kept on the hacker's own public.user row. They are the same
 // columns the application's "About you" questions write to.
 
-export const PROFILE_FIELDS = [firstName, lastName, pronouns, shirtSize] as const
+export const PROFILE_FIELDS = [firstName, lastName, pronouns, phoneNumber, shirtSize] as const
+
+/** The details the profile cannot be saved without. */
+export const REQUIRED_PROFILE_FIELDS: readonly string[] = [firstName.id, lastName.id, phoneNumber.id]
+
 export type ProfileField = (typeof PROFILE_FIELDS)[number]['id']
 export type ProfileValues = Record<ProfileField, string>
 
@@ -18,10 +23,16 @@ export type ProfileState = {
 export const PROFILE_MAX_LENGTH = 100
 const SHIRT_SIZES = new Set(shirtSize.options.map((option) => option.value))
 
-/** Whether `value` can be stored for `field`: short enough, and a real size for the t-shirt. */
+/**
+ * Whether `value` can be stored for `field`: short enough, a real size for the t-shirt and a real
+ * number for the phone. Empty is storable; whether a field may be left empty is the form's call.
+ */
 export function validProfileValue(field: ProfileField, value: string): boolean {
   if (value.length > PROFILE_MAX_LENGTH) return false
-  return field !== 'shirt_size' || value === '' || SHIRT_SIZES.has(value)
+  if (value === '') return true
+  if (field === 'shirt_size') return SHIRT_SIZES.has(value)
+  if (field === 'phone_number') return isPhoneNumber(value)
+  return true
 }
 
 /**
