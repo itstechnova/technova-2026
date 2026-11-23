@@ -90,7 +90,7 @@ function Scene() {
         src="/images/satellite.svg"
         alt=""
         className="anim-float absolute h-auto"
-        style={{ ...at(569, 633, 220), ...float(14, "-22%", "5%", "-5deg") }}
+        style={{ ...at(569, 633, 220), ...float(13, "-150%", "55%", "-16deg") }}
       />
       {/* eslint-enable @next/next/no-img-element */}
 

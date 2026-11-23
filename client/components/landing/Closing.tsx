@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
 import { ApplyLink, KeyDatesLine } from "@/components/landing/deadline";
-import { ShootingStar, art, wrap } from "@/components/landing/shared";
+import { BandedPlanet, ShootingStar, art, wrap } from "@/components/landing/shared";
 import { TwinkleStar, heading } from "@/components/portal/ui";
 
 // Figma "07 · Community & contact / #community": the closing call to action. The rocket bobs at
@@ -12,11 +12,8 @@ export function Closing() {
   return (
     <section className="closing relative">
       <div className={`${wrap} relative flex flex-col items-center gap-6 pt-24 pb-36 text-center lg:pt-28 lg:pb-52`}>
-        <img
-          src={art("saturn")}
-          alt=""
-          aria-hidden
-          className="anim-float pointer-events-none absolute top-24 left-[3%] hidden h-auto w-[150px] select-none lg:block"
+        <BandedPlanet
+          className="anim-float absolute top-24 left-[4%] hidden w-[120px] lg:block"
           style={{ "--dur": "19s", "--float-y": "-8%", "--float-x": "4%" } as CSSProperties}
         />
         {/* The design system's rocket, turned nose-up on the launch pad. */}

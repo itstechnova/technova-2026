@@ -91,7 +91,7 @@ function FlightPlan() {
 
       <img src={art("ringed-planet-sunset")} alt="" aria-hidden className="anim-float absolute h-auto" style={{ ...pct(880, 112, 340), "--dur": "21s", "--float-y": "-4%" } as CSSProperties} />
       {/* The satellite, launched and riding the end of the trajectory. */}
-      <img src="/images/satellite.svg" alt="" aria-hidden className="anim-float absolute h-auto -rotate-[18deg]" style={{ ...pct(1090, 6, 170), "--dur": "11s", "--float-y": "-18%", "--float-x": "4%", "--float-rotate": "6deg" } as CSSProperties} />
+      <img src="/images/satellite.svg" alt="" aria-hidden className="anim-float absolute h-auto -rotate-[18deg]" style={{ ...pct(1090, 6, 170), "--dur": "10s", "--float-y": "-70%", "--float-x": "-22%", "--float-rotate": "14deg" } as CSSProperties} />
       <Waypoint number="03" className="absolute" style={pct(850, 40)} />
       <div className="absolute" style={pct(900, 346, 348)}>
         <Copy title={STOPS[2].title}>{STOPS[2].text}</Copy>

@@ -28,7 +28,7 @@ const BODIES: Body[] = [
   { key: "banded", x: 8, y: 62, width: 58, depth: 0.1, seconds: 140, dx: 70, dy: -22, opacity: 0.55 },
   { key: "purple", x: 86, y: 118, width: 84, depth: 0.22, seconds: 110, dx: -74, dy: 16, opacity: 0.6 },
   { key: "green", x: 14, y: 176, width: 120, depth: 0.3, seconds: 95, dx: 66, dy: -30, opacity: 0.7 },
-  { key: "satellite", x: 78, y: 84, width: 76, depth: 0.16, seconds: 80, dx: -68, dy: 34, opacity: 0.65 },
+  { key: "satellite", x: 82, y: 70, width: 76, depth: 0.16, seconds: 46, dx: -78, dy: 44, opacity: 0.7 },
   { key: "sunset", x: 72, y: 236, width: 150, depth: 0.34, seconds: 125, dx: -60, dy: -18, opacity: 0.7 },
   { key: "banded-2", x: 30, y: 300, width: 46, depth: 0.14, seconds: 150, dx: 52, dy: 26, opacity: 0.5 },
 ];
