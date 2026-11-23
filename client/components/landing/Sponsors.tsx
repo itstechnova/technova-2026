@@ -104,7 +104,14 @@ export function Sponsors() {
   return (
     <section id="sponsors" className="relative">
       <div className={`${wrap} py-20 lg:py-28`}>
-        <SectionHeading title="Our sponsors">Helping make TechNova possible.</SectionHeading>
+        <div className="flex flex-col gap-x-10 gap-y-7 md:flex-row md:items-end md:justify-between">
+          <SectionHeading title="Our sponsors">Helping make TechNova possible.</SectionHeading>
+          {/* MLH, the event's official partner, sits apart from the sponsors. */}
+          <div className="scroll-in flex items-center gap-4 md:pb-1">
+            <p className="text-sm leading-[1.3] text-tn-muted">Official event partner</p>
+            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[104px]" />
+          </div>
+        </div>
         <Constellation />
         <LogoGrid />
 
