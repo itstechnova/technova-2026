@@ -71,18 +71,19 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
           <div className="flex min-w-0 flex-col gap-2">
             <label htmlFor="shirt_size" className={labelRow}>
               T-shirt size
-              <RequirementTag />
+              <RequirementTag required />
             </label>
             <div className="relative">
               <select
                 id="shirt_size"
                 name="shirt_size"
                 defaultValue={values.shirt_size}
+                aria-required
                 aria-invalid={errors.shirt_size ? true : undefined}
                 aria-describedby={errors.shirt_size ? "shirt_size-error" : undefined}
                 className={`${controlInput} cursor-pointer appearance-none pr-12`}
               >
-                <option value="" className="bg-tn-bg text-tn-muted">
+                <option value="" disabled className="bg-tn-bg text-tn-muted">
                   Select a size
                 </option>
                 {shirtSize.options.map((option) => (
