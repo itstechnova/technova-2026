@@ -12,8 +12,8 @@ export const panel = "rounded-2xl border border-tn-line/80 bg-[#120838]/50";
 // The landing page's buttons: squarer and lighter than the portal's pills.
 const actionBase =
   "inline-flex cursor-pointer items-center justify-center rounded-[10px] px-5 py-3 text-base leading-[1.25] font-semibold whitespace-nowrap transition focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white";
-// Frosted white glass for the main action; the quiet one is bare text until hovered.
-export const action = `${actionBase} border border-white/35 bg-white/15 text-white backdrop-blur-md hover:bg-white/25`;
+// The main action is a clear pill with a white outline; the quiet one is bare text until hovered.
+export const action = `${actionBase} rounded-full! border border-white/70 px-6! text-white hover:border-white hover:bg-white/10`;
 export const actionQuiet = `${actionBase} text-tn-ink hover:bg-white/10`;
 
 /** Small caps label. */
@@ -31,36 +31,51 @@ export function StarMark({ className = "" }: { className?: string }) {
   );
 }
 
-/**
- * A banded planet in the design system's style (soft gradient bands under a grain), drawn here
- * rather than exported: green, teal and gold, after the "Assets - Planets" sheet.
- */
-export function BandedPlanet({ className = "", style }: { className?: string; style?: CSSProperties }) {
+// Planets drawn in the design system's style (soft gradient bands under a grain), after its
+// "Assets - Planets" sheet. Each palette is its own planet, so the page doesn't repeat one.
+const PLANETS = {
+  // Green, teal and gold bands on a slant.
+  meadow: { bands: ["#3a8c5a", "#bfe07e", "#ddf0b4", "#4d98a0", "#245259", "#f5c85c", "#e09638"], angle: 35 },
+  // Violet sinking through teal to amber.
+  dusk: { bands: ["#9c6dd9", "#7a6bc4", "#4d98a0", "#3a8c8a", "#e0a23c"], angle: 90 },
+  // Pale green stripes.
+  mint: { bands: ["#ddf0b4", "#3a8c5a", "#bfe07e", "#f3e492", "#3a8c5a", "#ddf0b4", "#8fe0ea"], angle: 8 },
+  // Warm gold burning to red.
+  ember: { bands: ["#f3e492", "#f5c85c", "#e09638", "#e06563", "#a03a50"], angle: 60 },
+  // Soft pinks and lilac.
+  lilac: { bands: ["#ffd0f0", "#d1c4ff", "#9c6dd9", "#ff82c4", "#d1c4ff"], angle: 20 },
+  // Cold blues.
+  ice: { bands: ["#ffffff", "#9edae6", "#8fe0ea", "#4d98a0", "#245259"], angle: 75 },
+  // Dusty rose and wine.
+  rose: { bands: ["#f29191", "#ffd0f0", "#e06563", "#a03a50", "#571e1e"], angle: 110 },
+} as const;
+
+export type PlanetKind = keyof typeof PLANETS;
+
+/** One of the drawn planets. Use each `kind` once per page: the gradient ids are per kind. */
+export function DrawnPlanet({ kind, className = "", style }: { kind: PlanetKind; className?: string; style?: CSSProperties }) {
+  const { bands, angle } = PLANETS[kind];
   return (
     <svg aria-hidden viewBox="0 0 200 200" style={style} className={`pointer-events-none select-none ${className}`}>
       <defs>
-        <linearGradient id="banded-planet-bands" x1="0.15" y1="0" x2="0.85" y2="1">
-          <stop offset="0" stopColor="#3a8c5a" />
-          <stop offset="0.2" stopColor="#bfe07e" />
-          <stop offset="0.34" stopColor="#ddf0b4" />
-          <stop offset="0.5" stopColor="#4d98a0" />
-          <stop offset="0.62" stopColor="#245259" />
-          <stop offset="0.78" stopColor="#f5c85c" />
-          <stop offset="1" stopColor="#e09638" />
+        <linearGradient id={`planet-${kind}-bands`} gradientTransform={`rotate(${angle} 0.5 0.5)`}>
+          {bands.map((colour, index) => (
+            <stop key={index} offset={index / (bands.length - 1)} stopColor={colour} />
+          ))}
         </linearGradient>
-        <radialGradient id="banded-planet-shade" cx="0.32" cy="0.28" r="0.9">
+        <radialGradient id={`planet-${kind}-shade`} cx="0.32" cy="0.28" r="0.9">
           <stop offset="0.45" stopColor="#050026" stopOpacity="0" />
           <stop offset="1" stopColor="#050026" stopOpacity="0.55" />
         </radialGradient>
-        <filter id="banded-planet-grain" x="0" y="0" width="100%" height="100%">
-          <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed="7" result="noise" />
+        <filter id={`planet-${kind}-grain`} x="0" y="0" width="100%" height="100%">
+          <feTurbulence type="fractalNoise" baseFrequency="1.1" numOctaves="2" seed={angle} result="noise" />
           <feColorMatrix in="noise" type="matrix" values="0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 -1.3 0.85" />
           <feComposite in2="SourceGraphic" operator="in" />
         </filter>
       </defs>
-      <circle cx="100" cy="100" r="96" fill="url(#banded-planet-bands)" />
-      <circle cx="100" cy="100" r="96" fill="url(#banded-planet-shade)" />
-      <circle cx="100" cy="100" r="96" fill="#050026" opacity="0.28" filter="url(#banded-planet-grain)" />
+      <circle cx="100" cy="100" r="96" fill={`url(#planet-${kind}-bands)`} />
+      <circle cx="100" cy="100" r="96" fill={`url(#planet-${kind}-shade)`} />
+      <circle cx="100" cy="100" r="96" fill="#050026" opacity="0.28" filter={`url(#planet-${kind}-grain)`} />
     </svg>
   );
 }

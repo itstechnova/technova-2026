@@ -1,5 +1,5 @@
 import type { CSSProperties } from "react";
-import { SectionHeading, Tag, art, place, wrap } from "@/components/landing/shared";
+import { DrawnPlanet, SectionHeading, Tag, art, place, wrap } from "@/components/landing/shared";
 import { TwinkleStar } from "@/components/portal/ui";
 
 // Figma "02 · Your people / #about". The collage is placed as shares of its 670 x 600 design box.
@@ -32,15 +32,14 @@ function Collage() {
         className="absolute h-auto rounded-full border-[3px] border-tn-cyan shadow-[0_12px_32px_rgb(5_0_38_/_0.5)]"
         style={at(6, 368, 200)}
       />
-      {/* The moon travels the dashed orbit once a minute or so. */}
+      {/* A small planet travels the dashed orbit once a minute or so. */}
       <div className="anim-spin absolute aspect-square" style={{ ...at(50, 10, 560), "--dur": "54s" } as CSSProperties}>
-        <img src="/images/cratered-moon.svg" alt="" className="absolute h-auto" style={{ left: "70%", top: "-3%", width: "29%" }} />
+        <DrawnPlanet kind="rose" className="absolute" style={{ left: "76%", top: "4%", width: "11%" }} />
       </div>
       <Tag className="absolute rotate-[5deg] whitespace-nowrap shadow-lg" style={{ left: "59.7%", top: "75.3%" }}>
         Find your people
       </Tag>
       <TwinkleStar className="absolute" dur={4.4} style={at(600, 250, 56)} />
-      <TwinkleStar className="absolute" dur={5.2} style={at(64, 60, 44)} />
       {/* eslint-enable @next/next/no-img-element */}
     </div>
   );

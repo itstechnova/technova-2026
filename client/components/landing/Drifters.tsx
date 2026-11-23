@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
-import { BandedPlanet, art } from "@/components/landing/shared";
+import { DrawnPlanet, type PlanetKind } from "@/components/landing/shared";
 
 // Far-off planets and a satellite, behind everything. Each wanders slowly across the window on its
 // own long loop (`.drift` in globals.css), and the whole layer scrolls more slowly than the page, each
@@ -24,30 +24,18 @@ type Body = {
   opacity: number;
 };
 
+// Kept sparse and slow so the background stays calm. Neither planet appears elsewhere on the page.
 const BODIES: Body[] = [
-  { key: "banded", x: 8, y: 62, width: 58, depth: 0.1, seconds: 140, dx: 70, dy: -22, opacity: 0.55 },
-  { key: "purple", x: 86, y: 118, width: 84, depth: 0.22, seconds: 110, dx: -74, dy: 16, opacity: 0.6 },
-  { key: "green", x: 14, y: 176, width: 120, depth: 0.3, seconds: 95, dx: 66, dy: -30, opacity: 0.7 },
-  { key: "satellite", x: 82, y: 70, width: 76, depth: 0.16, seconds: 46, dx: -78, dy: 44, opacity: 0.7 },
-  { key: "sunset", x: 72, y: 236, width: 150, depth: 0.34, seconds: 125, dx: -60, dy: -18, opacity: 0.7 },
-  { key: "banded-2", x: 30, y: 300, width: 46, depth: 0.14, seconds: 150, dx: 52, dy: 26, opacity: 0.5 },
+  { key: "ember", x: 6, y: 78, width: 54, depth: 0.12, seconds: 240, dx: 34, dy: -12, opacity: 0.5 },
+  { key: "ice", x: 88, y: 190, width: 88, depth: 0.26, seconds: 280, dx: -30, dy: 10, opacity: 0.55 },
 ];
 
 function picture(key: string) {
-  /* eslint-disable @next/next/no-img-element */
-  switch (key.split("-")[0]) {
-    case "banded":
-      return <BandedPlanet className="w-full" />;
-    case "purple":
-      return <img src={art("purple-planet")} alt="" className="h-auto w-full" />;
-    case "green":
-      return <img src={art("ringed-planet-green")} alt="" className="h-auto w-full -rotate-12" />;
-    case "sunset":
-      return <img src={art("ringed-planet-sunset")} alt="" className="h-auto w-full" />;
-    default:
-      return <img src="/images/satellite.svg" alt="" className="h-auto w-full" />;
+  if (key === "satellite") {
+    // eslint-disable-next-line @next/next/no-img-element
+    return <img src="/images/satellite.svg" alt="" className="h-auto w-full" />;
   }
-  /* eslint-enable @next/next/no-img-element */
+  return <DrawnPlanet kind={key as PlanetKind} className="w-full" />;
 }
 
 export function Drifters() {

@@ -1,8 +1,7 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import { BandedPlanet, SectionHeading, wrap } from "@/components/landing/shared";
-import { TwinkleStar } from "@/components/portal/ui";
+import { DrawnPlanet, SectionHeading, wrap } from "@/components/landing/shared";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 
 // Figma "06 · Questions / #faq", without the console chrome: a plain list, one answer open at a time.
@@ -55,18 +54,11 @@ export function Faq() {
               {SUPPORT_EMAIL}
             </a>
           </p>
-          {/* A banded planet with a little moon, drifting under the heading. */}
-          <div aria-hidden className="relative mt-6 ml-6 hidden w-[230px] lg:block">
-            <BandedPlanet className="anim-float w-full" style={{ "--dur": "17s", "--float-y": "-4%", "--float-x": "2%" } as CSSProperties} />
-            {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src="/images/cratered-moon.svg"
-              alt=""
-              className="anim-float pointer-events-none absolute -top-10 -right-16 w-[120px] select-none"
-              style={{ "--dur": "12s", "--float-y": "-10%", "--float-x": "-6%" } as CSSProperties}
-            />
-            <TwinkleStar className="absolute -bottom-2 -left-10 w-9" dur={4.4} />
-          </div>
+          <DrawnPlanet
+            kind="meadow"
+            className="anim-float mt-6 ml-6 hidden w-[210px] lg:block"
+            style={{ "--dur": "17s", "--float-y": "-4%", "--float-x": "3%", "--float-rotate": "6deg" } as CSSProperties}
+          />
         </div>
 
         <div className="scroll-in">

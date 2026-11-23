@@ -435,10 +435,10 @@ body {
 
 @keyframes sky-twinkle {
   from {
-    opacity: 0.2;
+    opacity: 0.15;
   }
   to {
-    opacity: 0.85;
+    opacity: 0.6;
   }
 }
 

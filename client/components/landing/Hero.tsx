@@ -71,8 +71,7 @@ function Scene() {
     <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1320px] -translate-x-1/2 select-none lg:block">
       {/* eslint-disable @next/next/no-img-element */}
       {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
-      <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={9} delay={1.5} />
-      <ShootingStar className="absolute" style={at(330, 120, 300)} seconds={14} delay={6} />
+      <ShootingStar className="absolute" style={at(820, 20, 440)} seconds={13} delay={1.5} />
       <img src={art("comet")} alt="" className="absolute hidden h-auto motion-reduce:block" style={at(950, 40, 230)} />
 
       <div className="anim-float absolute inset-0" style={float(20, "-1.5%", "0.8%")}>
@@ -90,7 +89,7 @@ function Scene() {
         src="/images/satellite.svg"
         alt=""
         className="anim-float absolute h-auto"
-        style={{ ...at(569, 633, 220), ...float(13, "-150%", "55%", "-16deg") }}
+        style={{ ...at(569, 633, 220), ...float(16, "-90%", "35%", "-12deg") }}
       />
       {/* eslint-enable @next/next/no-img-element */}
 
