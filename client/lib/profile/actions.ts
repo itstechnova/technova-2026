@@ -1,13 +1,9 @@
 'use server'
 
 import { revalidatePath } from 'next/cache'
-import { shirtSize } from '@/lib/application/forms/shared'
-import { PROFILE_FIELDS, type ProfileState, type ProfileValues } from '@/lib/profile/fields'
+import { PROFILE_FIELDS, validProfileValue, type ProfileState, type ProfileValues } from '@/lib/profile/fields'
 import { requireRole } from '@/lib/auth/dal'
 import { createClient } from '@/lib/supabase/server'
-
-const MAX_LENGTH = 100
-const SHIRT_SIZES = new Set(shirtSize.options.map((option) => option.value))
 
 export async function saveProfile(prevState: ProfileState, formData: FormData): Promise<ProfileState> {
   const user = await requireRole(['applicant', 'admin'])
@@ -21,9 +17,9 @@ export async function saveProfile(prevState: ProfileState, formData: FormData): 
   if (!values.first_name) errors.first_name = 'Enter your first name.'
   if (!values.last_name) errors.last_name = 'Enter your last name.'
   if (!values.phone_number) errors.phone_number = 'Enter your phone number.'
-  if (values.shirt_size && !SHIRT_SIZES.has(values.shirt_size)) errors.shirt_size = 'Choose a size from the list.'
-  for (const field of PROFILE_FIELDS) {
-    if (!errors[field.id] && values[field.id].length > MAX_LENGTH) errors[field.id] = 'That’s too long.'
+  for (const { id } of PROFILE_FIELDS) {
+    if (errors[id] || validProfileValue(id, values[id])) continue
+    errors[id] = id === 'shirt_size' ? 'Choose a size from the list.' : 'That’s too long.'
   }
   if (Object.keys(errors).length > 0) return { values, errors }
 
@@ -35,6 +31,24 @@ export async function saveProfile(prevState: ProfileState, formData: FormData): 
   if (error || !data || data.length === 0) {
     console.error('saveProfile: failed to update user row', error ?? `no public.user row updated for ${user.id}`)
     return { values, error: 'We couldn’t save your changes. Please try again.' }
+  }
+
+  // An unfinished application asks for the same details: carry the change into the saved draft.
+  // Its save time is left alone, so it doesn't outrank newer answers still in the browser.
+  const { data: draft, error: draftError } = await supabase
+    .from('hacker_draft')
+    .select('answers')
+    .eq('user_id', user.id)
+    .maybeSingle()
+  if (draft) {
+    const answers = typeof draft.answers === 'object' && draft.answers !== null ? draft.answers : {}
+    const { error: patchError } = await supabase
+      .from('hacker_draft')
+      .update({ answers: { ...answers, ...values } })
+      .eq('user_id', user.id)
+    if (patchError) console.error('saveProfile: failed to update the saved draft', patchError)
+  } else if (draftError) {
+    console.error('saveProfile: failed to load the saved draft', draftError)
   }
 
   revalidatePath('/applicant', 'layout')

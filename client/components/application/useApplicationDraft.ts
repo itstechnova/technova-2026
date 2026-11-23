@@ -84,6 +84,22 @@ function removeDraft(userId: string) {
   }
 }
 
+/**
+ * Changes some answers in this browser's draft, if there is one, without touching its save time
+ * (Profile & settings does this, so the application shows the details just saved there).
+ */
+export function patchStoredDraft(userId: string, answers: Answers) {
+  const draft = parseDraft(readRaw(userId));
+  if (!draft) return;
+  try {
+    const next: Draft = { ...draft, answers: { ...draft.answers, ...answers } };
+    window.localStorage.setItem(draftKey(userId), JSON.stringify(next));
+    window.dispatchEvent(new Event(CHANGE_EVENT));
+  } catch {
+    // Storage is full or blocked: the copy on their account has the change.
+  }
+}
+
 function subscribe(onChange: () => void) {
   window.addEventListener("storage", onChange);
   window.addEventListener(CHANGE_EVENT, onChange);

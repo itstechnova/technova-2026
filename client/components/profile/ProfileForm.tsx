@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useEffect } from "react";
+import { patchStoredDraft } from "@/components/application/useApplicationDraft";
 import { Section, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, controlInput, fieldError } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
@@ -13,9 +14,14 @@ const label = "text-[17px] leading-[1.35] font-semibold text-tn-ink";
 const hint = "text-sm leading-[1.4] text-tn-muted";
 
 /** Profile & settings (Figma "04 · Hacker dashboard / Profile & settings"). */
-export function ProfileForm({ initial, email }: { initial: ProfileValues; email: string }) {
+export function ProfileForm({ userId, initial, email }: { userId: string; initial: ProfileValues; email: string }) {
   const [state, formAction, pending] = useActionState<ProfileState, FormData>(saveProfile, { values: initial });
   const { values, errors = {} } = state;
+
+  // An unfinished application in this browser asks for the same details: keep it in step.
+  useEffect(() => {
+    if (state.saved) patchStoredDraft(userId, state.values);
+  }, [state, userId]);
 
   const text = (
     question: { id: string; prompt: string; placeholder?: string },

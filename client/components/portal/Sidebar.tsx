@@ -6,6 +6,7 @@ import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { signOut } from "@/lib/auth/actions";
 import { APPLICATIONS_CLOSE_DATE_LABEL, APPLICATIONS_CLOSE_TIME_LABEL } from "@/lib/application/config";
+import { TimeLeft } from "@/components/portal/TimeLeft";
 import { BrandLockup } from "@/components/portal/ui";
 
 // The hacker dashboard's navigation (Figma "Sidebar / hacker dashboard", 240px). From `md` up it is a
@@ -36,6 +37,7 @@ function Deadline() {
       <p className="text-xs tracking-wide text-tn-muted uppercase">Applications close</p>
       <p className="text-xl font-semibold text-tn-ink">{APPLICATIONS_CLOSE_DATE_LABEL}</p>
       <p className="text-base text-tn-cyan xl:text-lg">{APPLICATIONS_CLOSE_TIME_LABEL}</p>
+      <TimeLeft className="pt-1 text-sm font-semibold text-tn-yellow tabular-nums" />
     </div>
   );
 }
