@@ -79,5 +79,5 @@ export async function authenticate(prevState: AuthState, formData: FormData): Pr
   if (role === 'admin') redirect('/admin/dashboard')
 
   await supabase.auth.signOut()
-  return { error: `This account isn’t set up yet. Email ${SUPPORT_EMAIL} and we’ll sort it out.`, email }
+  return { error: `We couldn’t open your account. Email ${SUPPORT_EMAIL} and we’ll sort it out.`, email }
 }

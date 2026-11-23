@@ -32,11 +32,16 @@ function urlErrorText(error: string) {
       return 'We couldn’t log you in. Please try again.'
     case 'oauth':
       return 'We couldn’t start Google sign-in. Please try again.'
-    case 'Account has no role assigned':
-      return `This account isn’t set up yet. Email ${SUPPORT_EMAIL} and we’ll sort it out.`
+    case 'no-role':
+      return `We couldn’t open your account. Email ${SUPPORT_EMAIL} and we’ll sort it out.`
     default:
       return error
   }
+}
+
+/** Plain words for the notices that arrive in the URL. */
+function urlMessageText(message: string) {
+  return message === 'session-expired' ? 'Your session ended. Please log in again.' : message
 }
 
 export function LoginForm() {
@@ -54,7 +59,7 @@ export function LoginForm() {
   const { next } = fromUrl
 
   const error = state?.error || (state || !fromUrl.error ? null : urlErrorText(fromUrl.error))
-  const message = state?.message || (state ? null : fromUrl.message)
+  const message = state?.message || (state || !fromUrl.message ? null : urlMessageText(fromUrl.message))
   const emailError = state?.fieldErrors?.email
   const unverified = Boolean(state?.unverified)
 

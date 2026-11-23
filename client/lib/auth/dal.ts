@@ -23,5 +23,11 @@ export async function requireRole(allowedRoles: Role[]) {
   }
 
   await supabase.auth.signOut()
-  redirect('/login?error=Account+has+no+role+assigned')
+
+  // No user: the session has expired or been revoked (the proxy only sees the cookie, which can
+  // outlive it). Nothing is wrong with the account, so just ask them to log in again.
+  if (!user) redirect('/login?message=session-expired')
+
+  // Signed in, but the account has no role we know: that one needs an organizer to fix.
+  redirect('/login?error=no-role')
 }
