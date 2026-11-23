@@ -59,7 +59,7 @@ export const hackerForm: Form = [
         type: "consent",
         prompt: "Getting to Waterloo",
         description:
-          "TechNova does not provide or arrange transportation. You are responsible for getting to and from the event in Waterloo, Ontario, and for the cost of travel.",
+          "TechNova does not provide or arrange transportation. You are responsible for getting to and from the event at PSE in Waterloo, Ontario, and for the cost of travel.",
         checkboxLabel: "I understand that I’m responsible for my own transportation.",
         required: true,
       },

@@ -251,7 +251,7 @@ export default function Home() {
               visible copy; the hero artwork alone only carries the name and date. */}
           <p className="sr-only">
             TechNova is the University of Waterloo&apos;s hackathon for women and non-binary students in tech,
-            held in Waterloo, Ontario from January 22 to 24, 2027.
+            held at PSE in Waterloo, Ontario from January 22 to 24, 2027.
           </p>
           <p className="hero-date">{EVENT_DATE_TEXT}</p>
           {/* Signed-out visitors are sent to /login by the proxy and come back here after. */}

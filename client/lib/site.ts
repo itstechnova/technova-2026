@@ -17,7 +17,7 @@ export const SITE_TITLE = `${EVENT_NAME} | Women+ in Tech Hackathon at the Unive
 
 export const SITE_DESCRIPTION =
   "TechNova is the University of Waterloo's hackathon for women and non-binary students in tech. " +
-  "Join us in Waterloo, Ontario on January 22-24, 2027 for a weekend of hacking, workshops and mentorship, from first-time hackers to seasoned builders.";
+  "Join us at PSE in Waterloo, Ontario on January 22-24, 2027 for a weekend of hacking, workshops and mentorship, from first-time hackers to seasoned builders.";
 
 export const SITE_KEYWORDS = [
   "TechNova",

@@ -16,7 +16,7 @@ import {
 } from "@/components/application/useApplicationDraft";
 import { PageHeading, PortalPage, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
-import { SUPPORT_EMAIL } from "@/lib/application/config";
+import { EVENT_LOCATION_LABEL, SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
 import { saveHackerDraft } from "@/lib/application/draft";
 import { submitHackerApplication } from "@/lib/application/submit";
@@ -36,7 +36,7 @@ import {
 
 // The welcome step's extras, under its introduction (Figma "01 · My application / Welcome").
 const KEY_DATES = [
-  { label: "Hackathon", value: "Jan 22-24", note: "2027 · in person, Waterloo" },
+  { label: "Hackathon", value: "Jan 22-24", note: `2027 · in person at ${EVENT_LOCATION_LABEL}` },
   { label: "Applications opened", value: "Nov 16", note: "2026" },
 ];
 const OPPORTUNITIES = [

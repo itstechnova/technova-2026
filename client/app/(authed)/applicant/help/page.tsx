@@ -28,7 +28,7 @@ const QUESTIONS = [
   },
   {
     q: "Is transportation provided?",
-    a: "No. TechNova does not provide or arrange transportation. You are responsible for getting to and from Waterloo.",
+    a: "No. TechNova does not provide or arrange transportation. You are responsible for getting to and from the venue, PSE in Waterloo.",
   },
   {
     q: "I need an accommodation. Who do I tell?",

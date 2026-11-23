@@ -5,7 +5,7 @@ import { useSyncExternalStore } from "react";
 import { DeadlineCountdown } from "@/components/auth/DeadlineCountdown";
 import { Section, textLink } from "@/components/portal/PortalPage";
 import { Planet, buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
-import { EVENT_DATES_SHORT_LABEL, SUPPORT_EMAIL } from "@/lib/application/config";
+import { EVENT_DATES_SHORT_LABEL, EVENT_LOCATION_LABEL, SUPPORT_EMAIL } from "@/lib/application/config";
 import { EVENT_START_DATE } from "@/lib/site";
 
 // Blocks of the dashboard's Overview page (Figma "02 · Hacker dashboard"). Only the deadline and
@@ -84,7 +84,7 @@ export function EventCard() {
     <div className="relative flex max-w-[820px] flex-col gap-2 overflow-clip rounded-xl border border-tn-cyan/60 bg-tn-surface p-6 pr-[38%] sm:p-7 sm:pr-[38%]">
       <p className="text-sm text-tn-muted">TechNova 6 · hackathon weekend</p>
       <p className={`${heading} text-[clamp(2rem,1.4rem+2vw,3rem)] leading-[1.1]`}>Jan 22–24</p>
-      <p className="text-base text-tn-muted">2027 · Friday to Sunday · in person, Waterloo</p>
+      <p className="text-base text-tn-muted">2027 · Friday to Sunday · in person at {EVENT_LOCATION_LABEL}</p>
       {days !== null && days > 0 && (
         <p className="mt-1 w-fit rounded-full bg-tn-cyan px-3 pt-1.5 pb-1 text-[13px] leading-none font-semibold text-tn-bg">
           {days} {days === 1 ? "day" : "days"} to go
