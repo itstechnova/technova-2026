@@ -335,7 +335,7 @@ function Stepper({ userId, prefill, stored, accountSavedAt }: StepperProps) {
         <div className="flex max-w-[820px] flex-col gap-3">
           <h1
             tabIndex={-1}
-            className={`${heading} text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}
+            className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(1.875rem,1.2rem+2vw,3rem)] leading-[1.15] text-balance outline-none`}
           >
             {title}
           </h1>

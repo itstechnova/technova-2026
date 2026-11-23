@@ -1,7 +1,7 @@
 import type { Metadata } from 'next'
 import Link from 'next/link'
 import type { CSSProperties } from 'react'
-import { SiteFooter, contentWidth } from '@/components/SiteFooter'
+import { SiteFooter, contentWidth, headerRow, headerShade } from '@/components/SiteFooter'
 import {
   BrandLockup,
   EyebrowPill,
@@ -67,8 +67,10 @@ export default function NotFound() {
         />
       </div>
 
-      <header className={`${contentWidth} flex items-center py-3 lg:pt-[clamp(0.75rem,3.2vh,1.9375rem)]`}>
-        <BrandLockup className={`min-h-11 rounded-sm ${focusRing}`} />
+      <header className={headerShade}>
+        <div className={headerRow}>
+          <BrandLockup className={`min-h-11 rounded-sm ${focusRing}`} />
+        </div>
       </header>
 
       <main className={`${contentWidth} flex flex-1 flex-col items-center justify-center gap-8 pt-10 pb-4 text-center lg:gap-10`}>
@@ -97,7 +99,7 @@ export default function NotFound() {
         <div className="flex flex-col items-center gap-6">
           <EyebrowPill>Page not found</EyebrowPill>
           <div className="flex flex-col items-center gap-4">
-            <h1 className={`${heading} text-[clamp(2.5rem,4.5vw,4rem)] leading-none`}>Lost in space.</h1>
+            <h1 className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(2.5rem,4.5vw,4rem)] leading-none`}>Lost in space.</h1>
             <p className="max-w-[560px] text-lg leading-[1.4] text-tn-muted sm:text-[22px]">
               This page drifted out of orbit, or was never here. Let’s get you back to TechNova.
             </p>

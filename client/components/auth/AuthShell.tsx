@@ -5,6 +5,7 @@
 import Link from 'next/link'
 import type { ReactNode } from 'react'
 import { BrandLockup, Planet, SpaceBackdrop, TwinkleStar, heading } from '@/components/portal/ui'
+import { contentWidth, headerRow, headerShade } from '@/components/SiteFooter'
 import { EVENT_DATES_LABEL } from '@/lib/application/config'
 
 /** Text link used under the auth forms (44px tall tap target). */
@@ -21,17 +22,19 @@ export function AuthShell({ children }: { children: ReactNode }) {
     <div className="relative isolate flex min-h-dvh w-full flex-col text-tn-ink">
       <SpaceBackdrop />
 
-      <header className="flex items-center justify-between gap-4 px-5 py-3 sm:px-10 md:py-[clamp(0.75rem,2.5vh,1.75rem)] xl:px-16">
-        <BrandLockup className="min-h-11 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white" />
-        <Link
-          href="/"
-          className="inline-flex min-h-11 items-center rounded-sm text-base leading-[1.35] font-semibold whitespace-nowrap text-tn-muted transition hover:text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-lg"
-        >
-          Back to website
-        </Link>
+      <header className={headerShade}>
+        <div className={headerRow}>
+          <BrandLockup className="min-h-11 rounded-sm focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white" />
+          <Link
+            href="/"
+            className="inline-flex min-h-11 items-center rounded-sm text-base leading-[1.35] font-semibold whitespace-nowrap text-tn-muted transition hover:text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-white sm:text-lg"
+          >
+            Back to website
+          </Link>
+        </div>
       </header>
 
-      <main className="mx-auto flex w-full max-w-[1440px] flex-1 flex-col gap-12 px-5 pt-4 pb-12 sm:px-10 md:flex-row md:items-start md:justify-center md:gap-[clamp(2rem,4vw,3.75rem)] md:pt-[clamp(0.5rem,4vh,3rem)] md:pb-10 xl:px-20">
+      <main className={`${contentWidth} flex flex-1 flex-col gap-12 pt-4 pb-12 md:flex-row md:items-start md:justify-between md:gap-[clamp(2rem,4vw,3.75rem)] md:pt-[clamp(0.5rem,4vh,3rem)] md:pb-10`}>
         {/* On phones the art follows the form, so the form comes first. Beside the form it is sized
             from the window's height as well as its width, so the pair fits a laptop screen. */}
         <div className="@container order-last mx-auto w-full max-w-[340px] min-w-0 md:order-none md:mx-0 md:max-w-[min(640px,calc((100dvh_-_9rem)*0.914))] md:flex-[0_1_640px]">
@@ -79,7 +82,7 @@ function AuthArt() {
 export function AuthHeader({ title, children }: { title: string; children?: ReactNode }) {
   return (
     <>
-      <h1 className={`${heading} text-[clamp(1.75rem,1.3rem+1.2vw,2.25rem)] leading-[1.25]`}>{title}</h1>
+      <h1 className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(1.75rem,1.3rem+1.2vw,2.25rem)] leading-[1.25]`}>{title}</h1>
       {children && (
         <p className="w-full max-w-[440px] text-base leading-[1.35] text-tn-muted sm:text-lg 2xl:text-xl">{children}</p>
       )}

@@ -43,11 +43,13 @@
 html {
   /* Shown in overscroll/bounce areas; matches the artwork's base colour. */
   background: var(--background);
-  /* The page never scrolls sideways: the artwork is wider than the screen on purpose. `clip` on the
-     root becomes `hidden` on the viewport, which stays the (vertical) root scroller that the
-     parallax timeline follows. No `overscroll-behavior-x: none` here: on the root it also switches
-     off the browser's two-finger swipe to go back or forward. */
+  /* The page never scrolls sideways: the artwork is wider than the screen on purpose. No
+     `overscroll-behavior-x: none` here: on the root it also switches off the browser's two-finger
+     swipe to go back or forward. */
   overflow-x: clip;
+  /* Anchor links (the landing page's navigation) glide, and stop clear of the sticky bar. */
+  scroll-behavior: smooth;
+  scroll-padding-top: 96px;
 }
 
 /* Rubber-band scrolling past the artwork reveals flat background; mice and trackpads don't need it.
@@ -64,131 +66,6 @@ body {
   font-family: var(--font-josefin), sans-serif;
   /* `clip`, unlike `hidden`, doesn't turn body into a scroll container. */
   overflow-x: clip;
-}
-
-/* ---------- The frame: one artwork, two layouts ----------
-   Desktop and tablet (>= 48rem, Tailwind's md) replicate the 1512 x 2761 Figma frame; phones get a
-   tall 390-wide arrangement of the same layers (lib/frame.ts). Both scale with the screen width.
-   Everything inside is positioned in the current layout's frame px: `calc(N * var(--u))`. */
-
-.frame {
-  --frame-width: var(--frame-width-d);
-  --frame-height: var(--frame-height-d);
-  /* One frame px. Only meaningful in descendants, where cqw resolves against this container. */
-  --u: calc(100cqw / var(--frame-width));
-  aspect-ratio: var(--frame-width) / var(--frame-height);
-  /* Viewports taller than the artwork are filled to the screen (see .bg-mirror). */
-  min-height: 100svh;
-  container-type: inline-size;
-}
-
-/* Artwork layers (and the arc): boxes from page.tsx as unitless frame px per layout. */
-.art {
-  position: absolute;
-  max-width: none;
-  left: calc(var(--x-d) * var(--u));
-  top: calc(var(--y-d) * var(--u));
-  width: calc(var(--w-d) * var(--u));
-}
-
-/* Desktop layout on viewports taller than the artwork: the backdrop mirrored below it, so its
-   bottom edge continues seamlessly; tucked 1px under the edge so no subpixel seam shows. */
-.bg-mirror {
-  position: absolute;
-  left: 0;
-  top: calc(var(--frame-height) * var(--u) - 1px);
-  display: none;
-  width: 100%;
-  max-width: none;
-  transform: scaleY(-1);
-}
-
-@media (width >= 48rem) and (max-aspect-ratio: 1512 / 2761) {
-  .bg-mirror {
-    display: block;
-  }
-}
-
-/* Content, desktop: Figma frame px (nodes 81:160 and 162:13). The hero block flows top to bottom
-   with the Figma gaps; small left indents are the design's optical alignment. */
-.logo {
-  position: absolute;
-  left: calc(1389.53 * var(--u));
-  top: calc(39.31 * var(--u));
-  width: calc(87.7 * var(--u));
-}
-
-.hero {
-  position: absolute;
-  left: calc(103 * var(--u));
-  top: calc(399 * var(--u));
-}
-
-.hero-title {
-  font-size: calc(145 * var(--u));
-  line-height: 0.941;
-  white-space: nowrap;
-}
-
-.hero-date {
-  margin: calc(22.56 * var(--u)) 0 0 calc(8 * var(--u));
-  font-size: calc(48 * var(--u));
-  line-height: 0.941;
-  white-space: nowrap;
-}
-
-.hero .hero-apply {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  margin: calc(96 * var(--u)) 0 0 calc(10 * var(--u));
-  height: max(48px, calc(80 * var(--u)));
-  padding: 0 max(28px, calc(64 * var(--u)));
-  font-size: max(18px, calc(34 * var(--u)));
-  line-height: 1;
-}
-
-/* Content, phones: mobile px, in the 20px-ish gutters. Type follows the frame's scale on phones
-   and stops growing on wider screens that still get this layout. */
-@media (width < 48rem) {
-  .frame {
-    --frame-width: var(--frame-width-m);
-    --frame-height: var(--frame-height-m);
-  }
-
-  .art {
-    left: calc(var(--x-m) * var(--u));
-    top: calc(var(--y-m) * var(--u));
-    width: calc(var(--w-m) * var(--u));
-  }
-
-  .logo {
-    left: calc(332 * var(--u));
-    top: calc(22 * var(--u));
-    width: calc(38 * var(--u));
-  }
-
-  .hero {
-    left: calc(20 * var(--u));
-    right: calc(20 * var(--u));
-    top: calc(180 * var(--u));
-  }
-
-  .hero-title {
-    font-size: min(calc(54 * var(--u)), 70px);
-  }
-
-  .hero-date {
-    margin: 0.55em 0 0 0.1em;
-    font-size: min(calc(20 * var(--u)), 26px);
-  }
-
-  .hero .hero-apply {
-    margin: clamp(28px, calc(36 * var(--u)), 44px) 0 0;
-    height: clamp(52px, calc(56 * var(--u)), 62px);
-    padding: 0 clamp(28px, calc(34 * var(--u)), 40px);
-    font-size: clamp(17px, calc(18 * var(--u)), 21px);
-  }
 }
 
 /* ---------- Background motion ---------- */
@@ -214,11 +91,6 @@ body {
 
 .anim-breathe {
   animation: breathe var(--dur) ease-in-out var(--delay, 0s) infinite;
-}
-
-/* Set by components/background-layer.tsx while an animated layer is off screen. */
-img[data-offscreen] {
-  animation-play-state: paused;
 }
 
 @keyframes spin {
@@ -355,67 +227,6 @@ img[data-offscreen] {
   }
 }
 
-/* ---------- Planet parallax (see lib/parallax.ts) ---------- */
-
-.parallax {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  will-change: transform;
-  --parallax-factor: var(--parallax-factor-d);
-  --parallax-anchor: var(--parallax-anchor-d);
-}
-
-@media (width < 48rem) {
-  .parallax {
-    --parallax-factor: var(--parallax-factor-m);
-    --parallax-anchor: var(--parallax-anchor-m);
-  }
-}
-
-/* Where scroll-driven animations exist, the drift runs off the main thread; lib/parallax.ts is the
-   fallback. Offset = (scrollY - anchor) * factor, with anchor = the scroll that centres the planet's
-   focal point, clamped to the scroll range. */
-@supports (animation-timeline: scroll()) {
-  @media (prefers-reduced-motion: no-preference) {
-    .parallax {
-      --max-scroll: calc(var(--frame-height) * var(--u) - 100vh);
-      --anchor-scroll: clamp(
-        0px,
-        calc(var(--parallax-anchor) * var(--u) - 50vh),
-        var(--max-scroll)
-      );
-      animation: parallax-drift linear both;
-      animation-timeline: scroll(root block);
-    }
-  }
-}
-
-@keyframes parallax-drift {
-  from {
-    transform: translate3d(0, calc(var(--anchor-scroll) * var(--parallax-factor) * -1), 0);
-  }
-  to {
-    transform: translate3d(
-      0,
-      calc((var(--max-scroll) - var(--anchor-scroll)) * var(--parallax-factor)),
-      0
-    );
-  }
-}
-
-/* Lazy layers fade in once loaded. filter: opacity() multiplies with the opacity keyframes
-   above instead of fighting them, and settles back to `none` when the fade is done. */
-img[data-lazy] {
-  transition: filter 0.5s ease-out;
-}
-
-img[data-lazy="pending"] {
-  filter: opacity(0);
-  /* WebKit outlines an <img> with no src, and ignores the filter on composited (spinning) ones. */
-  visibility: hidden;
-}
-
 /* ---------- Interest signup form: frosted pill in the pink planet's palette ---------- */
 
 .signup-pill {
@@ -544,7 +355,171 @@ img[data-lazy="pending"] {
   }
 }
 
+/* ---------- Landing page (app/page.tsx, components/landing) ---------- */
+
+/* Large headings across the site ("TechNova 6", section and page titles): white letters with the
+   design system's lilac shade rising from the lower right (Design System file, node 64:12: a blurred #B782DB blob masked by the letters). */
+.title-shade {
+  background:
+    radial-gradient(72% 125% at 72% 118%, rgb(183 130 219) 0%, rgb(183 130 219 / 0.78) 38%, rgb(183 130 219 / 0) 100%),
+    #fff;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Hero entrance: each line rises in, 140ms after the one before (`--i` is its place in the order). */
+.rise {
+  animation: rise 0.5s ease-out both;
+  animation-delay: calc(var(--i, 0) * 140ms);
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+}
+
+/* Sections ease in as they scroll into view, where the browser can tie an animation to scrolling.
+   Elsewhere they are simply there. */
+@supports (animation-timeline: view()) {
+  .scroll-in {
+    animation: rise linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 45%;
+  }
+}
+
+/* The hero planet's rings (components/landing/Hero.tsx). The pair is tilted and rocks slowly about
+   the planet's centre (SVG units of the 1440 x 980 scene); the dotted ring's dots stream round. */
+.ring-rock {
+  transform: rotate(-16deg);
+  transform-origin: 1090px 410px;
+  animation: ring-rock 18s ease-in-out infinite alternate;
+}
+
+@keyframes ring-rock {
+  from {
+    transform: rotate(-23deg);
+  }
+  to {
+    transform: rotate(-9deg);
+  }
+}
+
+.ring-flow {
+  animation: ring-flow 1.6s linear infinite;
+}
+
+.ring-flow-back {
+  animation-direction: reverse;
+}
+
+/* One dot-and-gap (2 + 10) per cycle, so the loop is seamless. */
+@keyframes ring-flow {
+  to {
+    stroke-dashoffset: -12;
+  }
+}
+
+.ring-bead {
+  filter: drop-shadow(0 0 6px currentColor);
+}
+
+/* The landing page's star field (components/landing/Sky.tsx): each layer of dots fades in and out
+   on its own beat. */
+.sky-stars {
+  animation: sky-twinkle var(--dur, 6s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes sky-twinkle {
+  from {
+    opacity: 0.15;
+  }
+  to {
+    opacity: 0.6;
+  }
+}
+
+/* Distant planets (components/landing/Drifters.tsx): a slow wander out across the window and back,
+   with a gentle turn. `--dx`/`--dy` say how far. */
+.drift {
+  animation: drift var(--dur, 120s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes drift {
+  from {
+    transform: translate3d(0, 0, 0) rotate(-6deg);
+  }
+  45% {
+    transform: translate3d(calc(var(--dx) * 0.6), calc(var(--dy) * -0.5), 0) rotate(4deg);
+  }
+  to {
+    transform: translate3d(var(--dx), var(--dy), 0) rotate(10deg);
+  }
+}
+
+/* The FAQ's map placeholder: a soft band of light sweeping across while the map loads. */
+.map-shimmer {
+  background: linear-gradient(100deg, transparent 30%, rgb(207 196 255 / 0.09) 50%, transparent 70%);
+  background-size: 250% 100%;
+  animation: map-shimmer 2.2s ease-in-out infinite;
+}
+
+@keyframes map-shimmer {
+  from {
+    background-position: 120% 0;
+  }
+  to {
+    background-position: -120% 0;
+  }
+}
+
+/* Easter egg: the moon over the crew spins once when clicked. */
+.moon-spin {
+  animation: moon-spin 0.9s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+@keyframes moon-spin {
+  40% {
+    transform: translateY(-14px) rotate(200deg) scale(1.08);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* The crew strip scrolls sideways without showing a scrollbar. */
+.no-scrollbar {
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  .rise,
+  .scroll-in,
+  .sky-stars,
+  .map-shimmer,
+  .drift,
+  .moon-spin,
+  .ring-rock,
+  .ring-flow {
+    animation: none;
+  }
+
+  /* The beads are driven by SVG animation, which ignores this setting, so they are left out. */
+  .ring-bead {
+    display: none;
+  }
+
   .anim-spin,
   .anim-twinkle,
   .anim-breathe,
@@ -555,9 +530,5 @@ img[data-lazy="pending"] {
   .anim-orbit-front,
   .anim-orbit-back {
     animation: none;
-  }
-
-  img[data-lazy] {
-    transition: none;
   }
 }

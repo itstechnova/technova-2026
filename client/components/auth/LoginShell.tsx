@@ -1,7 +1,7 @@
 import Link from 'next/link'
 import type { CSSProperties, ReactNode } from 'react'
-import { BrandLockup, EyebrowPill, Planet, TwinkleStar, heading } from '@/components/portal/ui'
-import { SiteFooter, contentWidth } from '@/components/SiteFooter'
+import { BrandLockup, Planet, TwinkleStar, heading } from '@/components/portal/ui'
+import { SiteFooter, contentWidth, headerRow, headerShade } from '@/components/SiteFooter'
 import { EVENT_DATES_SHORT_LABEL } from '@/lib/application/config'
 import { DeadlineCountdown } from './DeadlineCountdown'
 
@@ -32,23 +32,23 @@ export function LoginShell({ children }: { children: ReactNode }) {
       {/* From lg up this part is at least as tall as the artwork (the planet ends about 78% of the
           width down), so scrolling shows all of it before the footer. */}
       <div className="flex flex-1 flex-col lg:min-h-[82vw]">
-        <header className={`${contentWidth} flex items-center justify-between gap-4 py-3 lg:pt-[clamp(0.75rem,3.2vh,1.9375rem)]`}>
-          <BrandLockup className={`min-h-11 rounded-sm ${focusRing}`} />
-          <Link
-            href="/"
-            className={`inline-flex min-h-11 items-center rounded-sm text-base leading-[1.35] font-semibold whitespace-nowrap text-tn-muted transition hover:text-tn-ink sm:text-lg ${focusRing}`}
-          >
-            Back to website
-          </Link>
+        <header className={headerShade}>
+          <div className={headerRow}>
+            <BrandLockup className={`min-h-11 rounded-sm ${focusRing}`} />
+            <Link
+              href="/"
+              className={`inline-flex min-h-11 items-center rounded-sm text-base leading-[1.35] font-semibold whitespace-nowrap text-tn-muted transition hover:text-tn-ink sm:text-lg ${focusRing}`}
+            >
+              Back to website
+            </Link>
+          </div>
         </header>
 
         {/* Phones and tablets: title, then the form, then the countdown. From lg up the title and
             countdown share the left column and the form sits on the right. */}
         <main className={`${contentWidth} flex flex-col gap-8 pt-4 pb-12 lg:grid lg:grid-cols-[minmax(0,1fr)_minmax(0,440px)] lg:grid-rows-[auto_1fr] lg:items-start lg:gap-x-[clamp(2rem,6vw,5rem)] lg:gap-y-7 lg:pt-[clamp(1rem,6.5vh,3.9375rem)]`}>
           <div className={`${column} flex flex-col items-start gap-6 lg:gap-7`}>
-            <EyebrowPill>Applicant portal</EyebrowPill>
-
-            <p className={`${heading} text-[clamp(3rem,6.1vw,5rem)] leading-none`}>
+            <p className={`${heading} title-shade w-fit pb-[0.08em] text-[clamp(3rem,6.1vw,5rem)] leading-none`}>
               See you at
               <br />
               TechNova.
