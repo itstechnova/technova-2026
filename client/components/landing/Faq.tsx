@@ -6,7 +6,18 @@ import { SUPPORT_EMAIL } from "@/lib/application/config";
 
 // Figma "06 · Questions / #faq", without the console chrome: a plain list, one answer open at a time.
 
-const QUESTIONS = [
+// The venue, for the "Where is it held?" answer and its map.
+const VENUE = {
+  name: "Pearl Sullivan Engineering Building (PSE)",
+  address: "University of Waterloo, 200 University Avenue West, Waterloo, Ontario N2L 3G1",
+  query: "Pearl Sullivan Engineering Building, University of Waterloo",
+};
+const mapEmbed = `https://www.google.com/maps?q=${encodeURIComponent(VENUE.query)}&z=16&output=embed`;
+const mapLink = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(VENUE.query)}`;
+
+type Question = { q: string; a: string; map?: boolean };
+
+const QUESTIONS: Question[] = [
   {
     q: "What is a hackathon?",
     a: "A weekend where you team up to build a project and show it off at the end. It can be an app, a website, a piece of hardware, anything you like. Along the way there are workshops, mentors and plenty of activities.",
@@ -14,6 +25,11 @@ const QUESTIONS = [
   {
     q: "Who can join TechNova?",
     a: "TechNova is open to women and non-binary students. You can be enrolled at a university or at a non-traditional institution such as a code bootcamp, homeschool or online program.",
+  },
+  {
+    q: "Where is TechNova held?",
+    a: `TechNova 6 takes place in person at the ${VENUE.name}, on the ${VENUE.address.replace(" N2L 3G1", "")}.`,
+    map: true,
   },
   {
     q: "Do I need coding experience?",
@@ -29,7 +45,7 @@ const QUESTIONS = [
   },
   {
     q: "What about travel & accessibility?",
-    a: `TechNova does not provide or arrange transportation, so you are responsible for getting to and from the event in Waterloo, Ontario. If you need an accommodation, email ${SUPPORT_EMAIL} and we will work it out with you.`,
+    a: `TechNova does not provide or arrange transportation, so you are responsible for getting to and from the venue in Waterloo, Ontario. If you need an accommodation, email ${SUPPORT_EMAIL} and we will work it out with you.`,
   },
   {
     q: "What happens after I apply?",
@@ -63,7 +79,7 @@ export function Faq() {
 
         <div className="scroll-in">
           <ul className="border-t border-tn-line">
-            {QUESTIONS.map(({ q, a }, index) => {
+            {QUESTIONS.map(({ q, a, map }, index) => {
               const expanded = open === index;
               return (
                 <li key={q} className="border-b border-tn-line">
@@ -90,9 +106,30 @@ export function Faq() {
                     inert={!expanded}
                     className={`grid transition-[grid-template-rows] duration-[250ms] ease-out motion-reduce:transition-none ${expanded ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}
                   >
-                    <p className="overflow-hidden text-base leading-[1.5] text-tn-muted sm:text-lg">
-                      <span className="block max-w-[52ch] pb-6">{a}</span>
-                    </p>
+                    <div className="overflow-hidden text-base leading-[1.5] text-tn-muted sm:text-lg">
+                      <p className="max-w-[52ch] pb-6">{a}</p>
+                      {/* The map is only requested from Google once the answer is opened. */}
+                      {map && expanded && (
+                        <div className="flex flex-col gap-3 pb-6">
+                          <iframe
+                            title={`Map showing the ${VENUE.name}`}
+                            src={mapEmbed}
+                            loading="lazy"
+                            referrerPolicy="no-referrer-when-downgrade"
+                            allowFullScreen
+                            className="aspect-[16/10] w-full rounded-xl border border-tn-line"
+                          />
+                          <a
+                            href={mapLink}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-fit text-[15px] text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink"
+                          >
+                            Open in Google Maps<span className="sr-only"> (opens in a new tab)</span>
+                          </a>
+                        </div>
+                      )}
+                    </div>
                   </div>
                 </li>
               );
