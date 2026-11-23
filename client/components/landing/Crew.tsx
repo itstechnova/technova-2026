@@ -148,6 +148,7 @@ const orbit = (dur: number): CSSProperties => ({ "--dur": `${dur}s` }) as CSSPro
 
 export function Crew() {
   const [filter, setFilter] = useState<Filter>("All crew");
+  const [moonSpins, setMoonSpins] = useState(0);
   const people = filter === "All crew" ? CREW : CREW.filter((member) => member.department === filter);
 
   return (
@@ -162,15 +163,19 @@ export function Crew() {
       </div>
 
       <div className={`${wrap} relative pt-20 lg:pt-24`}>
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          src="/images/cratered-moon.svg"
-          alt=""
+        {/* Easter egg: click the moon and it spins. Pointer only, so it is hidden from assistive tech. */}
+        <button
+          type="button"
           aria-hidden
-          className="anim-float pointer-events-none absolute top-16 right-[8%] hidden w-[170px] select-none md:block"
+          tabIndex={-1}
+          onClick={() => setMoonSpins((count) => count + 1)}
+          className="anim-float absolute top-16 right-[8%] z-10 hidden w-[150px] cursor-pointer select-none md:block"
           style={{ ...orbit(15), "--float-y": "-6%" } as CSSProperties}
-        />
-        <SectionHeading title="Meet the crew">The people making TechNova happen.</SectionHeading>
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img key={moonSpins} src="/images/cratered-moon.svg" alt="" draggable={false} className={moonSpins ? "moon-spin w-full" : "w-full"} />
+        </button>
+        <SectionHeading title="Meet the crew" />
 
         <div role="group" aria-label="Show a department" className="no-scrollbar -mx-2 mt-6 flex gap-1 overflow-x-auto px-2 py-1">
           {FILTERS.map((name) => (

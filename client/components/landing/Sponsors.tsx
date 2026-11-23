@@ -1,6 +1,6 @@
 import type { CSSProperties } from "react";
-import { SectionHeading, caps, panel, wrap } from "@/components/landing/shared";
-import { TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
+import { SectionHeading, actionQuiet, panel, wrap } from "@/components/landing/shared";
+import { TwinkleStar, heading } from "@/components/portal/ui";
 
 // Figma "03 · Sponsors / #sponsors": the sponsors as a constellation. From `lg` up the logos, stars
 // and lines are placed as shares of the design's 1248 x 420 box; below that the logos are a grid.
@@ -108,21 +108,21 @@ export function Sponsors() {
         <Constellation />
         <LogoGrid />
 
-        <div className={`${panel} scroll-in relative mt-16 flex flex-col gap-x-10 gap-y-9 px-7 py-9 md:flex-row md:items-center md:justify-between lg:px-10 lg:py-8`}>
+        <div className={`${panel} scroll-in relative mt-16 flex flex-col gap-x-10 gap-y-9 px-7 py-8 md:flex-row md:items-center md:justify-between lg:px-9`}>
           <div className="flex flex-wrap items-center gap-x-9 gap-y-5">
             <div className="flex flex-col gap-2.5">
-              <h3 className={`${heading} text-[28px] leading-[1.25] sm:text-[32px]`}>Join the constellation.</h3>
-              <a href={`mailto:${SPONSOR_EMAIL}`} className="w-fit text-lg text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink sm:text-[21px]">
+              <h3 className={`${heading} text-2xl leading-[1.25] sm:text-[28px]`}>Join the constellation.</h3>
+              <a href={`mailto:${SPONSOR_EMAIL}`} className="w-fit text-lg text-tn-cyan underline decoration-from-font underline-offset-4 hover:text-tn-ink">
                 {SPONSOR_EMAIL}
               </a>
             </div>
-            <a href={`mailto:${SPONSOR_EMAIL}`} className={`${buttonSecondary} relative`}>
+            <a href={`mailto:${SPONSOR_EMAIL}`} className={actionQuiet}>
               Become a sponsor
             </a>
           </div>
           <div className="flex flex-col gap-5 md:pr-6">
-            <p className={`${caps} text-[15px] text-tn-cyan`}>Official event partner</p>
-            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[200px]" />
+            <p className="text-[15px] leading-none text-tn-muted">Official event partner</p>
+            <img src="/images/sponsors/mlh.webp" alt="Major League Hacking" width={400} height={168} loading="lazy" className="h-auto w-[160px]" />
           </div>
         </div>
       </div>

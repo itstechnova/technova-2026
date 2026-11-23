@@ -1,10 +1,12 @@
 import { About } from "@/components/landing/About";
 import { Closing } from "@/components/landing/Closing";
+import { EasterEggs } from "@/components/landing/EasterEggs";
 import { Crew } from "@/components/landing/Crew";
 import { Experience } from "@/components/landing/Experience";
 import { Faq } from "@/components/landing/Faq";
 import { Hero } from "@/components/landing/Hero";
 import { Nav } from "@/components/landing/Nav";
+import { Sky } from "@/components/landing/Sky";
 import { Sponsors } from "@/components/landing/Sponsors";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SpaceBackdrop } from "@/components/portal/ui";
@@ -40,6 +42,8 @@ export default function Home() {
     <div className="relative isolate text-tn-ink">
       <SpaceBackdrop />
       <Glows />
+      <Sky />
+      <EasterEggs />
       <Nav />
       {/* MLH's season banner hangs from the top right corner, over the navigation. */}
       {/* eslint-disable-next-line @next/next/no-img-element */}
@@ -48,7 +52,7 @@ export default function Home() {
         alt="Major League Hacking 2027 hackathon season"
         width={88}
         height={154}
-        className="absolute top-0 right-[max(1.25rem,calc((100vw-1440px)/2+40px))] z-50 hidden h-auto w-[88px] xl:block"
+        className="absolute top-0 right-[max(1rem,calc((100vw-1208px)/2-104px))] z-50 hidden h-auto w-[88px] xl:block"
       />
       <main>
         <Hero />

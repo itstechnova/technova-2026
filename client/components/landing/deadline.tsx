@@ -2,14 +2,12 @@
 
 import Link from "next/link";
 import { useSyncExternalStore } from "react";
-import { Chip, caps } from "@/components/landing/shared";
-import { buttonPrimary, heading } from "@/components/portal/ui";
+import { StarMark, action } from "@/components/landing/shared";
+import { heading } from "@/components/portal/ui";
 import {
   APPLICATIONS_CLOSE_AT,
   APPLICATIONS_CLOSE_DATE_LABEL,
-  APPLICATIONS_CLOSE_DAY_LABEL,
   APPLICATIONS_CLOSE_TIME_LABEL,
-  APPLICATIONS_CLOSE_YEAR_LABEL,
   EVENT_DATES_LABEL,
 } from "@/lib/application/config";
 import { EVENT_START_DATE } from "@/lib/site";
@@ -21,7 +19,6 @@ import { EVENT_START_DATE } from "@/lib/site";
 const CLOSE = APPLICATIONS_CLOSE_AT.getTime();
 // The hackathon's first morning, Eastern time.
 const EVENT_START = new Date(`${EVENT_START_DATE}T09:00:00-05:00`).getTime();
-const DAY = 86_400_000;
 
 /** The current time, refreshed every `ms`; null on the server and while hydrating. */
 function useNow(ms: number): number | null {
@@ -48,50 +45,18 @@ function useApplicationsOpen(): boolean {
 export function ApplyLink({ className = "" }: { className?: string }) {
   const open = useApplicationsOpen();
   return (
-    <Link href={open ? "/signup" : "/login"} className={`${buttonPrimary} whitespace-nowrap ${className}`}>
+    <Link href={open ? "/signup" : "/login"} className={`${action} ${className}`}>
       {open ? "Apply now" : "Applicant portal"}
     </Link>
   );
 }
 
-/**
- * The hero's yellow deadline card, the next thing a visitor has to act on. (The hackathon's own
- * dates are the subheader under the title.) Once applications close it turns muted and says so.
- */
-export function DeadlineCard() {
-  const now = useNow(30_000);
-  const open = now === null || now <= CLOSE;
-  const daysLeft = now === null ? null : Math.ceil((CLOSE - now) / DAY);
-
-  return (
-    <div
-      className={`flex w-fit max-w-full flex-col gap-1 rounded-3xl px-6 pt-5 pb-[18px] ${
-        open
-          ? "bg-tn-yellow text-tn-bg shadow-[0_0_40px_rgb(253_244_184_/_0.35)]"
-          : "border border-tn-line bg-[#120838]/70 text-tn-muted"
-      }`}
-    >
-      <p className="flex flex-wrap items-center gap-x-3 gap-y-1.5">
-        <span className={`${caps} text-[13px]`}>{open ? "Applications close" : "Applications closed"}</span>
-        {open && daysLeft !== null && (
-          <span className={`${caps} rounded-full bg-tn-bg px-2.5 pt-1.5 pb-1 text-xs tracking-[0.1em] text-tn-yellow`}>
-            {daysLeft <= 1 ? "Last day" : `${daysLeft} days left`}
-          </span>
-        )}
-      </p>
-      <p className={`${heading} text-[clamp(2.5rem,1.9rem+2.4vw,3.75rem)] leading-[1.05] whitespace-nowrap text-current!`}>
-        {APPLICATIONS_CLOSE_DAY_LABEL}
-      </p>
-      <p className="text-[17px] leading-none font-semibold">
-        {APPLICATIONS_CLOSE_YEAR_LABEL} · {APPLICATIONS_CLOSE_TIME_LABEL}
-      </p>
-    </div>
-  );
-}
-
 const pad = (n: number) => String(n).padStart(2, "0");
 
-/** The hero's live countdown: to the deadline, then to the start of the hackathon. */
+/**
+ * The hero's live countdown: to the application deadline, with the deadline itself written under
+ * it; once that passes, to the start of the hackathon.
+ */
 export function Countdown() {
   const now = useNow(1000);
   const open = now === null || now <= CLOSE;
@@ -101,49 +66,56 @@ export function Countdown() {
 
   const digits = (n: number | null) => (n === null ? "––" : pad(n));
   const units = [
-    { label: "Days", value: digits(seconds === null ? null : Math.floor(seconds / 86400)) },
-    { label: "Hours", value: digits(seconds === null ? null : Math.floor((seconds % 86400) / 3600)) },
-    { label: "Minutes", value: digits(seconds === null ? null : Math.floor((seconds % 3600) / 60)) },
-    { label: "Seconds", value: digits(seconds === null ? null : seconds % 60) },
+    { label: "days", value: digits(seconds === null ? null : Math.floor(seconds / 86400)) },
+    { label: "hrs", value: digits(seconds === null ? null : Math.floor((seconds % 86400) / 3600)) },
+    { label: "min", value: digits(seconds === null ? null : Math.floor((seconds % 3600) / 60)) },
+    { label: "sec", value: digits(seconds === null ? null : seconds % 60) },
   ];
+  const when = open
+    ? `${APPLICATIONS_CLOSE_DATE_LABEL} · ${APPLICATIONS_CLOSE_TIME_LABEL}`
+    : EVENT_DATES_LABEL;
 
   return (
-    <div className="flex flex-col gap-3">
+    <div className="flex flex-col gap-2.5">
       {/* Screen readers get the date once; the ticking digits are hidden from them. */}
       <p className="sr-only">
         {open
           ? `Applications close on ${APPLICATIONS_CLOSE_DATE_LABEL} at ${APPLICATIONS_CLOSE_TIME_LABEL}.`
           : `The hackathon runs ${EVENT_DATES_LABEL}.`}
       </p>
-      <p aria-hidden className={`${caps} text-[13px] text-tn-muted`}>
-        {open ? "Applications close in" : "Hackathon starts in"}
+      <p aria-hidden className="text-[15px] leading-none text-tn-muted">
+        {open ? "Applications close in" : "The hackathon starts in"}
       </p>
-      <dl aria-hidden className="grid w-full max-w-[436px] grid-cols-4 gap-2 sm:gap-3">
-        {units.map(({ label, value }) => (
-          <div
-            key={label}
-            className="flex min-w-0 flex-col items-center gap-1 rounded-[20px] border border-tn-line bg-[#120838] pt-4 pb-3 backdrop-blur-[16px]"
-          >
-            <dd className={`${heading} text-[clamp(2rem,1.4rem+2.4vw,2.75rem)] leading-[1.05] tabular-nums`}>{value}</dd>
-            <dt className={`${caps} text-[10px] tracking-[0.08em] text-tn-muted sm:text-[13px] sm:tracking-[0.12em]`}>{label}</dt>
+      <dl aria-hidden className="flex items-start gap-3 sm:gap-4">
+        {units.map(({ label, value }, index) => (
+          <div key={label} className="flex items-start gap-3 sm:gap-4">
+            {index > 0 && <span className={`${heading} text-[clamp(2rem,1.5rem+1.8vw,2.75rem)] leading-none text-tn-muted/50!`}>:</span>}
+            <div className="flex flex-col items-center gap-1.5">
+              <dd className={`${heading} text-[clamp(2rem,1.5rem+1.8vw,2.75rem)] leading-none tabular-nums`}>{value}</dd>
+              <dt className="text-xs leading-none text-tn-muted">{label}</dt>
+            </div>
           </div>
         ))}
       </dl>
+      <p aria-hidden className="text-[17px] leading-[1.3] font-semibold text-tn-yellow">{when}</p>
     </div>
   );
 }
 
-/** The closing section's two date chips; the deadline one goes once it has passed. */
-export function DateChips() {
+/** The closing section's two dates in the open, a star between them; the deadline goes once it has passed. */
+export function KeyDatesLine() {
   const open = useApplicationsOpen();
   return (
-    <p className="flex flex-wrap justify-center gap-3">
+    <p className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-base leading-[1.4] font-semibold text-tn-ink sm:text-lg">
       {open && (
-        <Chip>
-          Apply by {APPLICATIONS_CLOSE_DATE_LABEL} · {APPLICATIONS_CLOSE_TIME_LABEL}
-        </Chip>
+        <>
+          <span>
+            Apply by {APPLICATIONS_CLOSE_DATE_LABEL} · {APPLICATIONS_CLOSE_TIME_LABEL}
+          </span>
+          <StarMark />
+        </>
       )}
-      <Chip>Hack January 22–24, 2027</Chip>
+      <span>Hack January 22–24, 2027</span>
     </p>
   );
 }

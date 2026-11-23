@@ -1,10 +1,11 @@
 "use client";
 
 import { useState, type CSSProperties } from "react";
-import { SectionHeading, art, caps, panel, wrap } from "@/components/landing/shared";
+import { BandedPlanet, SectionHeading, wrap } from "@/components/landing/shared";
+import { TwinkleStar } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 
-// Figma "06 · Questions / #faq": a mission-control console. One answer is open at a time.
+// Figma "06 · Questions / #faq", without the console chrome: a plain list, one answer open at a time.
 
 const QUESTIONS = [
   {
@@ -42,47 +43,38 @@ export function Faq() {
 
   return (
     <section id="faq" className="relative">
-      <div className={`${wrap} grid gap-x-16 gap-y-12 py-20 lg:grid-cols-[minmax(0,520px)_minmax(0,1fr)] lg:py-24`}>
+      <div className={`${wrap} grid gap-x-16 gap-y-12 py-20 lg:grid-cols-[minmax(0,400px)_minmax(0,1fr)] lg:py-24`}>
         <div className="flex flex-col gap-8">
           <SectionHeading title="Questions?" size="stacked">
             A few things to know before you apply.
           </SectionHeading>
-          <p className="scroll-in text-lg leading-[1.35] text-tn-cyan sm:text-[21px]">
+          <p className="scroll-in text-lg leading-[1.35] text-tn-cyan">
             Ask us at
             <br />
             <a href={`mailto:${SUPPORT_EMAIL}`} className="underline decoration-from-font underline-offset-4 hover:text-tn-ink">
               {SUPPORT_EMAIL}
             </a>
           </p>
-          {/* eslint-disable-next-line @next/next/no-img-element */}
-          <img
-            src={art("rocket-red")}
-            alt=""
-            aria-hidden
-            width={729}
-            height={428}
-            loading="lazy"
-            className="anim-float pointer-events-none mt-4 ml-8 hidden h-auto w-[min(100%,400px)] select-none lg:block"
-            style={{ "--dur": "11s", "--float-y": "-5%", "--float-x": "-3%" } as CSSProperties}
-          />
+          {/* A banded planet with a little moon, drifting under the heading. */}
+          <div aria-hidden className="relative mt-6 ml-6 hidden w-[230px] lg:block">
+            <BandedPlanet className="anim-float w-full" style={{ "--dur": "17s", "--float-y": "-4%", "--float-x": "2%" } as CSSProperties} />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src="/images/cratered-moon.svg"
+              alt=""
+              className="anim-float pointer-events-none absolute -top-10 -right-16 w-[120px] select-none"
+              style={{ "--dur": "12s", "--float-y": "-10%", "--float-x": "-6%" } as CSSProperties}
+            />
+            <TwinkleStar className="absolute -bottom-2 -left-10 w-9" dur={4.4} />
+          </div>
         </div>
 
-        <div className={`${panel} scroll-in px-6 pt-6 pb-4 sm:px-8`}>
-          <p aria-hidden className={`${caps} flex flex-wrap items-center justify-between gap-x-6 gap-y-2 text-[13px]`}>
-            <span className="flex items-center gap-2 text-tn-muted">
-              <span className="size-2.5 rounded-full bg-[#ffd0f0]" />
-              <span className="size-2.5 rounded-full bg-tn-yellow" />
-              <span className="mr-1.5 size-2.5 rounded-full bg-[#ddf0b4]" />
-              Mission control · FAQ
-            </span>
-            <span className="text-[#ddf0b4]">● Channel open</span>
-          </p>
-
-          <ul className="mt-2">
+        <div className="scroll-in">
+          <ul className="border-t border-tn-line">
             {QUESTIONS.map(({ q, a }, index) => {
               const expanded = open === index;
               return (
-                <li key={q} className="border-b border-tn-line last:border-b-0">
+                <li key={q} className="border-b border-tn-line">
                   <h3>
                     <button
                       type="button"
@@ -90,7 +82,7 @@ export function Faq() {
                       aria-expanded={expanded}
                       aria-controls={`faq-answer-${index}`}
                       onClick={() => setOpen(expanded ? null : index)}
-                      className="flex w-full cursor-pointer items-center justify-between gap-6 py-6 text-left text-lg leading-[1.35] text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan sm:text-xl"
+                      className="flex w-full cursor-pointer items-center justify-between gap-6 py-5 text-left text-lg leading-[1.35] font-semibold text-tn-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-tn-cyan sm:text-xl"
                     >
                       {q}
                       <span aria-hidden className={`text-2xl leading-none text-tn-cyan transition-transform duration-200 ${expanded ? "rotate-45" : ""}`}>

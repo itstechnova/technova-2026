@@ -90,8 +90,8 @@ function FlightPlan() {
       </div>
 
       <img src={art("ringed-planet-sunset")} alt="" aria-hidden className="anim-float absolute h-auto" style={{ ...pct(880, 112, 340), "--dur": "21s", "--float-y": "-4%" } as CSSProperties} />
-      {/* The design system's rocket, flipped to fly up and to the right along the trajectory. */}
-      <img src={art("rocket-red")} alt="" aria-hidden className="anim-float absolute h-auto -scale-x-100" style={{ ...pct(1108, -8, 180), "--dur": "9s", "--float-y": "-7%", "--float-x": "5%", "--float-rotate": "-3deg" } as CSSProperties} />
+      {/* The satellite, launched and riding the end of the trajectory. */}
+      <img src="/images/satellite.svg" alt="" aria-hidden className="anim-float absolute h-auto -rotate-[18deg]" style={{ ...pct(1090, 6, 170), "--dur": "11s", "--float-y": "-18%", "--float-x": "4%", "--float-rotate": "6deg" } as CSSProperties} />
       <Waypoint number="03" className="absolute" style={pct(850, 40)} />
       <div className="absolute" style={pct(900, 346, 348)}>
         <Copy title={STOPS[2].title}>{STOPS[2].text}</Copy>
@@ -109,7 +109,7 @@ function FlightList() {
     <img key="b" src={art("photo-community")} alt="" width={876} height={574} loading="lazy" className={`${photo} -rotate-2`} />,
     <div key="c" className="relative mx-auto w-[78%] py-4">
       <img src={art("ringed-planet-sunset")} alt="" className="h-auto w-full" />
-      <img src={art("rocket-red")} alt="" className="absolute -top-3 -right-2 h-auto w-[40%] -scale-x-100" />
+      <img src="/images/satellite.svg" alt="" className="absolute -top-1 -right-3 h-auto w-[38%] -rotate-[18deg]" />
     </div>,
   ];
   return (

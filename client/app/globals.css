@@ -427,6 +427,35 @@ body {
   filter: drop-shadow(0 0 6px currentColor);
 }
 
+/* The landing page's star field (components/landing/Sky.tsx): each layer of dots fades in and out
+   on its own beat. */
+.sky-stars {
+  animation: sky-twinkle var(--dur, 6s) ease-in-out var(--delay, 0s) infinite alternate;
+}
+
+@keyframes sky-twinkle {
+  from {
+    opacity: 0.2;
+  }
+  to {
+    opacity: 0.85;
+  }
+}
+
+/* Easter egg: the moon over the crew spins once when clicked. */
+.moon-spin {
+  animation: moon-spin 0.9s cubic-bezier(0.3, 0.7, 0.3, 1);
+}
+
+@keyframes moon-spin {
+  40% {
+    transform: translateY(-14px) rotate(200deg) scale(1.08);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 /* The closing rocket lifts off while "Apply now" is hovered or focused. */
 .liftoff {
   transition: transform 1.1s cubic-bezier(0.5, 0, 0.8, 0.4), opacity 1.1s ease-in;
@@ -453,6 +482,8 @@ body {
 
   .rise,
   .scroll-in,
+  .sky-stars,
+  .moon-spin,
   .ring-rock,
   .ring-flow {
     animation: none;

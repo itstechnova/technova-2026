@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
-import { ApplyLink, Countdown, DeadlineCard } from "@/components/landing/deadline";
-import { ShootingStar, art, caps, place, wrap } from "@/components/landing/shared";
-import { Planet, TwinkleStar, buttonSecondary, heading } from "@/components/portal/ui";
+import { ApplyLink, Countdown } from "@/components/landing/deadline";
+import { ShootingStar, actionQuiet, art, caps, place, wrap } from "@/components/landing/shared";
+import { Planet, TwinkleStar, heading } from "@/components/portal/ui";
 import { EVENT_DATES_SHORT_LABEL } from "@/lib/application/config";
 
 // Figma "01 · Launch / #top". The scene on the right is placed as shares of the design's
@@ -67,7 +67,8 @@ function Rings({ half }: { half: "far" | "near" }) {
 
 function Scene() {
   return (
-    <div aria-hidden className="pointer-events-none absolute inset-x-0 top-0 -z-10 hidden aspect-[1440/980] select-none lg:block">
+    // The scene keeps to the page column (a little wider), so it doesn't grow with a very wide window.
+    <div aria-hidden className="pointer-events-none absolute top-0 left-1/2 -z-10 hidden aspect-[1440/980] w-full max-w-[1320px] -translate-x-1/2 select-none lg:block">
       {/* eslint-disable @next/next/no-img-element */}
       <img src={art("saturn")} alt="" className="anim-float absolute h-auto" style={{ ...at(706, 24, 124), ...float(18, "-10%", "6%") }} />
       {/* Shooting stars on different beats. With reduced motion, the design's still comet instead. */}
@@ -110,39 +111,35 @@ export function Hero() {
         <Planet kind="pink" className="w-full" />
       </div>
 
-      <div className={`${wrap} flex flex-col items-start gap-6 pt-14 pb-24 sm:pt-20 lg:min-h-[min(60vw,880px)] lg:gap-[22px] lg:pt-24 lg:pb-28`}>
+      <div className={`${wrap} flex flex-col items-start gap-6 pt-14 pb-24 sm:pt-20 lg:min-h-[min(58vw,780px)] lg:gap-6 lg:pt-24 lg:pb-28`}>
         <p className={`${caps} rise text-sm leading-[1.4] text-tn-cyan sm:text-[15px]`} style={order(0)}>
           Waterloo’s largest women+ hackathon
         </p>
 
         <div className="flex flex-col gap-3 lg:gap-1">
           <h1
-            className={`${heading} title-shade rise pb-[0.08em] text-[clamp(3.6rem,0.6rem+13.4vw,9rem)] leading-none whitespace-nowrap`}
+            className={`${heading} title-shade rise pb-[0.08em] text-[clamp(3.4rem,1.2rem+9.6vw,7rem)] leading-none whitespace-nowrap`}
             style={order(1)}
           >
             TechNova 6
           </h1>
           {/* The hackathon's dates sit right under the title, as its subheader. */}
-          <p className={`${heading} rise text-[clamp(1.75rem,1.2rem+2.2vw,2.75rem)] leading-[1.15]`} style={order(2)}>
+          <p className={`${heading} rise text-[clamp(1.5rem,1.1rem+1.7vw,2.25rem)] leading-[1.15]`} style={order(2)}>
             {EVENT_DATES_SHORT_LABEL}
           </p>
         </div>
 
-        <p className="rise max-w-[30ch] text-xl leading-[1.4] sm:text-[25px]" style={order(3)}>
+        <p className="rise max-w-[30ch] text-lg leading-[1.4] sm:text-[22px]" style={order(3)}>
           A universe of possibility. Hack with us.
         </p>
 
-        <div className="rise" style={order(4)}>
-          <DeadlineCard />
-        </div>
-
-        <div className="rise w-full" style={order(5)}>
+        <div className="rise mt-2" style={order(4)}>
           <Countdown />
         </div>
 
-        <div className="rise flex flex-wrap gap-4" style={order(6)}>
+        <div className="rise mt-1 flex flex-wrap gap-3" style={order(5)}>
           <ApplyLink />
-          <a href="#about" className={buttonSecondary}>
+          <a href="#about" className={actionQuiet}>
             Explore the mission <span aria-hidden className="ml-3">↓</span>
           </a>
         </div>

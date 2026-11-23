@@ -70,7 +70,7 @@ function useHiddenOnScrollDown(): boolean {
 }
 
 const anchor =
-  "flex min-h-11 items-center rounded-full px-3.5 text-[17px] leading-none font-semibold transition focus-visible:outline-2 focus-visible:outline-tn-cyan";
+  "flex min-h-11 items-center rounded-md px-3 text-base leading-none font-semibold transition focus-visible:outline-2 focus-visible:outline-tn-cyan";
 
 export function Nav() {
   const current = useCurrentSection();
@@ -85,7 +85,7 @@ export function Nav() {
           href={`#${id}`}
           aria-current={current === id ? "location" : undefined}
           onClick={onNavigate}
-          className={`${anchor} ${current === id ? "bg-white/10 text-tn-ink" : "text-tn-muted hover:text-tn-ink"}`}
+          className={`${anchor} ${current === id ? "text-tn-cyan" : "text-tn-ink/80 hover:text-tn-ink"}`}
         >
           {label}
         </a>
@@ -94,11 +94,12 @@ export function Nav() {
 
   return (
     <header
-      className={`sticky top-0 z-40 bg-tn-bg/45 backdrop-blur-xl transition-transform duration-300 ease-out focus-within:translate-y-0 motion-reduce:transition-none ${
+      // No bar: the page shows through, darkened only enough at the very top to keep the links legible.
+      className={`sticky top-0 z-40 bg-linear-to-b from-tn-bg/75 via-tn-bg/35 to-transparent transition-transform duration-300 ease-out focus-within:translate-y-0 motion-reduce:transition-none ${
         hidden ? "-translate-y-full" : "translate-y-0"
       }`}
     >
-      <div className="mx-auto flex h-[72px] w-full max-w-[1440px] items-center gap-4 px-5 sm:px-8 lg:h-24 lg:px-12">
+      <div className="mx-auto flex h-[68px] w-full max-w-[1208px] items-center gap-4 px-6 sm:px-10 lg:h-[84px] lg:px-16">
         <BrandLockup />
 
         <nav aria-label="Sections" className="hidden flex-1 justify-center lg:flex">
@@ -106,8 +107,8 @@ export function Nav() {
         </nav>
 
         {/* Room on the far right for the MLH banner, which hangs from the top of the page. */}
-        <div className="ml-auto flex items-center gap-3.5 lg:ml-0 xl:mr-[120px]">
-          <ApplyLink className="px-5! py-3! text-base! sm:px-6! sm:py-[15px]! sm:text-lg!" />
+        <div className="ml-auto flex items-center gap-2 lg:ml-0">
+          <ApplyLink className="px-4! py-2.5! text-[15px]!" />
           <button
             type="button"
             aria-expanded={open}
@@ -121,7 +122,7 @@ export function Nav() {
         </div>
       </div>
 
-      <nav id="landing-menu" aria-label="Sections" className={`${open ? "block" : "hidden"} border-t border-tn-line/60 px-5 pt-2 pb-4 sm:px-8 lg:hidden`}>
+      <nav id="landing-menu" aria-label="Sections" className={`${open ? "block" : "hidden"} bg-tn-bg/90 px-6 pt-1 pb-4 sm:px-10 lg:hidden`}>
         <ul className="flex flex-col">{links(() => setOpen(false))}</ul>
       </nav>
     </header>
