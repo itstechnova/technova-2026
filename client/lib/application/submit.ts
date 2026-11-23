@@ -7,6 +7,7 @@ import { applicationsOpen } from '@/lib/application/config'
 import { hackerForm } from '@/lib/application/forms/hacker'
 import type { Answers, AnswerValue, Question, SubmitResult } from '@/lib/application/types'
 import { isVisible, validateForm, visibleAnswers } from '@/lib/application/validate'
+import { decodeAnswers } from '@/lib/application/wire'
 import { requireRole } from '@/lib/auth/dal'
 import { isNumberQuestion, questionsForTable, type DbRow } from '@/lib/data/hackerApplication'
 import { sendApplicationReceivedEmail } from '@/lib/resend/send'
@@ -50,7 +51,7 @@ function buildRow(questions: Question[], answers: Answers): DbRow {
   return row
 }
 
-export async function submitHackerApplication(answers: Answers): Promise<SubmitResult> {
+export async function submitHackerApplication(encodedAnswers: string): Promise<SubmitResult> {
   // Server Actions are public endpoints: re-check the session and treat `answers` as untrusted.
   const user = await requireRole(['applicant', 'admin'])
   if (!user) return { ok: false, error: 'Please sign in again.' }
@@ -59,8 +60,10 @@ export async function submitHackerApplication(answers: Answers): Promise<SubmitR
     return { ok: false, error: 'Applications are closed.' }
   }
 
+  // The answers arrive encoded (see lib/application/wire.ts).
+  const answers = decodeAnswers(encodedAnswers)
   const input: Answers =
-    typeof answers === 'object' && answers !== null && !Array.isArray(answers) ? answers : {}
+    typeof answers === 'object' && answers !== null && !Array.isArray(answers) ? (answers as Answers) : {}
   const cleaned = visibleAnswers(hackerForm, input)
 
   const fieldErrors = validateForm(hackerForm, cleaned)

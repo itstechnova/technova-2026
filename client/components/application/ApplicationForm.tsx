@@ -21,6 +21,7 @@ import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
 import { saveHackerDraft } from "@/lib/application/draft";
 import { submitHackerApplication } from "@/lib/application/submit";
+import { encodeAnswers } from "@/lib/application/wire";
 import type { AnswerValue, Answers } from "@/lib/application/types";
 import {
   isAnswered,
@@ -188,7 +189,7 @@ function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperPr
     const attempt = ++accountSave.current;
     let result: Awaited<ReturnType<typeof saveHackerDraft>> = { ok: false };
     try {
-      result = await saveHackerDraft(answers, step);
+      result = await saveHackerDraft(encodeAnswers(answers), step);
     } catch {
       // Offline or the request failed: the browser copy is still there.
     }
@@ -294,7 +295,7 @@ function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperPr
     }
     startTransition(async () => {
       try {
-        const result = await submitHackerApplication(visibleAnswers(hackerForm, answers));
+        const result = await submitHackerApplication(encodeAnswers(visibleAnswers(hackerForm, answers)));
         if (result.ok) {
           setSubmitted(true);
           draft.clear();

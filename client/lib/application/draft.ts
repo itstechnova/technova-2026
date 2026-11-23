@@ -1,6 +1,7 @@
 'use server'
 
 import { applicationsOpen } from '@/lib/application/config'
+import { decodeAnswers } from '@/lib/application/wire'
 import { requireRole } from '@/lib/auth/dal'
 import { cleanDraftAnswers } from '@/lib/data/hackerDraft'
 import { profileColumns } from '@/lib/profile/fields'
@@ -13,14 +14,15 @@ export type SaveDraftResult = { ok: true; savedAt: string } | { ok: false }
  * or save and exit, not on every keystroke (the browser keeps those). The profile answers in it
  * are also written to their public.user row.
  */
-export async function saveHackerDraft(answers: unknown, step: unknown): Promise<SaveDraftResult> {
+export async function saveHackerDraft(encodedAnswers: unknown, step: unknown): Promise<SaveDraftResult> {
   // Server Actions are public endpoints: re-check the session and treat the input as untrusted.
   const user = await requireRole(['applicant', 'admin'])
   if (!user || !applicationsOpen()) return { ok: false }
 
   const savedAt = new Date().toISOString()
   const supabase = await createClient()
-  const cleaned = cleanDraftAnswers(answers)
+  // The answers arrive encoded (see lib/application/wire.ts).
+  const cleaned = cleanDraftAnswers(decodeAnswers(encodedAnswers))
   const { error } = await supabase.from('hacker_draft').upsert(
     {
       user_id: user.id,
