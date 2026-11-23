@@ -108,6 +108,16 @@ export function TwinkleStar({
   );
 }
 
+/** The small caps label in a frosted pill with a yellow dot ("APPLICANT PORTAL", "PAGE NOT FOUND"). */
+export function EyebrowPill({ children }: { children: ReactNode }) {
+  return (
+    <p className="inline-flex items-center gap-2.5 rounded-full border border-tn-line bg-tn-surface pt-[11px] pr-5 pb-[9px] pl-4 backdrop-blur-[10px]">
+      <span aria-hidden className="size-2 rounded-full bg-tn-yellow" />
+      <span className="text-sm leading-none font-semibold tracking-[0.12em] text-tn-cyan uppercase">{children}</span>
+    </p>
+  );
+}
+
 export function Eyebrow({ children }: { children: ReactNode }) {
   return <p className={eyebrow}>{children}</p>;
 }
