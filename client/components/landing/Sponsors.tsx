@@ -20,19 +20,36 @@ const src = (file: string) => `/images/sponsors/${file}.webp`;
 
 /* eslint-disable @next/next/no-img-element */
 
-// The stars pulse slowly and flicker over that (`.anim-star` in globals.css). Each one gets its
-// own timing so no two keep step.
-const shimmer = (index: number) => ({ "--dur": `${3.4 + (index % 4) * 0.6}s`, "--flicker": `${1.9 + (index % 5) * 0.45}s`, "--delay": `${-(index % 7) * 0.8}s` }) as CSSProperties;
+// The stars pulse slowly, their glow swelling and fading with them, and flicker over that
+// (`.anim-star` in globals.css). Each one gets its own timing so no two keep step.
+const shimmer = (index: number, glow: number) =>
+  ({ "--dur": `${6.5 + (index % 4) * 1.1}s`, "--flicker": `${3.1 + (index % 5) * 0.7}s`, "--delay": `${-(index % 7) * 1.3}s`, "--glow": `${glow}px` }) as CSSProperties;
 
+const STAR = "anim-star pointer-events-none overflow-visible select-none";
+// Eight thin rays.
+const RAYS = "0.0,-50.0 2.7,-6.5 21.2,-21.2 6.5,-2.7 50.0,0.0 6.5,2.7 21.2,21.2 2.7,6.5 0.0,50.0 -2.7,6.5 -21.2,21.2 -6.5,2.7 -50.0,0.0 -6.5,-2.7 -21.2,-21.2 -2.7,-6.5";
+// Eight points swept into a full body: the north star's own shape.
+const FLARE =
+  "M0 -50Q1.7 -4.2 19.1 -19.1Q4.2 -1.7 50 0Q4.2 1.7 19.1 19.1Q1.7 4.2 0 50Q-1.7 4.2 -19.1 19.1Q-4.2 1.7 -50 0Q-4.2 -1.7 -19.1 -19.1Q-1.7 -4.2 0 -50Z";
+
+/** A constellation star: the four-point artwork, or for a scattered few the eight-ray one. */
 function Star({ index, className = "", style }: { index: number; className?: string; style?: CSSProperties }) {
-  return <img aria-hidden src="/images/star-small.webp" alt="" className={`anim-star pointer-events-none select-none ${className}`} style={{ ...style, ...shimmer(index) }} />;
+  const look = { ...style, ...shimmer(index, 9) };
+  // A fixed pattern picks which, so the server and the browser agree.
+  if ((index * 7 + 3) % 5 < 2) {
+    return (
+      <svg aria-hidden viewBox="-54 -54 108 108" className={`${STAR} ${className}`} style={look}>
+        <polygon points={RAYS} fill="#dce7cb" />
+      </svg>
+    );
+  }
+  return <img aria-hidden src="/images/star-small.webp" alt="" className={`${STAR} ${className}`} style={look} />;
 }
 
-/** The north star: eight points where the other stars have four. */
 function NorthStar({ className = "", style }: { className?: string; style?: CSSProperties }) {
   return (
-    <svg aria-hidden viewBox="-54 -54 108 108" className={`anim-star pointer-events-none overflow-visible blur-[0.6px] select-none ${className}`} style={{ ...style, ...shimmer(2) }}>
-      <polygon points="0.0,-50.0 2.7,-6.5 21.2,-21.2 6.5,-2.7 50.0,0.0 6.5,2.7 21.2,21.2 2.7,6.5 0.0,50.0 -2.7,6.5 -21.2,21.2 -6.5,2.7 -50.0,0.0 -6.5,-2.7 -21.2,-21.2 -2.7,-6.5" fill="#dce7cb" />
+    <svg aria-hidden viewBox="-54 -54 108 108" className={`${STAR} ${className}`} style={{ ...style, ...shimmer(2, 22) }}>
+      <path d={FLARE} fill="#fbfadf" />
     </svg>
   );
 }
@@ -42,13 +59,6 @@ function Constellation() {
   return (
     <div className="scroll-in relative mt-16 hidden w-full lg:block" style={{ aspectRatio: `${SKY.width} / ${SKY.height}` }}>
       <svg aria-hidden viewBox={`0 0 ${SKY.width} ${SKY.height}`} fill="none" className="pointer-events-none absolute inset-0 size-full overflow-visible">
-        <defs>
-          <radialGradient id="north-star-glow">
-            <stop offset="0" stopColor="#fdf4b8" stopOpacity="0.3" />
-            <stop offset="0.65" stopColor="#fdf4b8" stopOpacity="0" />
-          </radialGradient>
-        </defs>
-        <circle cx={north.star.x} cy={north.star.y} r="120" fill="url(#north-star-glow)" />
         {SKY.lines.map(({ x1, y1, x2, y2, dashed }, index) => (
           <line key={index} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#cfc4ff" strokeOpacity="0.45" strokeWidth="1.5" strokeDasharray={dashed ? "2 8" : undefined} />
         ))}

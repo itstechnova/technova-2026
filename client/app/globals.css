@@ -93,12 +93,12 @@ body {
   animation: breathe var(--dur) ease-in-out var(--delay, 0s) infinite;
 }
 
-/* Sponsors' stars: a slow pulse with a quicker, uneven flicker over it. */
+/* Sponsors' stars: a slow pulse, the glow (--glow) swelling with it, and a quicker, uneven flicker over that. */
 .anim-star {
   transform-origin: 50% 50%;
   animation:
-    star-pulse var(--dur, 4s) ease-in-out var(--delay, 0s) infinite,
-    star-flicker var(--flicker, 2.3s) linear var(--delay, 0s) infinite;
+    star-pulse var(--dur, 7s) ease-in-out var(--delay, 0s) infinite,
+    star-flicker var(--flicker, 3.5s) linear var(--delay, 0s) infinite;
 }
 
 @keyframes spin {
@@ -226,10 +226,12 @@ body {
 @keyframes star-pulse {
   0%,
   100% {
-    transform: scale(0.8);
+    transform: scale(0.86);
+    filter: drop-shadow(0 0 calc(var(--glow, 9px) * 0.3) rgb(253 244 184 / 0.3));
   }
   50% {
-    transform: scale(1.16);
+    transform: scale(1.12);
+    filter: drop-shadow(0 0 var(--glow, 9px) rgb(253 244 184 / 0.95));
   }
 }
 
