@@ -1,84 +1,54 @@
 import type { CSSProperties } from "react";
 import { SectionHeading, action, wrap } from "@/components/landing/shared";
+import { NORTH_STAR, SMALL_SPONSORS, SPONSORS, layoutSponsors } from "@/components/landing/sponsors-layout";
 import { TwinkleStar, heading } from "@/components/portal/ui";
 
-// Figma "03 · Sponsors / #sponsors": the sponsors as a constellation. From `lg` up the logos, stars
-// and lines are placed as shares of the design's 1248 x 420 box; below that the logos are a grid.
-// The logos are not links yet.
+// Figma "03 · Sponsors / #sponsors": the sponsors as a night sky. The gold sponsor is the north
+// star, the others form a constellation and the smaller sponsors a second, smaller one. From `lg`
+// up everything is placed as a share of the sky's box (worked out in sponsors-layout.ts); below
+// that the logos are stacked and in grids. The logos are not links yet.
 
 const SPONSOR_EMAIL = "sponsor@itstechnova.org";
 
-const BOX = { w: 1248, h: 420 };
+const SKY = layoutSponsors();
 const pct = (x: number, y: number, w: number): CSSProperties => ({
-  left: `${(x / BOX.w) * 100}%`,
-  top: `${(y / BOX.h) * 100}%`,
-  width: `${(w / BOX.w) * 100}%`,
+  left: `${(x / SKY.width) * 100}%`,
+  top: `${(y / SKY.height) * 100}%`,
+  width: `${(w / SKY.width) * 100}%`,
 });
-
-// `box` is the logo's place in the constellation; `width`/`height` the image file's size.
-const SPONSORS = [
-  { name: "Mintlify", file: "mintlify", width: 439, height: 98, box: [70, 70, 220] },
-  { name: "Jane Street", file: "jane-street", width: 560, height: 149, box: [500, 44, 280] },
-  { name: "Accenture", file: "accenture", width: 457, height: 120, box: [900, 84, 230] },
-  { name: "Scotiabank", file: "scotiabank", width: 474, height: 68, box: [150, 270, 240] },
-  { name: "Shopify", file: "shopify", width: 440, height: 127, box: [700, 250, 220] },
-] as const;
-
-// Star centres and sizes, and the lines that join them (indexes into STARS).
-const STARS = [
-  [20, 44, 35],
-  [390, 36, 26],
-  [820, 10, 42],
-  [1232, 96, 29],
-  [1040, 236, 26],
-  [560, 200, 45],
-  [120, 250, 29],
-] as const;
-const LINES = [
-  [0, 1],
-  [1, 2],
-  [2, 3],
-  [3, 4],
-  [5, 4],
-  [1, 5],
-  [6, 5],
-  [0, 6],
-] as const;
-// The dashed open star: the place for the next sponsor.
-const OPEN_STAR = [1150, 356] as const;
+const src = (file: string) => `/images/sponsors/${file}.webp`;
 
 /* eslint-disable @next/next/no-img-element */
 
 function Constellation() {
+  const { north, open } = SKY;
   return (
-    <div className="scroll-in relative mt-16 hidden aspect-[1248/420] w-full lg:block">
-      <svg aria-hidden viewBox={`0 0 ${BOX.w} ${BOX.h}`} fill="none" className="pointer-events-none absolute inset-0 size-full overflow-visible">
-        {LINES.map(([from, to]) => (
-          <line
-            key={`${from}-${to}`}
-            x1={STARS[from][0]}
-            y1={STARS[from][1]}
-            x2={STARS[to][0]}
-            y2={STARS[to][1]}
-            stroke="#cfc4ff"
-            strokeOpacity="0.45"
-            strokeWidth="1.5"
-          />
+    <div className="scroll-in relative mt-16 hidden w-full lg:block" style={{ aspectRatio: `${SKY.width} / ${SKY.height}` }}>
+      <svg aria-hidden viewBox={`0 0 ${SKY.width} ${SKY.height}`} fill="none" className="pointer-events-none absolute inset-0 size-full overflow-visible">
+        <defs>
+          <radialGradient id="north-star-glow">
+            <stop offset="0" stopColor="#fdf4b8" stopOpacity="0.3" />
+            <stop offset="0.65" stopColor="#fdf4b8" stopOpacity="0" />
+          </radialGradient>
+        </defs>
+        <circle cx={north.star.x} cy={north.star.y} r="120" fill="url(#north-star-glow)" />
+        {SKY.lines.map(({ x1, y1, x2, y2, dashed }, index) => (
+          <line key={index} x1={x1} y1={y1} x2={x2} y2={y2} stroke="#cfc4ff" strokeOpacity="0.45" strokeWidth="1.5" strokeDasharray={dashed ? "2 8" : undefined} />
         ))}
-        <line x1={STARS[4][0]} y1={STARS[4][1]} x2={OPEN_STAR[0]} y2={OPEN_STAR[1]} stroke="#cfc4ff" strokeOpacity="0.45" strokeWidth="1.5" strokeDasharray="2 8" />
-        <circle cx={OPEN_STAR[0]} cy={OPEN_STAR[1]} r="11" fill="#050026" stroke="#fdf4b8" strokeWidth="1.5" strokeDasharray="3 3" />
+        {/* The dashed open star: the place for the next sponsor. */}
+        <circle cx={open.x} cy={open.y} r="11" fill="#050026" stroke="#fdf4b8" strokeWidth="1.5" strokeDasharray="3 3" />
       </svg>
-      {STARS.map(([x, y, size], index) => (
+      {[north.star, ...SKY.stars].map(({ x, y, size }, index) => (
         <TwinkleStar key={index} className="absolute" dur={3.6 + (index % 4) * 0.5} style={pct(x - size / 2, y - size / 2, size)} />
       ))}
       <ul>
-        {SPONSORS.map(({ name, file, width, height, box: [x, y, w] }) => (
+        {[north.logo, ...SKY.logos].map(({ name, file, width, height, x, y, w }) => (
           <li key={name} className="absolute" style={pct(x, y, w)}>
-            <img src={`/images/sponsors/${file}.webp`} alt={name} width={width} height={height} loading="lazy" className="h-auto w-full" />
+            <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto w-full" />
           </li>
         ))}
       </ul>
-      <p className="absolute text-xl leading-[1.4] whitespace-nowrap text-tn-muted" style={{ left: `${(1065 / BOX.w) * 100}%`, top: `${(380 / BOX.h) * 100}%` }}>
+      <p className="absolute text-xl leading-[1.4] whitespace-nowrap text-tn-muted" style={{ left: `${((open.x - 85) / SKY.width) * 100}%`, top: `${((open.y + 24) / SKY.height) * 100}%` }}>
         And more to come!
       </p>
     </div>
@@ -88,10 +58,21 @@ function Constellation() {
 function LogoGrid() {
   return (
     <div className="mt-10 lg:hidden">
-      <ul className="grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
+      <div className="scroll-in flex flex-col items-center gap-3">
+        <TwinkleStar className="size-10" />
+        <img src={src(NORTH_STAR.file)} alt={NORTH_STAR.name} width={NORTH_STAR.width} height={NORTH_STAR.height} loading="lazy" className="h-auto max-h-16 w-auto max-w-[70%]" />
+      </div>
+      <ul className="mt-10 grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
         {SPONSORS.map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in flex justify-center">
-            <img src={`/images/sponsors/${file}.webp`} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-14 w-auto max-w-full" />
+            <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-14 w-auto max-w-full" />
+          </li>
+        ))}
+      </ul>
+      <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
+        {SMALL_SPONSORS.map(({ name, file, width, height }) => (
+          <li key={name} className="scroll-in">
+            <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-8 w-auto max-w-[9rem]" />
           </li>
         ))}
       </ul>
