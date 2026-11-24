@@ -199,7 +199,7 @@ function at(sky: Constellation, dx: number, dy: number): Constellation {
 // The whole sky, in the design's 1248-wide units: the north star at the top, the main constellation
 // under it on the left and the smaller one on the right, a little lower.
 const WIDTH = 1248;
-const NORTH = { star: { x: WIDTH / 2, y: 46, size: 84 }, logoWidth: 340, logoTop: 104 };
+const NORTH = { star: { x: WIDTH / 2, y: 48, size: 96 }, logoWidth: 340, logoTop: 118 };
 const MAIN = { x: 0, width: 880, shapeHeight: 170, fit: { w: 200, h: 72 } };
 const SMALL = { x: 930, width: 318, shapeHeight: 90, fit: { w: 160, h: 46 }, drop: 28 };
 

@@ -1,7 +1,7 @@
 import type { CSSProperties } from "react";
 import { SectionHeading, action, wrap } from "@/components/landing/shared";
 import { NORTH_STAR, SMALL_SPONSORS, SPONSORS, layoutSponsors } from "@/components/landing/sponsors-layout";
-import { TwinkleStar, heading } from "@/components/portal/ui";
+import { heading } from "@/components/portal/ui";
 
 // Figma "03 · Sponsors / #sponsors": the sponsors as a night sky. The gold sponsor is the north
 // star, the others form a constellation and the smaller sponsors a second, smaller one. From `lg`
@@ -19,6 +19,23 @@ const pct = (x: number, y: number, w: number): CSSProperties => ({
 const src = (file: string) => `/images/sponsors/${file}.webp`;
 
 /* eslint-disable @next/next/no-img-element */
+
+// The stars pulse slowly and flicker over that (`.anim-star` in globals.css). Each one gets its
+// own timing so no two keep step.
+const shimmer = (index: number) => ({ "--dur": `${3.4 + (index % 4) * 0.6}s`, "--flicker": `${1.9 + (index % 5) * 0.45}s`, "--delay": `${-(index % 7) * 0.8}s` }) as CSSProperties;
+
+function Star({ index, className = "", style }: { index: number; className?: string; style?: CSSProperties }) {
+  return <img aria-hidden src="/images/star-small.webp" alt="" className={`anim-star pointer-events-none select-none ${className}`} style={{ ...style, ...shimmer(index) }} />;
+}
+
+/** The north star: eight points where the other stars have four. */
+function NorthStar({ className = "", style }: { className?: string; style?: CSSProperties }) {
+  return (
+    <svg aria-hidden viewBox="-54 -54 108 108" className={`anim-star pointer-events-none overflow-visible blur-[0.6px] select-none ${className}`} style={{ ...style, ...shimmer(2) }}>
+      <polygon points="0.0,-50.0 2.7,-6.5 21.2,-21.2 6.5,-2.7 50.0,0.0 6.5,2.7 21.2,21.2 2.7,6.5 0.0,50.0 -2.7,6.5 -21.2,21.2 -6.5,2.7 -50.0,0.0 -6.5,-2.7 -21.2,-21.2 -2.7,-6.5" fill="#dce7cb" />
+    </svg>
+  );
+}
 
 function Constellation() {
   const { north, open } = SKY;
@@ -38,8 +55,9 @@ function Constellation() {
         {/* The dashed open star: the place for the next sponsor. */}
         <circle cx={open.x} cy={open.y} r="11" fill="#050026" stroke="#fdf4b8" strokeWidth="1.5" strokeDasharray="3 3" />
       </svg>
-      {[north.star, ...SKY.stars].map(({ x, y, size }, index) => (
-        <TwinkleStar key={index} className="absolute" dur={3.6 + (index % 4) * 0.5} style={pct(x - size / 2, y - size / 2, size)} />
+      <NorthStar className="absolute" style={pct(north.star.x - north.star.size / 2, north.star.y - north.star.size / 2, north.star.size)} />
+      {SKY.stars.map(({ x, y, size }, index) => (
+        <Star key={index} index={index} className="absolute" style={pct(x - size / 2, y - size / 2, size)} />
       ))}
       <ul>
         {[north.logo, ...SKY.logos].map(({ name, file, width, height, x, y, w }) => (
@@ -59,7 +77,7 @@ function LogoGrid() {
   return (
     <div className="mt-10 lg:hidden">
       <div className="scroll-in flex flex-col items-center gap-3">
-        <TwinkleStar className="size-10" />
+        <NorthStar className="size-14" />
         <img src={src(NORTH_STAR.file)} alt={NORTH_STAR.name} width={NORTH_STAR.width} height={NORTH_STAR.height} loading="lazy" className="h-auto max-h-16 w-auto max-w-[70%]" />
       </div>
       <ul className="mt-10 grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
