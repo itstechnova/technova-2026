@@ -33,10 +33,9 @@ const FLARE =
   "M0 -50Q1.7 -4.2 19.1 -19.1Q4.2 -1.7 50 0Q4.2 1.7 19.1 19.1Q1.7 4.2 0 50Q-1.7 4.2 -19.1 19.1Q-4.2 1.7 -50 0Q-4.2 -1.7 -19.1 -19.1Q-1.7 -4.2 0 -50Z";
 
 /** A constellation star: the four-point artwork, or for a scattered few the eight-ray one. */
-function Star({ index, className = "", style }: { index: number; className?: string; style?: CSSProperties }) {
-  const look = { ...style, ...shimmer(index, 9) };
-  // A fixed pattern picks which, so the server and the browser agree.
-  if ((index * 7 + 3) % 5 < 2) {
+function Star({ index, rays, className = "", style }: { index: number; rays: boolean; className?: string; style?: CSSProperties }) {
+  const look = { ...style, ...shimmer(index, rays ? 12 : 9) };
+  if (rays) {
     return (
       <svg aria-hidden viewBox="-54 -54 108 108" className={`${STAR} ${className}`} style={look}>
         <polygon points={RAYS} fill="#dce7cb" />
@@ -66,8 +65,8 @@ function Constellation() {
         <circle cx={open.x} cy={open.y} r="11" fill="#050026" stroke="#fdf4b8" strokeWidth="1.5" strokeDasharray="3 3" />
       </svg>
       <NorthStar className="absolute" style={pct(north.star.x - north.star.size / 2, north.star.y - north.star.size / 2, north.star.size)} />
-      {SKY.stars.map(({ x, y, size }, index) => (
-        <Star key={index} index={index} className="absolute" style={pct(x - size / 2, y - size / 2, size)} />
+      {SKY.stars.map(({ x, y, size, rays }, index) => (
+        <Star key={index} index={index} rays={rays} className="absolute" style={pct(x - size / 2, y - size / 2, size)} />
       ))}
       <ul>
         {[north.logo, ...SKY.logos].map(({ name, file, width, height, x, y, w }) => (
@@ -91,14 +90,14 @@ function LogoGrid() {
         <img src={src(NORTH_STAR.file)} alt={NORTH_STAR.name} width={NORTH_STAR.width} height={NORTH_STAR.height} loading="lazy" className="h-auto max-h-16 w-auto max-w-[70%]" />
       </div>
       <ul className="mt-10 grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
-        {SPONSORS.filter(({ small }) => !small).map(({ name, file, width, height }) => (
+        {SPONSORS.filter(({ size }) => size !== "small").map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in flex justify-center">
             <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-14 w-auto max-w-full" />
           </li>
         ))}
       </ul>
       <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
-        {SPONSORS.filter(({ small }) => small).map(({ name, file, width, height }) => (
+        {SPONSORS.filter(({ size }) => size === "small").map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in">
             <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-8 w-auto max-w-[9rem]" />
           </li>
