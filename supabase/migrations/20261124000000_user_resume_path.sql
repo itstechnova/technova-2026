@@ -11,7 +11,8 @@
 -- to their own `<user id>/` folder; the check below does the same for the path on their row, so a
 -- row can never point at someone else's file.
 --
--- Additive and idempotent. Existing accounts have no resume (null).
+-- Additive and idempotent. Existing accounts have no resume (null), and the column stays nullable:
+-- the form requires a resume to submit, but applications sent before it asked for one have none.
 -- Apply this BEFORE deploying the form change: the application reads this column.
 
 alter table public."user"

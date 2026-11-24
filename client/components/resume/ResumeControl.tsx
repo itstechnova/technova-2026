@@ -130,7 +130,7 @@ type ResumeControlProps = {
   disabled?: boolean;
 };
 
-/** The file's name with Replace and Remove beside it, or a button to choose one. */
+/** The file's name with Replace (and Remove, when it is optional) beside it, or a button to choose one. */
 export function ResumeControl({ question, value, state, id, describedBy, invalid, disabled }: ResumeControlProps) {
   const input = useRef<HTMLInputElement>(null);
   const busy = disabled || state.busy !== null;
@@ -169,10 +169,13 @@ export function ResumeControl({ question, value, state, id, describedBy, invalid
               {state.busy === "uploading" ? "Uploading…" : "Replace"}
               <span className="sr-only"> resume</span>
             </button>
-            <button type="button" onClick={() => void state.remove()} disabled={busy} className={rowAction}>
-              {state.busy === "removing" ? "Removing…" : "Remove"}
-              <span className="sr-only"> resume</span>
-            </button>
+            {/* A required file can be replaced, not taken away. */}
+            {!question.required && (
+              <button type="button" onClick={() => void state.remove()} disabled={busy} className={rowAction}>
+                {state.busy === "removing" ? "Removing…" : "Remove"}
+                <span className="sr-only"> resume</span>
+              </button>
+            )}
           </div>
         </div>
       ) : (
@@ -184,6 +187,7 @@ export function ResumeControl({ question, value, state, id, describedBy, invalid
             onClick={choose}
             disabled={busy}
             aria-describedby={describedBy}
+            aria-required={question.required || undefined}
             className={cn(buttonSecondary, compactButton)}
           >
             {state.busy === "uploading" ? "Uploading…" : "Choose a file"}

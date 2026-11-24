@@ -18,8 +18,7 @@ const labelRow = `${label} flex items-baseline justify-between gap-4`;
 const hint = "text-sm leading-[1.4] text-tn-muted";
 
 /**
- * The resume, in its own block: it saves as soon as a file uploads (and when it is removed), not
- * with Save changes. `path` is held by the profile form, whose fields reset after each save.
+ * The resume, in its own block: it saves as soon as a file uploads, not with Save changes. `path` is held by the profile form, whose fields reset after each save.
  */
 function ResumeSection({ path, onChange }: { path: string; onChange: (path: string) => void }) {
   const id = useId();

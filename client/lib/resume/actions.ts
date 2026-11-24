@@ -74,10 +74,14 @@ export async function saveResume(path: unknown): Promise<ResumeResult> {
   return { ok: true, path }
 }
 
-/** Takes the resume off the applicant's profile and deletes the file. */
+/**
+ * Takes the resume off the applicant's profile and deletes the file. Only while the resume is
+ * optional: a required one can be replaced, not removed.
+ */
 export async function removeResume(): Promise<ResumeResult> {
   const user = await requireRole(['applicant', 'admin'])
   if (!user) return { ok: false, error: SIGN_IN }
+  if (resume.required) return { ok: false, error: NOT_REMOVED }
 
   const supabase = await createClient()
   const { data, error } = await supabase
