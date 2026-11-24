@@ -1,13 +1,14 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState, useEffect } from "react";
+import { useActionState, useEffect, useId, useState } from "react";
 import { patchStoredDraft } from "@/components/application/useApplicationDraft";
 import { Section, textLink } from "@/components/portal/PortalPage";
 import { buttonPrimary, buttonSecondary, controlInput, fieldError } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { RequirementTag } from "@/components/application/questions/QuestionShell";
-import { firstName, lastName, phoneNumber, pronouns, shirtSize } from "@/lib/application/forms/shared";
+import { ResumeControl, useResumeUpload } from "@/components/resume/ResumeControl";
+import { firstName, lastName, phoneNumber, pronouns, resume, shirtSize } from "@/lib/application/forms/shared";
 import { saveProfile } from "@/lib/profile/actions";
 import { REQUIRED_PROFILE_FIELDS, type ProfileField, type ProfileState, type ProfileValues } from "@/lib/profile/fields";
 
@@ -16,10 +17,56 @@ const label = "text-[17px] leading-[1.35] font-semibold text-tn-ink";
 const labelRow = `${label} flex items-baseline justify-between gap-4`;
 const hint = "text-sm leading-[1.4] text-tn-muted";
 
+/**
+ * The resume, in its own block: it saves as soon as a file uploads (and when it is removed), not
+ * with Save changes. `path` is held by the profile form, whose fields reset after each save.
+ */
+function ResumeSection({ path, onChange }: { path: string; onChange: (path: string) => void }) {
+  const id = useId();
+  const state = useResumeUpload(resume, onChange);
+
+  return (
+    <Section title="Resume">
+      <div className="flex min-w-0 flex-col gap-2">
+        <label htmlFor={id} className={labelRow}>
+          Your resume
+          <RequirementTag required={resume.required} />
+        </label>
+        <p id={`${id}-hint`} className={hint}>
+          PDF or Word (.docx), up to 10 MB. It’s saved as soon as it uploads, and it’s the one we see with your
+          application.
+        </p>
+        <ResumeControl
+          question={resume}
+          value={path}
+          state={state}
+          id={id}
+          describedBy={state.error ? `${id}-hint ${id}-error` : `${id}-hint`}
+          invalid={Boolean(state.error)}
+        />
+        {state.error && (
+          <p id={`${id}-error`} role="alert" className={fieldError}>
+            {state.error}
+          </p>
+        )}
+      </div>
+    </Section>
+  );
+}
+
+type ProfileFormProps = {
+  userId: string;
+  initial: ProfileValues;
+  /** The resume on their account, if any. */
+  resumePath: string | null;
+  email: string;
+};
+
 /** Profile & settings (Figma "04 · Hacker dashboard / Profile & settings"). */
-export function ProfileForm({ userId, initial, email }: { userId: string; initial: ProfileValues; email: string }) {
+export function ProfileForm({ userId, initial, resumePath, email }: ProfileFormProps) {
   const [state, formAction, pending] = useActionState<ProfileState, FormData>(saveProfile, { values: initial });
   const { values, errors = {} } = state;
+  const [resumeFile, setResumeFile] = useState(resumePath ?? "");
 
   // An unfinished application in this browser asks for the same details: keep it in step.
   useEffect(() => {
@@ -104,6 +151,15 @@ export function ProfileForm({ userId, initial, email }: { userId: string; initia
           </div>
         </div>
       </Section>
+
+      <ResumeSection
+        path={resumeFile}
+        onChange={(path) => {
+          setResumeFile(path);
+          // An unfinished application in this browser asks for it too: keep it in step.
+          patchStoredDraft(userId, { [resume.id]: path });
+        }}
+      />
 
       <Section title="Account">
         <div className="flex max-w-[400px] flex-col gap-2">

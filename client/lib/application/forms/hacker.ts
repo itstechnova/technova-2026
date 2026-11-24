@@ -13,6 +13,7 @@ import {
   mlhEmails,
   phoneNumber,
   pronouns,
+  resume,
   shirtSize,
 } from "./shared";
 
@@ -141,6 +142,7 @@ export const hackerForm: Form = [
         required: true,
         options: toOptions(["This will be my first!", "1", "2", "3", "4+"]),
       },
+      resume,
       {
         id: "heard_from",
         type: "multi_choice",

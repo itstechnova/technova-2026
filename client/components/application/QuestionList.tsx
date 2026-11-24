@@ -9,7 +9,7 @@ export function focusQuestion(id: string) {
   const wrapper = document.querySelector<HTMLElement>(`[data-question="${CSS.escape(id)}"]`);
   if (!wrapper) return;
   wrapper.scrollIntoView({ block: "center" });
-  wrapper.querySelector<HTMLElement>("input, select, textarea")?.focus({ preventScroll: true });
+  wrapper.querySelector<HTMLElement>("input, select, textarea, button[data-focus-target]")?.focus({ preventScroll: true });
 }
 
 /** The visible questions of a section, each wired to the draft's answers and errors. */

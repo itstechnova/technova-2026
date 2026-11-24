@@ -11,7 +11,7 @@ import type { Answers } from "@/lib/application/types";
 import { requireRole } from "@/lib/auth/dal";
 import { getMyHackerApplication } from "@/lib/data/hackerApplication";
 import { getMyHackerDraft } from "@/lib/data/hackerDraft";
-import { getProfileAnswers } from "@/lib/data/profile";
+import { getProfileAnswers, getResumePath } from "@/lib/data/profile";
 
 const DASHBOARD = "/applicant/dashboard";
 const SPONSORS_EMAIL = "sponsors@itstechnova.org";
@@ -132,7 +132,11 @@ export default async function ApplicationPage({
     );
   }
 
-  const [accountDraft, profile] = await Promise.all([getMyHackerDraft(), getProfileAnswers(user.id)]);
+  const [accountDraft, profile, resumePath] = await Promise.all([
+    getMyHackerDraft(),
+    getProfileAnswers(user.id),
+    getResumePath(user.id),
+  ]);
 
   return (
     // ApplicationForm reads the step from the URL with useSearchParams.
@@ -141,6 +145,7 @@ export default async function ApplicationPage({
         userId={user.id}
         prefill={accountAnswers(user.email, user.user_metadata?.full_name)}
         profile={profile}
+        resumePath={resumePath}
         accountDraft={accountDraft}
         closed={!applicationsOpen()}
       />

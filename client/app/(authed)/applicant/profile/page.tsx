@@ -4,7 +4,7 @@ import { PageHeading, PortalPage } from "@/components/portal/PortalPage";
 import { ProfileForm } from "@/components/profile/ProfileForm";
 import { requireRole } from "@/lib/auth/dal";
 import { getMyHackerDraft } from "@/lib/data/hackerDraft";
-import { getProfileAnswers } from "@/lib/data/profile";
+import { getProfileAnswers, getResumePath } from "@/lib/data/profile";
 import { PROFILE_FIELDS, validProfileValue, type ProfileValues } from "@/lib/profile/fields";
 
 export const metadata: Metadata = { title: "Profile & settings" };
@@ -15,7 +15,11 @@ export default async function ProfilePage() {
 
   // What is saved on their account; a detail only typed into an unfinished application so far
   // is offered too, and is saved here with the rest.
-  const [profile, draft] = await Promise.all([getProfileAnswers(user.id), getMyHackerDraft()]);
+  const [profile, draft, resumePath] = await Promise.all([
+    getProfileAnswers(user.id),
+    getMyHackerDraft(),
+    getResumePath(user.id),
+  ]);
   const initial = Object.fromEntries(
     PROFILE_FIELDS.map(({ id }) => {
       const value = profile[id] ?? draft?.answers[id];
@@ -26,10 +30,10 @@ export default async function ProfilePage() {
   return (
     <PortalPage>
       <PageHeading title="Profile & settings">
-        Keep your details up to date. Your name, pronouns, phone number and t-shirt size are the same ones
-        used on your application, so a change here shows there too.
+        Keep your details up to date. Your name, pronouns, phone number, t-shirt size and resume are the same
+        ones used on your application, so a change here shows there too.
       </PageHeading>
-      <ProfileForm userId={user.id} initial={initial} email={user.email ?? ""} />
+      <ProfileForm userId={user.id} initial={initial} resumePath={resumePath} email={user.email ?? ""} />
     </PortalPage>
   );
 }

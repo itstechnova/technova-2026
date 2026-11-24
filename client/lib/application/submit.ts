@@ -67,10 +67,34 @@ export async function submitHackerApplication(encodedAnswers: string): Promise<S
     typeof answers === 'object' && answers !== null && !Array.isArray(answers) ? (answers as Answers) : {}
   const cleaned = visibleAnswers(hackerForm, input)
 
+  const supabase = await createClient()
+
+  // An uploaded file (the resume) is recorded on the account when it uploads, not here: check the
+  // application against what is stored, whatever the browser says it has.
+  const allQuestions = hackerForm.flatMap((section) => section.questions)
+  const fileQuestions = allQuestions.filter((question) => question.type === 'file')
+  if (fileQuestions.length > 0) {
+    const { data: stored, error: storedError } = await supabase
+      .from('user')
+      .select(fileQuestions.map((question) => question.id).join(','))
+      .eq('user_id', user.id)
+      .maybeSingle<DbRow>()
+
+    if (storedError) {
+      console.error('submitHackerApplication: failed to load uploaded files', storedError)
+      return { ok: false, error: GENERIC_ERROR }
+    }
+    for (const question of fileQuestions) {
+      const path = stored?.[question.id]
+      if (typeof path === 'string' && path !== '') cleaned[question.id] = path
+      else delete cleaned[question.id]
+    }
+  }
+
   const fieldErrors = validateForm(hackerForm, cleaned)
 
   // Numeric answers must be whole numbers that fit their smallint column.
-  for (const question of hackerForm.flatMap((section) => section.questions)) {
+  for (const question of allQuestions) {
     const value = cleaned[question.id]
     if (!isNumberQuestion(question) || fieldErrors[question.id] || typeof value !== 'string') {
       continue
@@ -81,7 +105,7 @@ export async function submitHackerApplication(encodedAnswers: string): Promise<S
   }
 
   // Lookup answers must come from their list, which only the server has in full.
-  for (const question of hackerForm.flatMap((section) => section.questions)) {
+  for (const question of allQuestions) {
     const value = cleaned[question.id]
     if (question.type !== 'lookup' || fieldErrors[question.id] || typeof value !== 'string') continue
     if (value !== question.otherValue && !isOnList(question.list, value)) {
@@ -92,8 +116,6 @@ export async function submitHackerApplication(encodedAnswers: string): Promise<S
   if (Object.keys(fieldErrors).length > 0) {
     return { ok: false, error: INVALID, fieldErrors }
   }
-
-  const supabase = await createClient()
 
   // A hacker row exists only once an application has been submitted.
   const { data: existing, error: existingError } = await supabase
@@ -111,7 +133,11 @@ export async function submitHackerApplication(encodedAnswers: string): Promise<S
   }
 
   // 1. Profile answers go on the user's own public.user row (created by the signup trigger).
-  const userRow = buildRow(questionsForTable(hackerForm, 'user'), cleaned)
+  // Uploaded files are already there (see above) and are left as they are.
+  const userRow = buildRow(
+    questionsForTable(hackerForm, 'user').filter((question) => question.type !== 'file'),
+    cleaned
+  )
   const { data: updatedUsers, error: userError } = await supabase
     .from('user')
     .update(userRow)

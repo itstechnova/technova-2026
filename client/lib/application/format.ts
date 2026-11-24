@@ -1,6 +1,7 @@
 // Turns a stored answer back into display text, for the review page and the read-only view.
 
 import type { AnswerValue, Option, Question } from "./types";
+import { fileNameFromPath } from "./validate";
 
 const EMPTY = "—";
 
@@ -29,6 +30,8 @@ export function formatAnswer(question: Question, value: AnswerValue | undefined)
     case "single_choice":
     case "dropdown":
       return optionLabel(question.options, text);
+    case "file":
+      return fileNameFromPath(text);
     default:
       return text;
   }
