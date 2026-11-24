@@ -86,6 +86,18 @@ export type ConsentQuestion = QuestionBase & {
   checkboxLabel?: string;
 };
 
+/**
+ * A file uploaded to Supabase Storage as soon as it is picked. The answer is the object's path in
+ * `bucket`: `<user id>/<question id>/<timestamp>-<file name>`.
+ */
+export type FileQuestion = QuestionBase & {
+  type: "file";
+  bucket: string;
+  /** Allowed extensions, lowercase with the dot: [".pdf", ".docx"]. */
+  accept: string[];
+  maxBytes: number;
+};
+
 export type Question =
   | ShortTextQuestion
   | ParagraphQuestion
@@ -93,11 +105,12 @@ export type Question =
   | DropdownQuestion
   | LookupQuestion
   | MultiChoiceQuestion
-  | ConsentQuestion;
+  | ConsentQuestion
+  | FileQuestion;
 
 export type QuestionType = Question["type"];
 
-/** short_text / paragraph / single_choice / dropdown / lookup: string. multi_choice: string[]. consent: boolean. */
+/** short_text / paragraph / single_choice / dropdown / lookup / file: string. multi_choice: string[]. consent: boolean. */
 export type AnswerValue = string | string[] | boolean;
 export type Answers = Record<string, AnswerValue | undefined>;
 

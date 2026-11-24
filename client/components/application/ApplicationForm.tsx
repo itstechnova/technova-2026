@@ -19,6 +19,7 @@ import { TimeLeft } from "@/components/portal/TimeLeft";
 import { buttonPrimary, buttonSecondary, heading } from "@/components/portal/ui";
 import { SUPPORT_EMAIL } from "@/lib/application/config";
 import { hackerForm } from "@/lib/application/forms/hacker";
+import { resume } from "@/lib/application/forms/shared";
 import { saveHackerDraft } from "@/lib/application/draft";
 import { submitHackerApplication } from "@/lib/application/submit";
 import { encodeAnswers } from "@/lib/application/wire";
@@ -132,13 +133,15 @@ type FormProps = {
   prefill: Answers;
   /** What Profile & settings has saved (name, pronouns, t-shirt size). These win over the draft. */
   profile: Answers;
+  /** The resume on their account, if any. It is saved there on upload, so a draft's copy of the answer can be stale. */
+  resumePath: string | null;
   /** The draft saved to the applicant's account, if any. */
   accountDraft: Draft | null;
   /** True once the application deadline has passed. */
   closed: boolean;
 };
 
-export default function ApplicationForm({ userId, prefill, profile, accountDraft, closed }: FormProps) {
+export default function ApplicationForm({ userId, prefill, profile, resumePath, accountDraft, closed }: FormProps) {
   const stored = useStoredDraft(userId);
 
   if (closed) return <ClosedState />;
@@ -150,25 +153,29 @@ export default function ApplicationForm({ userId, prefill, profile, accountDraft
       userId={userId}
       prefill={prefill}
       profile={profile}
+      resumePath={resumePath}
       stored={newerDraft(stored, accountDraft)}
       accountSavedAt={accountDraft?.savedAt || null}
     />
   );
 }
 
-type StepperProps = Pick<FormProps, "userId" | "prefill" | "profile"> & {
+type StepperProps = Pick<FormProps, "userId" | "prefill" | "profile" | "resumePath"> & {
   stored: Draft | null;
   /** When the account copy was last saved. */
   accountSavedAt: string | null;
 };
 
-function Stepper({ userId, prefill, profile, stored, accountSavedAt }: StepperProps) {
+function Stepper({ userId, prefill, profile, resumePath, stored, accountSavedAt }: StepperProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
   // `stored` is only the starting point; the hook owns the draft from here on.
   const draft = useApplicationDraft(
     userId,
-    { answers: { ...withPrefill(stored?.answers ?? {}, prefill), ...profile }, step: stored?.step || STEPS[0].id },
+    {
+      answers: { ...withPrefill(stored?.answers ?? {}, prefill), ...profile, [resume.id]: resumePath ?? "" },
+      step: stored?.step || STEPS[0].id,
+    },
     stored?.savedAt || null,
   );
   const { answers } = draft;

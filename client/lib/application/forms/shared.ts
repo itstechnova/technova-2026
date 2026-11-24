@@ -3,6 +3,7 @@
 
 import type {
   ConsentQuestion,
+  FileQuestion,
   ShortTextQuestion,
   SingleChoiceQuestion,
 } from "../types";
@@ -64,6 +65,22 @@ export const shirtSize: SingleChoiceQuestion = {
     "Unisex sizing. Measurements are given in inches. Please note that size availability may vary.",
   required: true,
   options: toOptions(["XS", "S", "M", "L", "XL", "2XL", "3XL"]),
+};
+
+// Kept on the applicant's public.user row, like the other profile details, so it can be added or
+// replaced from Profile & settings at any time (including after the application is submitted).
+// Required to submit; the column itself stays nullable, for applications sent before it was asked.
+// The `resumes` bucket has the same limits as `accept` and `maxBytes`.
+export const resume: FileQuestion = {
+  id: "resume_path",
+  type: "file",
+  table: "user",
+  prompt: "Upload your resume",
+  description: "PDF or Word (.docx), up to 10 MB. You can replace it later in Profile & settings.",
+  required: true,
+  bucket: "resumes",
+  accept: [".pdf", ".docx"],
+  maxBytes: 10 * 1024 * 1024,
 };
 
 export const genderIdentity: SingleChoiceQuestion = {

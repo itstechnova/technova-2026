@@ -4,6 +4,7 @@ import type { AnswerValue, Question } from "@/lib/application/types";
 
 import { ConsentField } from "./ConsentField";
 import { DropdownField } from "./DropdownField";
+import { FileUploadField } from "./FileUploadField";
 import { LookupField } from "./LookupField";
 import { MultiChoiceField } from "./MultiChoiceField";
 import { ParagraphField } from "./ParagraphField";
@@ -43,6 +44,8 @@ export function QuestionField({ question, value, onChange, error, disabled }: Qu
       return <MultiChoiceField question={question} value={asList(value)} {...shared} />;
     case "consent":
       return <ConsentField question={question} value={asBoolean(value)} {...shared} />;
+    case "file":
+      return <FileUploadField question={question} value={asString(value)} {...shared} />;
     default: {
       // Adding a question type to the union is a compile error here until it has a component.
       const unhandled: never = question;

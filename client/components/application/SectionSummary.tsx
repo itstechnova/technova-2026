@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { textLink } from "@/components/portal/PortalPage";
 import { formatAnswer } from "@/lib/application/format";
 import type { Answers, FormSection } from "@/lib/application/types";
 import { isVisible } from "@/lib/application/validate";
@@ -36,7 +37,15 @@ export function SectionSummary({
           <div key={question.id} className="flex flex-col gap-1">
             <dt className="text-[15px] text-tn-muted">{question.prompt}</dt>
             <dd className="text-lg break-words whitespace-pre-line text-tn-ink">
-              {formatAnswer(question, answers[question.id])}
+              {question.type === "file" && answers[question.id] ? (
+                // The applicant's own resume (app/(authed)/applicant/resume/route.ts).
+                <a href="/applicant/resume" target="_blank" rel="noopener noreferrer" className={textLink}>
+                  {formatAnswer(question, answers[question.id])}
+                  <span className="sr-only"> (opens in a new tab)</span>
+                </a>
+              ) : (
+                formatAnswer(question, answers[question.id])
+              )}
             </dd>
           </div>
         ))}
