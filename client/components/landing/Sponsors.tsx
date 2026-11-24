@@ -1,12 +1,12 @@
 import type { CSSProperties } from "react";
 import { SectionHeading, action, wrap } from "@/components/landing/shared";
-import { NORTH_STAR, SMALL_SPONSORS, SPONSORS, layoutSponsors } from "@/components/landing/sponsors-layout";
+import { NORTH_STAR, SPONSORS, layoutSponsors } from "@/components/landing/sponsors-layout";
 import { heading } from "@/components/portal/ui";
 
 // Figma "03 · Sponsors / #sponsors": the sponsors as a night sky. The gold sponsor is the north
-// star, the others form a constellation and the smaller sponsors a second, smaller one. From `lg`
-// up everything is placed as a share of the sky's box (worked out in sponsors-layout.ts); below
-// that the logos are stacked and in grids. The logos are not links yet.
+// star and the others are the stars of one constellation, the smaller sponsors with smaller stars
+// and logos. From `lg` up everything is placed as a share of the sky's box (worked out in
+// sponsors-layout.ts); below that the logos are stacked and in grids. The logos are not links yet.
 
 const SPONSOR_EMAIL = "sponsor@itstechnova.org";
 
@@ -91,14 +91,14 @@ function LogoGrid() {
         <img src={src(NORTH_STAR.file)} alt={NORTH_STAR.name} width={NORTH_STAR.width} height={NORTH_STAR.height} loading="lazy" className="h-auto max-h-16 w-auto max-w-[70%]" />
       </div>
       <ul className="mt-10 grid grid-cols-2 items-center gap-x-8 gap-y-8 sm:grid-cols-3">
-        {SPONSORS.map(({ name, file, width, height }) => (
+        {SPONSORS.filter(({ small }) => !small).map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in flex justify-center">
             <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-14 w-auto max-w-full" />
           </li>
         ))}
       </ul>
       <ul className="mt-10 flex flex-wrap items-center justify-center gap-x-10 gap-y-6">
-        {SMALL_SPONSORS.map(({ name, file, width, height }) => (
+        {SPONSORS.filter(({ small }) => small).map(({ name, file, width, height }) => (
           <li key={name} className="scroll-in">
             <img src={src(file)} alt={name} width={width} height={height} loading="lazy" className="h-auto max-h-8 w-auto max-w-[9rem]" />
           </li>

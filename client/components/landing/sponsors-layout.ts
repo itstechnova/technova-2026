@@ -1,28 +1,24 @@
 // The sponsors section's data and the layout of its constellations (Figma "03 · Sponsors / #sponsors").
 //
 // To add a sponsor: put its all-white logo in public/images/sponsors as <file>.webp and add a line
-// to the right list below. Nothing is placed by hand: a list of five is drawn as Cepheus, add a
-// sixth and it becomes Cygnus, and so on (see SHAPES).
+// to the list below. Nothing is placed by hand: the seven sponsors are drawn as the Big Dipper, and
+// the constellation changes with the count (see SHAPES).
 
-/** A logo file under public/images/sponsors; `width`/`height` are the image file's size. */
-export type Logo = { name: string; file: string; width: number; height: number };
+/** A logo file under public/images/sponsors; `width`/`height` are the image file's size. `small` gives the sponsor a smaller star and logo. */
+export type Logo = { name: string; file: string; width: number; height: number; small?: boolean };
 
 /** The gold sponsor: the north star, on its own above the constellations. */
 export const NORTH_STAR: Logo = { name: "Mintlify", file: "mintlify", width: 439, height: 98 };
 
-/** The main constellation. */
+/** The constellation: one star each. */
 export const SPONSORS: Logo[] = [
   { name: "Jane Street", file: "jane-street", width: 560, height: 149 },
   { name: "Accenture", file: "accenture", width: 457, height: 120 },
   { name: "Scotiabank", file: "scotiabank", width: 474, height: 68 },
   { name: "Shopify", file: "shopify", width: 440, height: 127 },
   { name: "Ubisoft", file: "ubisoft", width: 300, height: 275 },
-];
-
-/** The smaller constellation beside it. */
-export const SMALL_SPONSORS: Logo[] = [
-  { name: "Wealthsimple", file: "wealthsimple", width: 560, height: 91 },
-  { name: "Saily", file: "saily", width: 300, height: 130 },
+  { name: "Wealthsimple", file: "wealthsimple", width: 560, height: 91, small: true },
+  { name: "Saily", file: "saily", width: 300, height: 130, small: true },
 ];
 
 export type Placed = Logo & { x: number; y: number; w: number; h: number };
@@ -48,7 +44,7 @@ const SHAPES: Shape[] = [
   // Deneb, Sadr, Aljanah, Fawaris, Eta Cygni, Albireo
   { name: "Cygnus", width: 1.0, height: 0.708, points: [[1.0, 0.237], [0.71, 0.323], [0.492, 0.0], [0.861, 0.708], [0.398, 0.501], [0.0, 0.696]], lines: [[0, 1], [1, 2], [1, 3], [1, 4], [4, 5]] },
   // Alkaid, Mizar, Alioth, Megrez, Dubhe, Merak, Phecda
-  { name: "Ursa Major", width: 1.0, height: 0.48, points: [[0.0, 0.48], [0.201, 0.296], [0.377, 0.282], [0.593, 0.248], [0.926, 0.0], [1.0, 0.206], [0.726, 0.373]], lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]] },
+  { name: "Ursa Major", width: 1.0, height: 0.313, points: [[0.0, 0.268], [0.227, 0.134], [0.396, 0.156], [0.607, 0.167], [0.971, 0.0], [1.0, 0.21], [0.708, 0.313]], lines: [[0, 1], [1, 2], [2, 3], [3, 4], [4, 5], [5, 6], [6, 3]] },
 ];
 // Past seven sponsors the stars are spread along a hooked chain in the manner of Scorpius; this one
 // is a sketch, not a star-for-star map.
@@ -79,8 +75,8 @@ type Options = {
   shapeHeight: number;
   /** The largest box a logo may fill; each logo keeps its own proportions inside it. */
   fit: { w: number; h: number };
-  /** Shrinks or grows the stars. */
-  starScale?: number;
+  /** How much smaller a `small` sponsor's star and logo are. */
+  smallScale?: number;
   /** Ends the constellation with the dashed open star: the place for the next sponsor. */
   open?: boolean;
 };
@@ -114,7 +110,7 @@ const overlap = (a: Box, b: Box, pad: number) => a.x < b.x + b.w + pad && b.x < 
 const distance = (a: Point, b: Point) => Math.hypot(a.x - b.x, a.y - b.y);
 
 /** One try at a constellation; `misfits` counts the logos that found no clear place. */
-function attempt(list: Logo[], shape: Shape, { width, shapeHeight, fit, starScale = 1 }: Options, openSide: "right" | "left" | null) {
+function attempt(list: Logo[], shape: Shape, { width, shapeHeight, fit, smallScale = 0.78 }: Options, openSide: "right" | "left" | null) {
   // The shape is drawn inside a margin wide enough for a logo to sit on any side of an outer star.
   const marginX = Math.min(fit.w * 0.9, width * 0.2);
   const marginY = fit.h + LOGO_GAP + 24;
@@ -125,7 +121,7 @@ function attempt(list: Logo[], shape: Shape, { width, shapeHeight, fit, starScal
   const stars: Star[] = shape.points.map(([x, y], i) => ({
     x: left + x * scale,
     y: marginY + y * scale,
-    size: STAR_SIZES[i % STAR_SIZES.length] * starScale,
+    size: STAR_SIZES[i % STAR_SIZES.length] * (list[i].small ? smallScale : 1),
   }));
   const lines: Line[] = shape.lines.map(([from, to]) => ({ x1: stars[from].x, y1: stars[from].y, x2: stars[to].x, y2: stars[to].y }));
 
@@ -141,7 +137,9 @@ function attempt(list: Logo[], shape: Shape, { width, shapeHeight, fit, starScal
   let misfits = 0;
   list.forEach((logo, i) => {
     const star = stars[i];
-    const w = Math.min(fit.w, (fit.h * logo.width) / logo.height);
+    const shrink = logo.small ? smallScale : 1;
+    // A small logo is also kept lower, so a tall mark does not outweigh the wide ones around it.
+    const w = Math.min(fit.w * shrink, (fit.h * shrink * (logo.small ? 0.8 : 1) * logo.width) / logo.height);
     const h = (w * logo.height) / logo.width;
     const reach = star.size / 2 + LOGO_GAP;
     // Which way the star's own lines leave it: the logo goes on the far side where it can.
@@ -207,26 +205,16 @@ function at(sky: Constellation, dx: number, dy: number): Constellation {
   };
 }
 
-// The whole sky, in the design's 1248-wide units: the north star at the top, the main constellation
-// under it on the left and the smaller one on the right, a little lower.
+// The whole sky, in the design's 1248-wide units: the north star at the top and the constellation
+// under it, centred.
 const WIDTH = 1248;
 const NORTH = { star: { x: WIDTH / 2, y: 48, size: 96 }, logoWidth: 340, logoTop: 118 };
-const MAIN = { x: 0, width: 880, shapeHeight: 230, fit: { w: 200, h: 72 } };
-const SMALL = { x: 930, width: 318, shapeHeight: 90, fit: { w: 160, h: 46 }, drop: 28 };
+const MAIN = { width: 1100, shapeHeight: 280, fit: { w: 155, h: 56 } };
 
 export function layoutSponsors() {
   const northHeight = (NORTH.logoWidth * NORTH_STAR.height) / NORTH_STAR.width;
   const north: Placed = { ...NORTH_STAR, x: (WIDTH - NORTH.logoWidth) / 2, y: NORTH.logoTop, w: NORTH.logoWidth, h: northHeight };
-  const top = NORTH.logoTop + northHeight + 34;
-  const main = at(layoutConstellation(SPONSORS, MAIN), MAIN.x, top);
-  const small = at(layoutConstellation(SMALL_SPONSORS, { ...SMALL, starScale: 0.75, open: true }), SMALL.x, top + SMALL.drop);
-  return {
-    width: WIDTH,
-    height: Math.max(top + main.height, top + SMALL.drop + small.height),
-    north: { star: NORTH.star, logo: north },
-    logos: [...main.logos, ...small.logos],
-    stars: [...main.stars, ...small.stars],
-    lines: [...main.lines, ...small.lines],
-    open: small.open!,
-  };
+  const top = NORTH.logoTop + northHeight + 20;
+  const sky = at(layoutConstellation(SPONSORS, { ...MAIN, open: true }), (WIDTH - MAIN.width) / 2, top);
+  return { width: WIDTH, height: top + sky.height, north: { star: NORTH.star, logo: north }, logos: sky.logos, stars: sky.stars, lines: sky.lines, open: sky.open! };
 }
