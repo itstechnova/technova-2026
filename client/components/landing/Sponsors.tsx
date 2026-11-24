@@ -48,7 +48,7 @@ function Star({ index, className = "", style }: { index: number; className?: str
 
 function NorthStar({ className = "", style }: { className?: string; style?: CSSProperties }) {
   return (
-    <svg aria-hidden viewBox="-54 -54 108 108" className={`${STAR} ${className}`} style={{ ...style, ...shimmer(2, 22) }}>
+    <svg aria-hidden viewBox="-54 -54 108 108" className={`${STAR} ${className}`} style={{ ...style, ...shimmer(2, 56) }}>
       <path d={FLARE} fill="#fbfadf" />
     </svg>
   );
