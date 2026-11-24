@@ -187,7 +187,6 @@ export function ResumeControl({ question, value, state, id, describedBy, invalid
             onClick={choose}
             disabled={busy}
             aria-describedby={describedBy}
-            aria-required={question.required || undefined}
             className={cn(buttonSecondary, compactButton)}
           >
             {state.busy === "uploading" ? "Uploading…" : "Choose a file"}
